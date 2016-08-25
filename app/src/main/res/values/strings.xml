@@ -5,4 +5,92 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+
+    <string name="prompt_name">Name</string>
+    <string name="prompt_mobile">Mobile</string>
+    <string name="prompt_desc">Description</string>
+    <string name="prompt_sbmt">SUBMIT</string>
+
+
+    <string name="advertise">Advertise With Us</string>
+    <string name="contact">Contact Us</string>
+    <string name="error_invalid_name">This name is too short</string>
+    <string name="error_invalid_number">Enter Valid Mobile Number</string>
+    <string name="error_desc_required">Enter some description</string>
+
+    <string name="login_error">Error While Login</string>
+    <string name="title_activity_login">Sign in</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+
+    <string name="silly_about_us">From Jennifer Lawrence to Shahrukh Khan, from Rajinikanth to Kamal Hassan, from Pawan Kalyan to Mohan Lal. Catch up with all your favourite stars, films, and celeb news right here. We’ve got trailers and reviews from Tollywood, Kollywood, Mollywood, Bollywood and Hollywood, so buckle up and settle down for some glitzy fun! Hang on. Movies ain’t your cup of tea? No problem- Silly Monks’ cup is brimming with short films, music and YouTube news too! Album reviews, band news, short film discussions… we’re not even sure you can handle all this. So what are you waiting for? Take a nice big sip!</string>
+    <string name="silly_terms_conditions">"Terms of Service
+Please read the following terms and conditions very carefully. If you do not agree with the following terms and conditions, do not download, install or register to use the application. By downloading, installing or using this app or any portion thereof, you agree to the following terms and conditions.
+
+1. USE OF THE SILLY MONKS APPLICATION
+This agreement (“Agreement”) is entered into between you (“You”) and Silly Monks Entertainment Media Pvt Ltd (“Silly Monks”). Subject to the terms and conditions of this Agreement, You are hereby granted the non-transferable right to use this software (“Silly Monks Application”) solely for personal, non-commercial purposes.
+
+You may not use the Silly Monks Application in any manner that may impair, overburden, damage, disable or otherwise compromise (i) Silly Monks services; (ii) any other party’s use and enjoyment of Silly Monks services; or (iii) the services and products of any third parties (including, without limitation, the Authorized Device). You agree to comply with all local laws and regulations governing the downloading, installation and/or use of the Silly Monks Application, including, without limitation, any usage rules set forth in the online application store terms of service.
+
+From time to time, Silly Monks may automatically check the version of Silly Monks Application installed on the Authorized Device and, if applicable, provide updates for the Silly Monks Application (“Updates”). Updates may contain, without limitation, bug fixes, patches, enhanced functionality, plug-ins and new versions of the Silly Monks Application. By installing the Silly Monks Application, you authorize the automatic download and installation of Updates and agree to download and install Updates manually if necessary. Your use of the Silly Monks Application and Updates will be governed by this Agreement (as amended by any terms and conditions that may be provided with Updates).
+
+Silly Monks reserves the right to temporarily disable or permanently discontinue any and all functionality of the Silly Monks Application at any time without notice and with no liability to you.
+
+For the avoidance of doubt, this Agreement is solely between Silly Monks and You. If you need to contact Silly Monks about the Silly Monks Application, you may do so by calling +91 8008 12 12 36 or email us @ info@sillymonks.com.
+
+2. CONTENT DATA AND INFORMATION
+Silly Monks aggregates the content information data feed from various content providers and/or content created in house.
+
+You understand that Silly Monks is just facilitating for you to view the information of the news, videos, and view/download images, etc.. Sometimes you may face irruptions due to various reasons to access content and Silly Monks doesn’t take any responsibility for such instances.
+
+3. PRIVACY POLICY
+As a condition of using the Silly Monks Application, you agree to the terms of Silly Monks Privacy Policy. You acknowledge and agree that Silly Monks Privacy Policy and Silly Monks Terms of Use may be updated from time to time, without prior notice. Any such change(s) will be effective as soon as Silly Monks posts a revised version of the applicable Policy. In the event of an otherwise irreconcilable conflict between this Agreement and Silly Monks Terms of Service or Silly Monks Privacy Policy, this Agreement will govern, solely with regard to the conflicting provisions and solely to the extent of such conflict.
+
+Silly Monks may track and archive information regarding your use of the Silly Monks Application (“Use Information”). Use Information does not reveal your personal identity. Use Information may be stored and processed in the India or any other country in which Silly Monks or its agents maintain facilities. By using the Silly Monks Application, you consent to the collection of your User Information and to any transfer of your User Information outside of your country.
+
+4. TERMINATION
+You may terminate this Agreement at any time by permanently deleting the Silly Monks Application in its entirety from the Authorized Device, whereupon (and without notice from Silly Monks) any rights granted to you herein will automatically terminate. If you fail to comply with any provision of this Agreement, any rights granted to you herein will automatically terminate. In the event of such termination, you must immediately delete the Silly Monks Application from the Authorized Device.
+
+5. INDEMNITY
+You agree to hold harmless and indemnify Silly Monks and its subsidiaries, affiliates, officers, agents, and employees (and their subsidiaries, affiliates, officers, agents, and employees) from and against any claim, suit or action arising from or in any way related to your use of the Silly Monks Application or your violation of this Agreement, including any liability or expense arising from all claims, losses, damages, suits, judgments, litigation costs and attorneys’ fees, of every kind and nature. In such a case, Silly Monks will provide you with written notice of such claim, suit or action.
+
+6. DISCLAIMER OF WARRANTIES
+THE SILLY MONKS APPLICATION IS PROVIDED ON AN “AS IS” BASIS AND WITHOUT WARRANTY OF ANY KIND. TO THE MAXIMUM EXTENT PERMITTED BY LAW, SILLY MONKS EXPRESSLY DISCLAIMS ALL WARRANTIES AND CONDITIONS OF ANY KIND, WHETHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT.
+
+YOUR USE OF THE SILLY MONKS APPLICATION IS AT YOUR SOLE RISK. SILLY MONKS SHALL NOT BE OBLIGATED TO PROVIDE YOU WITH ANY MAINTENANCE OR SUPPORT SERVICES IN CONNECTION WITH THE SILLY MONKS APPLICATION.
+
+ SILLY MONKS MAKES NO WARRANTY (I) THAT THE SILLY MONKS APPLICATION WILL MEET YOUR REQUIREMENTS; (II) THAT THE SILLY MONKS APPLICATION WILL BE ERROR-FREE; (III) REGARDING THE SECURITY, RELIABILITY, TIMELINESS, OR PERFORMANCE OF THE SILLY MONKS APPLICATION; AND (IV) THAT ANY ERRORS IN THE SILLY MONKS APPLICATION WILL BE CORRECTED.
+
+ANY CONTENT OR MATERIAL YOU DOWNLOAD OR OTHERWISE OBTAIN THROUGH THE SILLY MONKS APPLICATION IS OBTAINED AT YOUR OWN DISCRETION AND RISK. YOU WILL BE SOLELY RESPONSIBLE FOR ANY DAMAGE TO YOUR AUTHORIZED DEVICE (OR ANY OTHER DEVICE) OR ANY LOSS OF DATA THAT MAY RESULT FROM DOWNLOADING ANY SUCH CONTENT OR MATERIAL.
+
+NO INFORMATION, WHETHER ORAL OR WRITTEN, OBTAINED BY YOU FROM SILLY MONKS OR THROUGH THE SILLY MONKS APPLICATION SHALL CREATE ANY WARRANTY NOT EXPRESSLY STATED IN THESE TERMS AND CONDITIONS.
+
+ 7. LIMITATION OF LIABILITY
+YOU EXPRESSLY UNDERSTAND AND AGREE THAT SILLY MONKS SHALL NOT BE LIABLE TO YOU FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL OR EXEMPLARY DAMAGES, INCLUDING BUT NOT LIMITED TO, DAMAGES FOR LOSS OF PROFITS, GOODWILL, USE, DATA OR OTHER INTANGIBLE LOSSES (EVEN IF SILLY MONKS HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES) RESULTING FROM: (I) THE USE OR THE INABILITY TO USE THE SILLY MONKS APPLICATION; (II) THE INABILITY TO USE THE SILLY MONKS APPLICATION TO ACCESS CONTENT OR DATA; (III) THE COST OF PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; (IV) UNAUTHORIZED ACCESS TO OR ALTERATION OF YOUR TRANSMISSIONS OR DATA; OR (V) ANY OTHER MATTER RELATING TO THE SILLY MONKS APPLICATION. THE FOREGOING LIMITATIONS SHALL APPLY NOTWITHSTANDING A FAILURE OF ESSENTIAL PURPOSE OF ANY LIMITED REMEDY AND TO THE FULLEST EXTENT PERMITTED BY LAW.
+
+8. EXCLUSIONS AND LIMITATIONS
+NOTHING IN THIS AGREEMENT IS INTENDED TO EXCLUDE OR LIMIT ANY CONDITION, WARRANTY, RIGHT OR LIABILITY WHICH MAY NOT BE LAWFULLY EXCLUDED OR LIMITED. SOME JURISDICTIONS DO NOT ALLOW THE EXCLUSION OF CERTAIN WARRANTIES OR CONDITIONS OR THE LIMITATION OR EXCLUSION OF LIABILITY FOR LOSS OR DAMAGE CAUSED BY NEGLIGENCE, BREACH OF CONTRACT OR BREACH OF IMPLIED TERMS, OR INCIDENTAL OR CONSEQUENTIAL DAMAGES. ACCORDINGLY, ONLY THE ABOVE LIMITATIONS IN SECTIONS 10 AND 11 WHICH ARE LAWFUL IN YOUR JURISDICTION WILL APPLY TO YOU AND SILLY MONKS LIABILITY WILL BE LIMITED TO THE MAXIMUM EXTENT PERMITTED BY LAW.
+
+9. ENTIRE AGREEMENT; REVISIONS TO AGREEMENT.
+Silly Monks may, from time to time, modify this Agreement. Such modifications shall be effective as soon as the modified version of the “Silly Monks Application Terms and Conditions” is posted in the online application store or any other authorized Silly Monks Application distribution location. You can determine when this Agreement was last revised by referring to the “LAST UPDATED” legend at the top of then-current version of the “Silly Monks Mobile Application Terms and Conditions” in the online application store or any other authorized Silly Monks Application distribution location. Your use of Silly Monks Application following such changes constitutes Your acceptance of the revised version of the “Silly Monks Mobile Application Terms and Conditions” in the online application store or any other authorized Silly Monks Application distribution location.
+
+10. MISCELLANEOUS PROVISIONS
+This Agreement and the legal relations between the parties hereto shall be governed by and construed in accordance with the laws of Government of India, without reference to its conflict-of-laws principles. The parties hereto, their successors and assigns, consent to the jurisdiction of the courts of Hyderabad, India with respect to any legal proceedings related to this Agreement, and waive any objection to the propriety or convenience of venue in such courts.
+
+11.QUESTIONS
+Please contact us at info@sillymonks.com if you have any questions about our terms of use. Effective: March 30th 2016
+
+@ 2016 Silly Monks Entertainment Pvt Ltd. All Rights Reserved"</string>
+
+
 </resources>
