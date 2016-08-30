@@ -12,24 +12,36 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.maheshpujala.sillymonks.Adapters.ListAdapter;
 import com.example.maheshpujala.sillymonks.Api.NetworkCheck;
 import com.example.maheshpujala.sillymonks.R;
+import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
+import com.google.android.gms.ads.doubleclick.PublisherAdView;
 
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener {
     private CoordinatorLayout container;
-    private TextView abt,login,terms,cnt,advt,share;
-
+    private final String[] values = new String[] { "Android List View",
+            "Adapter implementation",
+            "Simple List View In Android",
+            "Create List View Android",
+            "Android Example",
+            "List View Source Code",
+            "List View Array Adapter",
+            "Android Example List View"
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -39,20 +51,32 @@ public class MainActivity extends AppCompatActivity
 
         // NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         //  navigationView.setNavigationItemSelectedListener(this);
-        login = (TextView)findViewById(R.id.signin);
+        TextView login = (TextView) findViewById(R.id.signin);
         login.setOnClickListener(this);
-        abt = (TextView)findViewById(R.id.about);
+        TextView abt = (TextView) findViewById(R.id.about);
         abt.setOnClickListener(this);
-        terms = (TextView) findViewById(R.id.tandc);
+        TextView terms = (TextView) findViewById(R.id.tandc);
         terms.setOnClickListener(this);
-        cnt = (TextView) findViewById(R.id.contact);
+        TextView cnt = (TextView) findViewById(R.id.contact);
         cnt.setOnClickListener(this);
-        advt = (TextView) findViewById(R.id.advertise);
+        TextView advt = (TextView) findViewById(R.id.advertise);
         advt.setOnClickListener(this);
-        share = (TextView)findViewById(R.id.sharetheapp);
+        TextView share = (TextView) findViewById(R.id.sharetheapp);
         share.setOnClickListener(this);
         container = (CoordinatorLayout) findViewById(R.id.layout_container);
         checkConnection();
+
+        PublisherAdView mPublisherAdView = (PublisherAdView) findViewById(R.id.publisherAdView);
+        PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
+
+//        AdSize customAdSize = new AdSize(200, 200);
+//        mPublisherAdView.setAdSizes(customAdSize);
+
+        mPublisherAdView.loadAd(adRequest);
+
+        ListView home_list = (ListView) findViewById(R.id.list_allwoods);
+
+        home_list.setAdapter(new ListAdapter(this,values));
 
     }
 
@@ -155,28 +179,4 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         }
 
-//    @Override
-//    public boolean onNavigationItemSelected(MenuItem item) {
-//        // Handle navigation view item clicks here.
-//        int id = item.getItemId();
-//
-//        if (id == R.id.textView2) {
-//            // Handle the camera action
-//            Toast.makeText(this,"clicked",Toast.LENGTH_SHORT).show();
-//        } else if (id == R.id.textView3) {
-//
-//        } else if (id == R.id.textView4) {
-//
-//        } else if (id == R.id.nav_manage) {
-//
-//        } else if (id == R.id.nav_share) {
-//
-//        } else if (id == R.id.nav_send) {
-//
-//        }
-//
-//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-//        drawer.closeDrawer(GravityCompat.START);
-//        return true;
-//    }
     }
