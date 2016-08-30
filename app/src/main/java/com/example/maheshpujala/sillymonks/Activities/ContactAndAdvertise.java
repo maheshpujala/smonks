@@ -18,10 +18,11 @@ import com.example.maheshpujala.sillymonks.R;
  * Created by maheshpujala on 23/8/16.
  */
 public class ContactAndAdvertise extends AppCompatActivity implements View.OnClickListener {
-    EditText pname, pmobile, desc;
-    TextView header;
-    Button submit;
-    String person_name,mobile_no,description;
+    private EditText desc,pname,pmobile;
+    private TextView header;
+    private Button submit;
+    private String person_name,mobile_no,description;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

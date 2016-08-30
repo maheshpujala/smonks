@@ -2,24 +2,15 @@ package com.example.maheshpujala.sillymonks.Activities;
 
 import android.content.Intent;
 import android.os.Handler;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
-import com.example.maheshpujala.sillymonks.Api.NetworkCheck;
 import com.example.maheshpujala.sillymonks.R;
 
 public class SplashActivity extends AppCompatActivity {
-    private WebView logo;
-    // Splash screen timer
-    private static int SPLASH_TIME_OUT = 4200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +20,7 @@ public class SplashActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        logo =(WebView)findViewById(R.id.view_logo);
+        WebView logo = (WebView) findViewById(R.id.view_logo);
         logo.loadUrl("file:///android_asset/logotab.html");
 
         loadAndParseConfig();
@@ -38,6 +29,7 @@ public class SplashActivity extends AppCompatActivity {
 
 
     private void loadAndParseConfig() {
+        int SPLASH_TIME_OUT = 4200;
         new Handler().postDelayed(new Runnable() {
 
             /*

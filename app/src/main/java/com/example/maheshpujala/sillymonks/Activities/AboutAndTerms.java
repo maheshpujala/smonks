@@ -13,7 +13,8 @@ import com.example.maheshpujala.sillymonks.R;
  * Created by maheshpujala on 23/8/16.
  */
 public class AboutAndTerms extends AppCompatActivity {
-    TextView header,contenttodisplay;
+    private TextView header;
+    private TextView contenttodisplay;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
