@@ -1,9 +1,14 @@
 package com.example.maheshpujala.sillymonks.Activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -12,6 +17,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,23 +29,37 @@ import android.widget.Toast;
 import com.example.maheshpujala.sillymonks.Adapters.ListAdapter;
 import com.example.maheshpujala.sillymonks.Api.NetworkCheck;
 import com.example.maheshpujala.sillymonks.R;
+import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
 
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener {
     private CoordinatorLayout container;
+    ListView home_list;
+    View mDownView;
+    int   mDownPosition;
+    PublisherAdView mPublisherAdView;
     private final String[] values = new String[] { "Android List View",
-            "Adapter implementation",
-            "Simple List View In Android",
-            "Create List View Android",
-            "Android Example",
-            "List View Source Code",
-            "List View Array Adapter",
-            "Android Example List View"
+            "TollyWood",
+            "BollyWood",
+            "KollyWood",
+            "MollyWood",
+            "HollyWood",
+            "Creators",
+    };
+    private final Integer[] images = new Integer[]{
+            R.drawable.drawer_image,
+            R.drawable.tollywood,
+            R.drawable.bollywood,
+            R.drawable.kollywood,
+            R.drawable.mollywood,
+            R.drawable.hollywood,
+            R.drawable.creators
     };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -66,19 +90,68 @@ public class MainActivity extends AppCompatActivity
         container = (CoordinatorLayout) findViewById(R.id.layout_container);
         checkConnection();
 
-        PublisherAdView mPublisherAdView = (PublisherAdView) findViewById(R.id.publisherAdView);
+//        FrameLayout frame_load= (FrameLayout) findViewById(R.id.main_frame);
+//        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        View view =inflater.inflate(R.layout.test, frame_load, false);
+//        frame_load.addView(view);
+
+        mPublisherAdView = (PublisherAdView) findViewById(R.id.publisherAdView);
         PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
 
 //        AdSize customAdSize = new AdSize(200, 200);
 //        mPublisherAdView.setAdSizes(customAdSize);
 
         mPublisherAdView.loadAd(adRequest);
+        mPublisherAdView.setOnClickListener(this);
 
-        ListView home_list = (ListView) findViewById(R.id.list_allwoods);
+        home_list = (ListView) findViewById(R.id.list_allwoods);
 
-        home_list.setAdapter(new ListAdapter(this,values));
+        home_list.setAdapter(new ListAdapter(this, values,images));
 
+        home_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+            if (position!=0){
+                Toast.makeText(getApplicationContext(), "clicked " + position, Toast.LENGTH_SHORT).show();
+            }
+            }
+        });
+        home_list.setOnTouchListener(new AdapterView.OnTouchListener(){
+
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                Rect rect = new Rect();
+                int childCount = home_list.getChildCount();
+                int[] listViewCoords = new int[2];
+                home_list.getLocationOnScreen(listViewCoords);
+                int x = (int) motionEvent.getRawX() - listViewCoords[0];
+                int y = (int) motionEvent.getRawY() - listViewCoords[1];
+                View child;
+                for (int i = 0; i < childCount; i++) {
+                    child = home_list.getChildAt(i);
+                    child.getHitRect(rect);
+                    if (rect.contains(x, y)) {
+                         mDownView = child; // This is your down view
+                        break;
+                    }
+                }
+                if (mDownView != null) {
+                     mDownPosition = home_list.getPositionForView(mDownView);
+                    Log.e("position in on touch","clicked"+mDownPosition);
+                    if (mDownPosition == 0){
+                        mPublisherAdView.dispatchTouchEvent(motionEvent);
+                    }
+                }
+                view.onTouchEvent(motionEvent);
+                return true;
+            }
+        });
     }
+
+
+
 
     private void checkConnection() {
         if (NetworkCheck.isInternetAvailable(MainActivity.this))  //if connection available
@@ -174,6 +247,10 @@ public class MainActivity extends AppCompatActivity
             int requestCode = 5;
             advertise.putExtra("requestCode", requestCode);
             startActivityForResult(advertise,requestCode);
+        }
+        if (id == R.id.publisherAdView) {
+            Toast.makeText(this, "clicked ADVERTISEMENT", Toast.LENGTH_SHORT).show();
+
         }
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
