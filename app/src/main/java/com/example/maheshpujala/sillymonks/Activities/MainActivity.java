@@ -7,7 +7,11 @@ import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.view.View;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -20,6 +24,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,7 +43,8 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity
-        implements View.OnClickListener {
+        implements View.OnClickListener,SwipeRefreshLayout.OnRefreshListener{
+    private SwipeRefreshLayout swipeRefreshLayout;
     private CoordinatorLayout container;
     ListView home_list;
     View mDownView;
@@ -61,6 +69,7 @@ public class MainActivity extends AppCompatActivity
             R.drawable.mollywood,
             R.drawable.hollywood,
             R.drawable.creators
+
     };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +117,7 @@ public class MainActivity extends AppCompatActivity
         AdSize customAdSize = new AdSize(360, 180);
 
         mPublisherAdView = (PublisherAdView) findViewById(R.id.publisherAdView);
-       // mPublisherAdView.setAdSizes(customAdSize);
+        // mPublisherAdView.setAdSizes(customAdSize);
 
         mPublisherAdView.setAdSizes(AdSize.MEDIUM_RECTANGLE);
 
@@ -128,20 +137,21 @@ public class MainActivity extends AppCompatActivity
 
         home_list = (ListView) findViewById(R.id.list_allwoods);
 
-        home_list.setAdapter(new ListAdapter(this, values,images));
+        home_list.setAdapter(new ListAdapter(this, values, images));
 
         home_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-            if (position!=0){
-                Toast.makeText(getApplicationContext(), "clicked " + position, Toast.LENGTH_SHORT).show();
-                Intent it = new Intent(MainActivity.this, CategoryActivity.class);
-                startActivity(it);
-            }
+                if (position != 0) {
+                    Toast.makeText(getApplicationContext(), "clicked " + position, Toast.LENGTH_SHORT).show();
+                    Intent it = new Intent(MainActivity.this, CategoryActivity.class);
+                    startActivity(it);
+                }
             }
         });
-        home_list.setOnTouchListener(new AdapterView.OnTouchListener(){
+
+        home_list.setOnTouchListener(new AdapterView.OnTouchListener() {
 
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -157,32 +167,28 @@ public class MainActivity extends AppCompatActivity
                     child = home_list.getChildAt(i);
                     child.getHitRect(rect);
                     if (rect.contains(x, y)) {
-                         mDownView = child; // This is your down view
+                        mDownView = child; // This is your down view
                         break;
                     }
                 }
                 if (mDownView != null) {
-                   try{
+                    try {
 
 
-                     mDownPosition = home_list.getPositionForView(mDownView);
-                    Log.e("position in on touch","clicked"+mDownPosition);
-                    if (mDownPosition == 0){
-                        mPublisherAdView.dispatchTouchEvent(motionEvent);
+                        mDownPosition = home_list.getPositionForView(mDownView);
+                        Log.e("position in on touch", "clicked" + mDownPosition);
+                        if (mDownPosition == 0) {
+                            mPublisherAdView.dispatchTouchEvent(motionEvent);
+                        }
+                    } catch (Exception e) {
+                        Log.e("Exception", "error");
                     }
-                   }catch (Exception e){
-                       Log.e("Exception","error");
-                   }
                 }
                 view.onTouchEvent(motionEvent);
                 return true;
             }
         });
     }
-
-
-
-
     private void checkConnection() {
         if (NetworkCheck.isInternetAvailable(MainActivity.this))  //if connection available
         {
@@ -331,6 +337,10 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(this, "clicked ADVERTISEMENT", Toast.LENGTH_SHORT).show();
 
         }
+        if (id == R.id.publisherAdView) {
+            Toast.makeText(this, "clicked ADVERTISEMENT", Toast.LENGTH_SHORT).show();
+
+        }
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
         }
@@ -367,4 +377,16 @@ public class MainActivity extends AppCompatActivity
                 //Write your code if there's no result
             }
         }//onActivityResult
+    @Override
+    public void onRefresh() {
+// Execute some code after 2 seconds have passed
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefreshLayout.setRefreshing(false);
+
+            }
+        }, 2000);
     }
+}

@@ -11,8 +11,11 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.maheshpujala.sillymonks.R;
+import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
+import com.google.android.gms.ads.doubleclick.PublisherAdView;
 
 /**
  * Created by maheshpujala on 29/8/16.
@@ -50,16 +53,15 @@ public class ListAdapter extends BaseAdapter {
 
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView;
+        final View rowView;
         if(position == 0) {
             Log.e("getView","POSITION CHECK++++0");
 
             rowView = inflater.inflate(R.layout.listview_dummy,null);
 
             LinearLayout blank = (LinearLayout) rowView.findViewById(R.id.blank);
-           // blank.setOnClickListener(null);
-
-        }else{
+        }
+        else{
             Log.e("getView","POSITION CHECK++++1");
 
             rowView = inflater.inflate(R.layout.listview_home,null);
@@ -67,6 +69,7 @@ public class ListAdapter extends BaseAdapter {
             ImageView cover_image = (ImageView) rowView.findViewById(R.id.wood_cover_image);
             wood_name.setText(web[position]);
             cover_image.setImageResource(image[position]);
+
         }
         return rowView;
     }
