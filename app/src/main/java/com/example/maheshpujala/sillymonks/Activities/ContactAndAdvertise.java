@@ -27,7 +27,7 @@ public class ContactAndAdvertise extends AppCompatActivity implements View.OnCli
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.contact_advertise_activity);
+        setContentView(R.layout.activity_contact_advertise);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

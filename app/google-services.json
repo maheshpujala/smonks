@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "591096552293",
+    "project_id": "firebase-free-gift"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:591096552293:android:92ad4f94dfa0224d",
+        "android_client_info": {
+          "package_name": "com.example.maheshpujala.sillymonks"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "591096552293-66taa5grvogc7ha39o4t0q92e1o8shks.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.maheshpujala.sillymonks",
+            "certificate_hash": "C7941D63594C80FDB25248ADF02937E2835197CE"
+          }
+        },
+        {
+          "client_id": "591096552293-h00ucn2rntlt13j2h5engurr0b9luok0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXRD_Z6LKzFjVLs_bk0NhOcl5jl7ntHVs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -18,7 +18,7 @@ public class AboutAndTerms extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.about_terms_activity);
+        setContentView(R.layout.activity_about_terms);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

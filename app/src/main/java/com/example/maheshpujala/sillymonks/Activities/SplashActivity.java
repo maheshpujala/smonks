@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebView;
+import android.widget.Toast;
 
 import com.example.maheshpujala.sillymonks.R;
 
@@ -24,7 +26,15 @@ public class SplashActivity extends AppCompatActivity {
         logo.loadUrl("file:///android_asset/logotab.html");
 
         loadAndParseConfig();
+        getScreensize();
+    }
 
+    private void getScreensize() {
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int height = displaymetrics.heightPixels;
+        int width = displaymetrics.widthPixels;
+        Toast.makeText(this,width+"x"+height,Toast.LENGTH_LONG).show();
     }
 
 

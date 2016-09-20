@@ -1,19 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
-    <TextView
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:orientation="vertical"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+    android:background="@color/card_detailing">
+
+    <RelativeLayout
+        android:id="@+id/relativeBG"
         android:layout_width="match_parent"
+        android:layout_height="260dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/sillymonks_mall_stroke"
+        android:orientation="vertical" >
+    </RelativeLayout>
         android:layout_height="90dp"
-        android:background="@android:color/holo_red_dark"
+        android:background="@android:color/white"
         android:text="New Text"
+        android:gravity="center"
         android:id="@+id/textView"
         android:layout_gravity="center_horizontal" />
 
-    <ImageView
+    <TextView
+        android:id="@+id/wood_name_sillymonks"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageView2"
-        android:layout_gravity="center_horizontal" />
-</LinearLayout>
+        android:layout_alignTop="@+id/relativeBG"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
+        android:text="hgrhjhgrerfgnmngfegn"
+        android:gravity="center"
+        android:textColor="@color/app_theme"
+        android:textSize="16sp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignBottom="@+id/relativeBG"
+        android:layout_marginBottom="32dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:background="#a8a8a8"
+        android:orientation="vertical"
+        android:padding="1dp" >
+
+        <ImageView
+            android:id="@+id/wood_cover_image"
+            android:layout_width="match_parent"
+            android:layout_height="2000dp"
+            android:layout_centerInParent="true"
+            android:contentDescription="mall_name"
+            android:scaleType="centerCrop"
+            android:background="@drawable/sillymonks_mall_stroke"
+            android:src="@drawable/drawer_image" />
+    </RelativeLayout>
+
+
+</RelativeLayout>

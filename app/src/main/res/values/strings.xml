@@ -6,8 +6,12 @@
 
     <string name="action_settings">Settings</string>
     <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
+    <string name="prompt_email">Email address</string>
     <string name="prompt_password">Password</string>
+    <string name="facebook_app_id">948537241887382</string>
+    <string name="fb_login_protocol_scheme">fb948537241887382</string>
+
+
 
     <string name="prompt_name">Name</string>
     <string name="prompt_mobile">Mobile</string>
@@ -32,6 +36,12 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+
+    <dimen name="tab_max_width">264dp</dimen>
+    <dimen name="tab_padding_bottom">16dp</dimen>
+    <dimen name="tab_label">14sp</dimen>
+    <dimen name="custom_tab_layout_height">72dp</dimen>
+
 
     <string name="silly_about_us">From Jennifer Lawrence to Shahrukh Khan, from Rajinikanth to Kamal Hassan, from Pawan Kalyan to Mohan Lal. Catch up with all your favourite stars, films, and celeb news right here. We’ve got trailers and reviews from Tollywood, Kollywood, Mollywood, Bollywood and Hollywood, so buckle up and settle down for some glitzy fun! Hang on. Movies ain’t your cup of tea? No problem- Silly Monks’ cup is brimming with short films, music and YouTube news too! Album reviews, band news, short film discussions… we’re not even sure you can handle all this. So what are you waiting for? Take a nice big sip!</string>
     <string name="silly_terms_conditions">"Terms of Service
@@ -94,5 +104,6 @@ Please contact us at info@sillymonks.com if you have any questions about our ter
 
 
     <string name="banner_ad_unit_id">/6499/example/banner</string>
+    <string name="title_activity_testing">TESTING</string>
 
 </resources>
