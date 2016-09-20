@@ -27,6 +27,7 @@ public class ListAdapter extends BaseAdapter {
         this.web = web;
         this.image=image;
     }
+
     @Override
     public int getCount() {
         return web.length;

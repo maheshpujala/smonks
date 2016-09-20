@@ -3,7 +3,10 @@ package com.example.maheshpujala.sillymonks.Activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
@@ -21,6 +24,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,13 +35,33 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import com.example.maheshpujala.sillymonks.R;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.appevents.AppEventsLogger;
+import com.google.android.gms.auth.api.Auth;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.GoogleApiClient;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -66,22 +90,41 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
+    private CallbackManager mFacebookCallbackManager;
+    private SignInButton mGoogleSignInButton;
+    private LoginButton mFacebookSignInButton;
+    private GoogleApiClient mGoogleApiClient;
+    private static final int RC_SIGN_IN = 9001;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FacebookSdk.sdkInitialize(getApplicationContext());
+        facebookSDKInitialize();
          setContentView(R.layout.activity_login);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+        // Set Up Social Logins
+        mFacebookSignInButton = (LoginButton) findViewById(R.id.fb_login_button);
+        getLoginDetails(mFacebookSignInButton);
+
+        mGoogleSignInButton = (SignInButton) findViewById(R.id.gplus_signin_button);
+        setGooglePlusButtonText(mGoogleSignInButton,"Google");
+        mGoogleSignInButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signInWithGoogle();
+            }
+        });
+
             // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        mEmailView = (AutoCompleteTextView) findViewById(R.id.email_view);
         populateAutoComplete();
 
-        mPasswordView = (EditText) findViewById(R.id.password);
+        mPasswordView = (EditText) findViewById(R.id.password_view);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -93,7 +136,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        Button mEmailSignInButton = (Button) findViewById(R.id.sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -101,8 +144,152 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
+    }
+    /*
+          Initialize the facebook sdk and then callback manager will handle the login responses.
+       */
+    protected void facebookSDKInitialize() {
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
+
+        mFacebookCallbackManager = CallbackManager.Factory.create();
+        AppEventsLogger.activateApp(this);
 
     }
+    protected void setGooglePlusButtonText(SignInButton signInButton,
+                                           String buttonText) {
+        for (int i = 0; i < signInButton.getChildCount(); i++) {
+            View v = signInButton.getChildAt(i);
+
+            if (v instanceof TextView) {
+                TextView tv = (TextView) v;
+                tv.setTextSize(15);
+                tv.setTypeface(null, Typeface.NORMAL);
+                tv.setText(buttonText);
+                tv.setGravity(Gravity.CENTER);
+                return;
+            }
+        }
+    }
+    protected void getLoginDetails(LoginButton mFacebookSignInButton){
+        // Callback registration
+        mFacebookSignInButton.registerCallback(mFacebookCallbackManager, new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult login_result) {
+                        handleSignInResult(new Callable<Void>() {
+                            @Override
+                            public Void call() throws Exception {
+                                LoginManager.getInstance().logOut();
+                                return null;
+                            }
+                        });
+                    }
+                    @Override
+                    public void onCancel() {
+                        handleSignInResult(null);
+                    }
+                    @Override
+                    public void onError(FacebookException error) {
+                        Log.d(LoginActivity.class.getCanonicalName(), error.getMessage());
+                        handleSignInResult(null);
+                    }
+                }
+        );
+    }
+
+    private void signInWithGoogle() {
+        if(mGoogleApiClient != null) {
+            mGoogleApiClient.disconnect();
+        }
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+        final Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if(result.isSuccess()) {
+                final GoogleApiClient client = mGoogleApiClient;
+                GoogleSignInAccount acct = result.getSignInAccount();
+                String personName = acct.getDisplayName();
+                String personEmail = acct.getEmail();
+                Uri pPhoto = acct.getPhotoUrl();
+                String personPhoto =pPhoto.toString();
+                Intent googleIntent = getIntent();
+
+                googleIntent.putExtra("pname",personName);
+                googleIntent.putExtra("pemail", personEmail);
+                googleIntent.putExtra("pphoto", personPhoto);
+
+                setResult(Activity.RESULT_OK, googleIntent);
+                finish();
+
+            } else {
+                handleSignInResult(null);
+            }
+        }  else {
+            mFacebookCallbackManager.onActivityResult(requestCode, resultCode, data);
+
+        }
+    }
+
+
+    private void handleSignInResult(Callable<Void> logout) {
+        if (logout == null) {
+            /* Login error */
+            Toast.makeText(getApplicationContext(), R.string.login_error, Toast.LENGTH_SHORT).show();
+        } else {
+            /* Login success */
+            /*
+       To get the facebook user's own profile information via  creating a new request.
+       When the request is completed, a callback is called to handle the success condition.
+    */
+            GraphRequest data_request = GraphRequest.newMeRequest(
+                    AccessToken.getCurrentAccessToken(),
+                    new GraphRequest.GraphJSONObjectCallback() {
+                        @Override
+                        public void onCompleted(
+                                JSONObject json_object,GraphResponse response) {
+                            Log.e("onCompleted",""+response+json_object);
+                            if (response != null) {
+                                try {
+                                    String mFbid = json_object.getString("id");
+                                    String mFullname = json_object.getString("name");
+                                   // String mEmail = json_object.getString("email");
+Log.e("onCompleted facebook",""+mFbid+mFullname);
+                                    Intent returnIntent = getIntent();
+                                    returnIntent.putExtra("FB_id", mFbid);
+                                    returnIntent.putExtra("FB_name", mFullname);
+                              //      returnIntent.putExtra("FB_email", mEmail);
+                                    setResult(Activity.RESULT_OK, returnIntent);
+                                    finish();
+                                } catch (JSONException e) {}
+
+                            }
+                            else{
+                                Log.e("Response","null");
+                            }
+                        }
+                    });
+            Bundle permission_param = new Bundle();
+            permission_param.putString("fields", "id,name,email,picture.width(120).height(120)");
+            data_request.setParameters(permission_param);
+            data_request.executeAsync();
+
+        }
+    }
+
 
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
@@ -319,6 +506,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
         }
     }
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
