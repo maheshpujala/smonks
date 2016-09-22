@@ -1,8 +1,11 @@
 package com.example.maheshpujala.sillymonks.Activities;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -12,6 +15,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -19,13 +23,19 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.maheshpujala.sillymonks.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
+import com.google.android.gms.ads.doubleclick.PublisherAdView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,12 +43,15 @@ import java.util.List;
 /**
  * Created by maheshpujala on 12/9/16.
  */
-public class CategoryActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, View.OnClickListener {
+public class CategoryActivity extends AppCompatActivity implements  View.OnClickListener, SearchView.OnQueryTextListener {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
     TextView tolly,bolly,molly,kolly,holly,creator,home;
     ImageView  home_img;
+    PublisherAdView mPublisherAdView;
+    CollapsingToolbarLayout collapse_toolbar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +60,27 @@ public class CategoryActivity extends AppCompatActivity implements SearchView.On
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+       collapse_toolbar= (CollapsingToolbarLayout)findViewById(R.id.collapsing);
+        collapse_toolbar.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
+
+        mPublisherAdView = (PublisherAdView) findViewById(R.id.publisherAdView);
+        mPublisherAdView.setAdSizes(AdSize.MEDIUM_RECTANGLE);
+
+        PublisherAdRequest adRequest = new PublisherAdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
+                .addTestDevice("90EE0E29646EF0CBAC99567D3827BAF5")// My Genymotion
+                .addTestDevice("9E24EA1846195D46BA5800679368D5E2")// MOTO G 4.5  marshmallow
+                .addTestDevice("E8A785BC1EC7B41E36D183611BEAE615")// MOTO E  4.3 kitkat
+                .addTestDevice("1DEFD3C3E725D34AD35682EFAC30169E")// Karbon 4     kitkat
+
+                .build();
+        mPublisherAdView.loadAd(adRequest);
+
+
+        NestedScrollView scrollView = (NestedScrollView) findViewById (R.id.scroll_nested);
+        scrollView.setFillViewport (true);
+
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -79,16 +113,14 @@ public class CategoryActivity extends AppCompatActivity implements SearchView.On
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFrag(new CategoryFragment(), "ONE");
-        adapter.addFrag(new CategoryFragment(), "TWO");
-        adapter.addFrag(new CategoryFragment(), "THREE");
-        adapter.addFrag(new CategoryFragment(), "FOUR");
-        adapter.addFrag(new CategoryFragment(), "FIVE");
-        adapter.addFrag(new CategoryFragment(), "SIX");
-        adapter.addFrag(new CategoryFragment(), "SEVEN");
-        adapter.addFrag(new CategoryFragment(), "EIGHT");
-        adapter.addFrag(new CategoryFragment(), "NINE");
-        adapter.addFrag(new CategoryFragment(), "TEN");
+        adapter.addFrag(new CategoryFragment(), "Premium Content");
+        adapter.addFrag(new CategoryFragment(), "News");
+        adapter.addFrag(new CategoryFragment(), "Teasers and Trailers");
+        adapter.addFrag(new CategoryFragment(), "Music");
+        adapter.addFrag(new CategoryFragment(), "Movies");
+        adapter.addFrag(new CategoryFragment(), "Reviews");
+        adapter.addFrag(new CategoryFragment(), "Celebrities");
+        adapter.addFrag(new CategoryFragment(), "Gallery");
         viewPager.setAdapter(adapter);
     }
     @Override
@@ -102,16 +134,6 @@ public class CategoryActivity extends AppCompatActivity implements SearchView.On
     }
 
 
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        Toast.makeText(getApplicationContext(), query, Toast.LENGTH_SHORT).show();
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String newText) {
-        return false;
-    }
 
     @Override
     public void onClick(View view) {
@@ -127,9 +149,8 @@ public class CategoryActivity extends AppCompatActivity implements SearchView.On
              molly.setVisibility(View.VISIBLE);
              creator.setVisibility(View.VISIBLE);
 
-             if(getSupportActionBar()!=null) {
-                 getSupportActionBar().setTitle("Tollywood");
-             }
+             collapse_toolbar.setTitle("Tollywood");
+
          }
         if (id == R.id.bolly){
             bolly.setVisibility(View.GONE);
@@ -138,9 +159,8 @@ public class CategoryActivity extends AppCompatActivity implements SearchView.On
             kolly.setVisibility(View.VISIBLE);
             molly.setVisibility(View.VISIBLE);
             creator.setVisibility(View.VISIBLE);
-            if(getSupportActionBar()!=null) {
-                getSupportActionBar().setTitle("Bollywood");
-            }
+
+            collapse_toolbar.setTitle("Bollywood");
         }
         if (id == R.id.kolly){
             kolly.setVisibility(View.GONE);
@@ -149,9 +169,9 @@ public class CategoryActivity extends AppCompatActivity implements SearchView.On
             tolly.setVisibility(View.VISIBLE);
             molly.setVisibility(View.VISIBLE);
             creator.setVisibility(View.VISIBLE);
-            if(getSupportActionBar()!=null) {
-                getSupportActionBar().setTitle("Kollywood");
-            }
+
+                collapse_toolbar.setTitle("Kollywood");
+
         }
         if (id == R.id.molly){
             molly.setVisibility(View.GONE);
@@ -160,9 +180,9 @@ public class CategoryActivity extends AppCompatActivity implements SearchView.On
             kolly.setVisibility(View.VISIBLE);
             tolly.setVisibility(View.VISIBLE);
             creator.setVisibility(View.VISIBLE);
-            if(getSupportActionBar()!=null) {
-                getSupportActionBar().setTitle("Mollywood");
-            }
+
+            collapse_toolbar.setTitle("Mollywood");
+
         }
         if (id == R.id.holly){
             holly.setVisibility(View.GONE);
@@ -171,9 +191,9 @@ public class CategoryActivity extends AppCompatActivity implements SearchView.On
             kolly.setVisibility(View.VISIBLE);
             molly.setVisibility(View.VISIBLE);
             creator.setVisibility(View.VISIBLE);
-            if(getSupportActionBar()!=null) {
-                getSupportActionBar().setTitle("Hollywood");
-            }
+
+                collapse_toolbar.setTitle("Hollywood");
+
         }
         if (id == R.id.creator){
             creator.setVisibility(View.GONE);
@@ -182,12 +202,27 @@ public class CategoryActivity extends AppCompatActivity implements SearchView.On
             kolly.setVisibility(View.VISIBLE);
             molly.setVisibility(View.VISIBLE);
             tolly.setVisibility(View.VISIBLE);
-            if(getSupportActionBar()!=null) {
-                getSupportActionBar().setTitle("Creator");
-            }
+
+                collapse_toolbar.setTitle("Creator");
         }
+            if (id == R.id.publisherAdView) {
+                Toast.makeText(this, "clicked ADVERTISEMENT", Toast.LENGTH_SHORT).show();
+
+            }
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        Toast.makeText(this,"+query",Toast.LENGTH_LONG).show();
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -222,14 +257,24 @@ public class CategoryActivity extends AppCompatActivity implements SearchView.On
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.search, menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.search, menu);
 
-        // Associate searchable configuration with the SearchView
-        // SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
-        // searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
         searchView.setOnQueryTextListener(this);
-        return super.onCreateOptionsMenu(menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_search:
+
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }

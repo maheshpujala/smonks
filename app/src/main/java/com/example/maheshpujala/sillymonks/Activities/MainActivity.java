@@ -114,10 +114,10 @@ public class MainActivity extends AppCompatActivity
 
 
         checkConnection();
-        AdSize customAdSize = new AdSize(360, 180);
+        //AdSize customAdSize = new AdSize(400, 250);
 
         mPublisherAdView = (PublisherAdView) findViewById(R.id.publisherAdView);
-        // mPublisherAdView.setAdSizes(customAdSize);
+       // mPublisherAdView.setAdSizes(customAdSize);
 
         mPublisherAdView.setAdSizes(AdSize.MEDIUM_RECTANGLE);
 
@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity
 
         home_list = (ListView) findViewById(R.id.list_allwoods);
 
-        home_list.setAdapter(new ListAdapter(this, values, images));
+        home_list.setAdapter(new ListAdapter(this, values, images,1));
 
         home_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -337,10 +337,7 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(this, "clicked ADVERTISEMENT", Toast.LENGTH_SHORT).show();
 
         }
-        if (id == R.id.publisherAdView) {
-            Toast.makeText(this, "clicked ADVERTISEMENT", Toast.LENGTH_SHORT).show();
 
-        }
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
         }

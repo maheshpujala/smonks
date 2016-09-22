@@ -30,7 +30,7 @@ public class CategoryFragment extends Fragment {
     View mDownView;
     int mDownPosition;
     PublisherAdView mPublisherAdView;
-    private final String[] values = new String[]{"Android List View",
+    private final String[] values = new String[]{
             "TollyWood",
             "BollyWood",
             "KollyWood",
@@ -39,7 +39,7 @@ public class CategoryFragment extends Fragment {
             "Creators",
     };
     private final Integer[] images = new Integer[]{
-            R.drawable.drawer_image,
+
             R.drawable.tollywood,
             R.drawable.bollywood,
             R.drawable.kollywood,
@@ -63,65 +63,62 @@ public class CategoryFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         // Setup any handles to view objects here
 
-        mPublisherAdView = (PublisherAdView) view.findViewById(R.id.publisherAdView);
-        PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
+       // mPublisherAdView = (PublisherAdView) view.findViewById(R.id.publisherAdView);
 
 //        AdSize customAdSize = new AdSize(200, 200);
 //        mPublisherAdView.setAdSizes(customAdSize);
 
-        mPublisherAdView.loadAd(adRequest);
-
         home_list = (ListView) view.findViewById(R.id.category_list);
 
-        home_list.setAdapter(new ListAdapter(getActivity(), values, images));
+        home_list.setAdapter(new ListAdapter(getActivity(), values, images,2));
 
         home_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                if (position != 0) {
+
                     Intent cat2art = new Intent(getActivity(), ArticleActivity.class);
                     startActivity(cat2art);
-                }
+
             }
         });
-        home_list.setOnTouchListener(new AdapterView.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-
-                Rect rect = new Rect();
-                int childCount = home_list.getChildCount();
-                int[] listViewCoords = new int[2];
-                home_list.getLocationOnScreen(listViewCoords);
-                int x = (int) motionEvent.getRawX() - listViewCoords[0];
-                int y = (int) motionEvent.getRawY() - listViewCoords[1];
-                View child;
-                for (int i = 0; i < childCount; i++) {
-                    child = home_list.getChildAt(i);
-                    child.getHitRect(rect);
-                    if (rect.contains(x, y)) {
-                        mDownView = child; // This is your down view
-                        break;
-                    }
-                }
-                if (mDownView != null) {
-                    try {
-
-
-                        mDownPosition = home_list.getPositionForView(mDownView);
-                        Log.e("position in on touch", "clicked" + mDownPosition);
-                        if (mDownPosition == 0) {
-                            mPublisherAdView.dispatchTouchEvent(motionEvent);
-                        }
-                    } catch (Exception e) {
-                        Log.e("Exception", "error");
-                    }
-                }
-                view.onTouchEvent(motionEvent);
-                return true;
-            }
-        });
+//        home_list.setOnTouchListener(new AdapterView.OnTouchListener() {
+//
+//            @Override
+//            public boolean onTouch(View view, MotionEvent motionEvent) {
+//
+//                Rect rect = new Rect();
+//                int childCount = home_list.getChildCount();
+//                int[] listViewCoords = new int[2];
+//                home_list.getLocationOnScreen(listViewCoords);
+//                int x = (int) motionEvent.getRawX() - listViewCoords[0];
+//                int y = (int) motionEvent.getRawY() - listViewCoords[1];
+//                View child;
+//                for (int i = 0; i < childCount; i++) {
+//                    child = home_list.getChildAt(i);
+//                    child.getHitRect(rect);
+//                    if (rect.contains(x, y)) {
+//                        mDownView = child; // This is your down view
+//                        break;
+//                    }
+//                }
+//                if (mDownView != null) {
+//                    try {
+//
+//
+//                        mDownPosition = home_list.getPositionForView(mDownView);
+//                        Log.e("position in on touch", "clicked" + mDownPosition);
+//                        if (mDownPosition == 0) {
+//                            mPublisherAdView.dispatchTouchEvent(motionEvent);
+//                        }
+//                    } catch (Exception e) {
+//                        Log.e("Exception", "error");
+//                    }
+//                }
+//                view.onTouchEvent(motionEvent);
+//                return true;
+//            }
+//        });
 
 
     }

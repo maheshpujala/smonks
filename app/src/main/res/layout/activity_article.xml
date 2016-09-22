@@ -33,7 +33,7 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:layout_width="match_parent"
@@ -56,13 +56,85 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Medium Text"
-                android:id="@+id/textView4"
+                android:id="@+id/medium_txt"
                 android:gravity="center"
                 android:layout_margin="5dp"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:drawable/divider_horizontal_bright"
+                android:layout_marginBottom="5dp"/>
+            <RelativeLayout
+                android:id="@+id/rlRevRatings"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dip"
+                android:layout_marginRight="10dip"
+                android:gravity="center_vertical">
 
+                <RatingBar
+                    android:id="@+id/ratingBar"
+                    style="@style/CustomRatingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="26dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_gravity="top"
+                    android:isIndicator="false"
+                    android:max="5"
+                    android:numStars="5"
+                    android:rating="0"
+                    android:stepSize="0.5" />
+
+                <RelativeLayout
+                    android:id="@+id/rlComment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_toLeftOf="@+id/share"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/comment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:contentDescription="name"
+                        android:src="@drawable/comments" />
+
+                    <TextView
+                        android:id="@+id/tvComments"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text=""
+                        android:textColor="@android:color/white"
+                        android:textSize="9sp" />
+                </RelativeLayout>
+
+                <ImageView
+                    android:id="@+id/share"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:layout_toLeftOf="@+id/favourite_heart"
+                    android:contentDescription="name"
+                    android:src="@drawable/share" />
+
+                <ImageView
+                    android:id="@+id/favourite_heart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:contentDescription="name"
+                    android:src="@drawable/heart" />
+
+            </RelativeLayout>
 
         </LinearLayout>
     </ScrollView>
-
-
 </RelativeLayout>

@@ -24,11 +24,13 @@ public class ListAdapter extends BaseAdapter {
     private final String[] web;
     private final Activity context;
     private final Integer[] image;
+    private final int responseCode;
 
-    public ListAdapter(Activity context, String[] web,Integer[] image) {
+    public ListAdapter(Activity context, String[] web,Integer[] image,int responseCode) {
         this.context = context;
         this.web = web;
         this.image=image;
+        this.responseCode=responseCode;
     }
 
     @Override
@@ -54,23 +56,33 @@ public class ListAdapter extends BaseAdapter {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View rowView;
-        if(position == 0) {
-            Log.e("getView","POSITION CHECK++++0");
+        if(responseCode == 1) {
+            if (position == 0) {
+                Log.e("getView", "POSITION CHECK++++0");
 
-            rowView = inflater.inflate(R.layout.listview_dummy,null);
+                rowView = inflater.inflate(R.layout.listview_dummy, null);
 
-            LinearLayout blank = (LinearLayout) rowView.findViewById(R.id.blank);
-        }
-        else{
-            Log.e("getView","POSITION CHECK++++1");
+                LinearLayout blank = (LinearLayout) rowView.findViewById(R.id.blank);
+            } else {
+                Log.e("getView", "POSITION CHECK++++1");
 
-            rowView = inflater.inflate(R.layout.listview_home,null);
-            TextView wood_name = (TextView) rowView.findViewById(R.id.wood_name_sillymonks);
-            ImageView cover_image = (ImageView) rowView.findViewById(R.id.wood_cover_image);
-            wood_name.setText(web[position]);
-            cover_image.setImageResource(image[position]);
+                rowView = inflater.inflate(R.layout.listview_home, null);
+                TextView wood_name = (TextView) rowView.findViewById(R.id.wood_name_sillymonks);
+                ImageView cover_image = (ImageView) rowView.findViewById(R.id.wood_cover_image);
+                wood_name.setText(web[position]);
+                cover_image.setImageResource(image[position]);
 
-        }
+            }
+        }else{
+                rowView = inflater.inflate(R.layout.listview_category, null);
+                TextView wood_name = (TextView) rowView.findViewById(R.id.wood_name_sillymonks);
+                ImageView cover_image = (ImageView) rowView.findViewById(R.id.wood_cover_image);
+                wood_name.setText(web[position]);
+                cover_image.setImageResource(image[position]);
+
+            }
+
+
         return rowView;
     }
 }
