@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.maheshpujala.sillymonks">
+
+    package="com.example.maheshpujala.sillymonks"
+    android:versionCode="15"
+    android:versionName="1.5">
 
     <!--  -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -65,7 +68,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activities.TestActivity"
-            />
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"

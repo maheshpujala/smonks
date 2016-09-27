@@ -9,8 +9,8 @@ android {
         applicationId "com.example.maheshpujala.sillymonks"
         minSdkVersion 15
         targetSdkVersion 24
-        versionCode 1
-        versionName "1.0"
+        versionCode 15
+        versionName "1.5"
     }
     buildTypes {
         release {
@@ -34,6 +34,6 @@ dependencies {
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
     compile 'com.google.android.gms:play-services-auth:9.4.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
-
+    compile 'com.android.support:recyclerview-v7:24.2.0'
 
 }

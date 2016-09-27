@@ -4,6 +4,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -28,9 +30,11 @@ public class ArticleActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        String html = getString(R.string.html_text);
+        Spanned html_spanned = Html.fromHtml(html);
 
         TextView medium =(TextView)findViewById(R.id.medium_txt);
-        medium.setText(R.string.silly_about_us);
+        medium.setText(html_spanned);
 
         rating = (RatingBar) findViewById(R.id.ratingBar);
         rating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener(){

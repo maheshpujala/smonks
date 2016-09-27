@@ -127,6 +127,7 @@ public class MainActivity extends AppCompatActivity
                 .addTestDevice("9E24EA1846195D46BA5800679368D5E2")// MOTO G 4.5  marshmallow
                 .addTestDevice("E8A785BC1EC7B41E36D183611BEAE615")// MOTO E  4.3 kitkat
                 .addTestDevice("1DEFD3C3E725D34AD35682EFAC30169E")// Karbon 4     kitkat
+                .addTestDevice("568D4320C2F8B11064876CC8CAE9DAF9")// Genymotion api 19
 
                 .build();
 //        AdSize customAdSize = new AdSize(200, 200);
@@ -331,7 +332,25 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (id == R.id.sharetheapp) {
-            Toast.makeText(this, "clicked Share THe APp", Toast.LENGTH_SHORT).show();
+            try{
+                Intent i = new Intent(Intent.ACTION_SEND);
+                i.setType("text/plain");
+                i.putExtra(Intent.EXTRA_SUBJECT, "SillyMonks Android Application");
+                String sAux = "\nLet me recommend you this application\n\n";
+                sAux = sAux + "https://play.google.com/store/apps/details?id=com.ongo.silly_monks \n\n";
+                i.putExtra(Intent.EXTRA_TEXT, sAux);
+                startActivity(Intent.createChooser(i, "choose one"));
+            }
+            catch(Exception e)
+            { //e.toString();
+            }
+
+//            final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
+//            try {
+//                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.ongo.silly_monks" )));
+//            } catch (android.content.ActivityNotFoundException anfe) {
+//                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.ongo.silly_monks")));
+//            }
         }
         if (id == R.id.publisherAdView) {
             Toast.makeText(this, "clicked ADVERTISEMENT", Toast.LENGTH_SHORT).show();

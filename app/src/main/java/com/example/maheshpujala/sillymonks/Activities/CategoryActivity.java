@@ -25,9 +25,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,10 +50,12 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    SearchView searchView;
     TextView tolly,bolly,molly,kolly,holly,creator,home;
     ImageView  home_img;
     PublisherAdView mPublisherAdView;
     CollapsingToolbarLayout collapse_toolbar;
+    NestedScrollView scrollView;
 
 
     @Override
@@ -58,10 +63,11 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-       collapse_toolbar= (CollapsingToolbarLayout)findViewById(R.id.collapsing);
-        collapse_toolbar.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
+
+//       collapse_toolbar= (CollapsingToolbarLayout)findViewById(R.id.collapsing);
+//        collapse_toolbar.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
 
         mPublisherAdView = (PublisherAdView) findViewById(R.id.publisherAdView);
         mPublisherAdView.setAdSizes(AdSize.MEDIUM_RECTANGLE);
@@ -72,15 +78,14 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
                 .addTestDevice("9E24EA1846195D46BA5800679368D5E2")// MOTO G 4.5  marshmallow
                 .addTestDevice("E8A785BC1EC7B41E36D183611BEAE615")// MOTO E  4.3 kitkat
                 .addTestDevice("1DEFD3C3E725D34AD35682EFAC30169E")// Karbon 4     kitkat
+                .addTestDevice("568D4320C2F8B11064876CC8CAE9DAF9")// Genymotion api 19
 
                 .build();
         mPublisherAdView.loadAd(adRequest);
 
-
-        NestedScrollView scrollView = (NestedScrollView) findViewById (R.id.scroll_nested);
+        scrollView = (NestedScrollView) findViewById (R.id.scroll_nested);
         scrollView.setFillViewport (true);
-
-
+        scrollView.setNestedScrollingEnabled(true);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -123,15 +128,7 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
         adapter.addFrag(new CategoryFragment(), "Gallery");
         viewPager.setAdapter(adapter);
     }
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
+
 
 
 
@@ -149,7 +146,7 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
              molly.setVisibility(View.VISIBLE);
              creator.setVisibility(View.VISIBLE);
 
-             collapse_toolbar.setTitle("Tollywood");
+             toolbar.setTitle("Tollywood");
 
          }
         if (id == R.id.bolly){
@@ -160,7 +157,7 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
             molly.setVisibility(View.VISIBLE);
             creator.setVisibility(View.VISIBLE);
 
-            collapse_toolbar.setTitle("Bollywood");
+            toolbar.setTitle("Bollywood");
         }
         if (id == R.id.kolly){
             kolly.setVisibility(View.GONE);
@@ -170,7 +167,7 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
             molly.setVisibility(View.VISIBLE);
             creator.setVisibility(View.VISIBLE);
 
-                collapse_toolbar.setTitle("Kollywood");
+            toolbar.setTitle("Kollywood");
 
         }
         if (id == R.id.molly){
@@ -181,7 +178,7 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
             tolly.setVisibility(View.VISIBLE);
             creator.setVisibility(View.VISIBLE);
 
-            collapse_toolbar.setTitle("Mollywood");
+            toolbar.setTitle("Mollywood");
 
         }
         if (id == R.id.holly){
@@ -192,7 +189,7 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
             molly.setVisibility(View.VISIBLE);
             creator.setVisibility(View.VISIBLE);
 
-                collapse_toolbar.setTitle("Hollywood");
+            toolbar.setTitle("Hollywood");
 
         }
         if (id == R.id.creator){
@@ -203,7 +200,7 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
             molly.setVisibility(View.VISIBLE);
             tolly.setVisibility(View.VISIBLE);
 
-                collapse_toolbar.setTitle("Creator");
+            toolbar.setTitle("Creators");
         }
             if (id == R.id.publisherAdView) {
                 Toast.makeText(this, "clicked ADVERTISEMENT", Toast.LENGTH_SHORT).show();
@@ -216,7 +213,9 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        Toast.makeText(this,"+query",Toast.LENGTH_LONG).show();
+        Toast.makeText(this,""+query,Toast.LENGTH_SHORT).show();
+      //  searchView.setIconified(true);
+        searchView.onActionViewCollapsed();
         return false;
     }
 
@@ -261,7 +260,7 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
         inflater.inflate(R.menu.search, menu);
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
 
         searchView.setOnQueryTextListener(this);
         return true;
@@ -276,5 +275,14 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
         }
         return super.onOptionsItemSelected(item);
     }
-
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+           // searchView.onActionViewCollapsed();
+        } else {
+            super.onBackPressed();
+        }
+    }
 }
