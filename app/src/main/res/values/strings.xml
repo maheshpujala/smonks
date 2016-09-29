@@ -42,6 +42,27 @@
     <dimen name="tab_label">14sp</dimen>
     <dimen name="custom_tab_layout_height">72dp</dimen>
 
+    <string name="html_text">
+   <![CDATA[
+        <h1>Main Title</h1>
+        <h2>A sub-title</h2>
+        <p>This is some html. Look, here\'s an <u>underline</u>.</p>
+        <p>Look, this is <em>emphasized.</em> And here\'s some <b>bold</b>.</p>
+        <p>This is a UL list:
+        <ul>
+        <li>One</li>
+        <li>Two</li>
+        <li>Three</li>
+        </ul>
+        <p>This is an OL list:
+        <ol>
+        <li>One</li>
+        <li>Two</li>
+        <li>Three</li>
+        </ol>
+        ]]>
+    </string>
+
 
     <string name="silly_about_us">From Jennifer Lawrence to Shahrukh Khan, from Rajinikanth to Kamal Hassan, from Pawan Kalyan to Mohan Lal. Catch up with all your favourite stars, films, and celeb news right here. We’ve got trailers and reviews from Tollywood, Kollywood, Mollywood, Bollywood and Hollywood, so buckle up and settle down for some glitzy fun! Hang on. Movies ain’t your cup of tea? No problem- Silly Monks’ cup is brimming with short films, music and YouTube news too! Album reviews, band news, short film discussions… we’re not even sure you can handle all this. So what are you waiting for? Take a nice big sip!</string>
     <string name="silly_terms_conditions">"Terms of Service
