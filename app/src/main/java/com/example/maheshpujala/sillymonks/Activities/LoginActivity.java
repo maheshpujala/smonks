@@ -37,7 +37,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -95,6 +98,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private LoginButton mFacebookSignInButton;
     private GoogleApiClient mGoogleApiClient;
     private static final int RC_SIGN_IN = 9001;
+    Bundle savedInstanceState;
+    private String accessToken;
 
 
     @Override
@@ -106,10 +111,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+       showSkip();
 
         // Set Up Social Logins
         mFacebookSignInButton = (LoginButton) findViewById(R.id.fb_login_button);
+
         getLoginDetails(mFacebookSignInButton);
+
 
         mGoogleSignInButton = (SignInButton) findViewById(R.id.gplus_signin_button);
         setGooglePlusButtonText(mGoogleSignInButton,"Google");
@@ -145,6 +153,33 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         });
 
     }
+
+    private void showSkip() {
+        String newString;
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                newString= null;
+            } else {
+                newString= extras.getString("From Splash");
+
+                if (newString.contains("show_skip")){
+                    Button skip =(Button) findViewById(R.id.skip_button);
+                    skip.setVisibility(View.VISIBLE);
+                    skip.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent main = new Intent(LoginActivity.this,MainActivity.class);
+                            startActivity(main);
+                            finish();
+                        }
+                    });
+                }
+            }
+
+        }
+    }
+
     /*
           Initialize the facebook sdk and then callback manager will handle the login responses.
        */
@@ -173,6 +208,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
     protected void getLoginDetails(LoginButton mFacebookSignInButton){
         // Callback registration
+        LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, (Arrays.asList("user_birthday", "user_location", "email")));
+
         mFacebookSignInButton.registerCallback(mFacebookCallbackManager, new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult login_result) {
@@ -261,21 +298,24 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         @Override
                         public void onCompleted(
                                 JSONObject json_object,GraphResponse response) {
-                            Log.e("onCompleted",""+response+json_object);
                             if (response != null) {
-                                try {
-                                    String mFbid = json_object.getString("id");
-                                    String mFullname = json_object.getString("name");
-                                   // String mEmail = json_object.getString("email");
-Log.e("onCompleted facebook",""+mFbid+mFullname);
-                                    Intent returnIntent = getIntent();
-                                    returnIntent.putExtra("FB_id", mFbid);
-                                    returnIntent.putExtra("FB_name", mFullname);
-                              //      returnIntent.putExtra("FB_email", mEmail);
-                                    setResult(Activity.RESULT_OK, returnIntent);
-                                    finish();
-                                } catch (JSONException e) {}
+                                Bundle bFacebookData = getFacebookData(json_object);
+                                Log.e("bfbdata", "" + bFacebookData);
+                                String mFbid = bFacebookData.getString("idFacebook");
+                                String mFullname = bFacebookData.getString("first_name") + " "+bFacebookData.getString("last_name");
+                                String mEmail = bFacebookData.getString("email");
+                                String mGender =bFacebookData.getString("gender");
 
+                                Log.e("onCompleted facebook Bundle",""+mFbid+mFullname+mEmail+mGender);
+                                Intent returnIntent = getIntent();
+                                returnIntent.putExtra("FB_id", mFbid);
+                                returnIntent.putExtra("FB_name", mFullname);
+                                returnIntent.putExtra("FB_email", mEmail);
+                                returnIntent.putExtra("FB_gender", mGender);
+
+
+                                setResult(Activity.RESULT_OK, returnIntent);
+                                finish();
                             }
                             else{
                                 Log.e("Response","null");
@@ -283,13 +323,30 @@ Log.e("onCompleted facebook",""+mFbid+mFullname);
                         }
                     });
             Bundle permission_param = new Bundle();
-            permission_param.putString("fields", "id,name,email,picture.width(120).height(120)");
+            permission_param.putString("fields", "id, first_name, last_name,gender, email,age_range");
             data_request.setParameters(permission_param);
             data_request.executeAsync();
 
         }
     }
+    private Bundle getFacebookData(JSONObject object) {
+        Bundle bundle = new Bundle();
+        try {
+            bundle.putString("idFacebook",object.getString("id"));
+            if (object.has("first_name"))
+                bundle.putString("first_name", object.getString("first_name"));
+            if (object.has("last_name"))
+                bundle.putString("last_name", object.getString("last_name"));
+            if (object.has("email"))
+                bundle.putString("email", object.getString("email"));
+            if (object.has("gender"))
+                bundle.putString("gender", object.getString("gender"));
 
+        } catch (JSONException e) {
+            Log.e("exp",""+e.getLocalizedMessage());
+        }
+        return bundle;
+    }
 
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {

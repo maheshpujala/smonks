@@ -24,13 +24,11 @@ public class ListAdapter extends BaseAdapter {
     private final String[] web;
     private final Activity context;
     private final Integer[] image;
-    private final int responseCode;
 
-    public ListAdapter(Activity context, String[] web,Integer[] image,int responseCode) {
+    public ListAdapter(Activity context, String[] web,Integer[] image) {
         this.context = context;
         this.web = web;
         this.image=image;
-        this.responseCode=responseCode;
     }
 
     @Override
@@ -56,7 +54,6 @@ public class ListAdapter extends BaseAdapter {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View rowView;
-        if(responseCode == 1) {
             if (position == 0) {
                 Log.e("getView", "POSITION CHECK++++0");
 
@@ -73,15 +70,6 @@ public class ListAdapter extends BaseAdapter {
                 cover_image.setImageResource(image[position]);
 
             }
-        }else{
-                rowView = inflater.inflate(R.layout.listview_category, null);
-                TextView wood_name = (TextView) rowView.findViewById(R.id.wood_name_sillymonks);
-                ImageView cover_image = (ImageView) rowView.findViewById(R.id.wood_cover_image);
-                wood_name.setText(web[position]);
-                cover_image.setImageResource(image[position]);
-
-            }
-
 
         return rowView;
     }

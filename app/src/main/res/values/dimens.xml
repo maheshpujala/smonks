@@ -9,4 +9,5 @@
     <dimen name="fab_margin">12dp</dimen>
     <dimen name="horizontal_page_margin">10dp</dimen>
     <dimen name="vertical_page_margin">10dp</dimen>
+    <dimen name="appbar_padding_top">8dp</dimen>
 </resources>

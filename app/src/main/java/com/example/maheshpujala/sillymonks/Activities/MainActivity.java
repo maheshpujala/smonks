@@ -43,7 +43,7 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity
-        implements View.OnClickListener,SwipeRefreshLayout.OnRefreshListener{
+        implements View.OnClickListener{
     private SwipeRefreshLayout swipeRefreshLayout;
     private CoordinatorLayout container;
     ListView home_list;
@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity
     PublisherAdView mPublisherAdView;
     ImageView profile_pic,fb_button,twitter_button,gplus_button;
     TextView login;
+    Bundle bundle;
 
     private final String[] values = new String[] { "Android List View",
             "Tollywood",
@@ -138,7 +139,7 @@ public class MainActivity extends AppCompatActivity
 
         home_list = (ListView) findViewById(R.id.list_allwoods);
 
-        home_list.setAdapter(new ListAdapter(this, values, images,1));
+        home_list.setAdapter(new ListAdapter(this, values, images));
 
         home_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -250,7 +251,22 @@ public class MainActivity extends AppCompatActivity
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.signin) {
-            Toast.makeText(this, "clicked SIGN IN", Toast.LENGTH_SHORT).show();
+            String login_check = login.getText().toString();
+            if(login_check.contains("My Profile")){
+                Toast.makeText(this, "clicked My Profile", Toast.LENGTH_SHORT).show();
+                Intent profile = new Intent(this,MyProfileActivity.class);
+                profile.putExtras(bundle);
+                startActivity(profile);
+            }else{
+                Toast.makeText(this, "clicked SIGN IN", Toast.LENGTH_SHORT).show();
+                Intent signin = new Intent(this,LoginActivity.class);
+                int requestCode = 6;
+                startActivityForResult(signin,requestCode);
+            }
+
+        }
+        if (id == R.id.profile_image) {
+            Toast.makeText(this, "clicked profile Image", Toast.LENGTH_SHORT).show();
             Intent signin = new Intent(this,LoginActivity.class);
             int requestCode = 6;
             startActivityForResult(signin,requestCode);
@@ -365,15 +381,22 @@ public class MainActivity extends AppCompatActivity
         if (requestCode == 6) {
             if (resultCode == Activity.RESULT_OK) {
                 if (data.hasExtra("FB_id")) {
-
                     String fb_id=data.getStringExtra("FB_id");
                     String fb_name=data.getStringExtra("FB_name");
-                 //   String fb_email=data.getStringExtra("FB_email");
-                    Log.e("User FB_DETAILS ", fb_name+fb_id);
+                    String fb_email=data.getStringExtra("FB_email");
+                    String fb_gender=data.getStringExtra("FB_gender");
+
                     login.setText("My Profile");
 
                     Picasso.with(this).load("https://graph.facebook.com/" + fb_id + "/picture?type=large").into(profile_pic);
-
+//Create the bundle
+                    bundle = new Bundle();
+//Add your data from getFactualResults method to bundle
+                    bundle.putString("FB_NAME", fb_name);
+                    bundle.putString("FB_EMAIL", fb_email);
+                    bundle.putString("FB_ID", fb_id);
+                    bundle.putString("FB_GENDER",fb_gender);
+//Add the bundle to the intent
                     }
 
                 if (data.hasExtra("pname")){
@@ -392,17 +415,5 @@ public class MainActivity extends AppCompatActivity
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
             }
-        }//onActivityResult
-    @Override
-    public void onRefresh() {
-// Execute some code after 2 seconds have passed
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                swipeRefreshLayout.setRefreshing(false);
-
-            }
-        }, 2000);
-    }
+        }
 }

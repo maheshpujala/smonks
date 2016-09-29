@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="250dp"
+    android:layout_margin="5dp"
+    android:background="@drawable/sillymonks_mall_stroke">
+
+    <ImageView
+        android:id="@+id/grid_image"
+        android:layout_width="match_parent"
+        android:layout_height="225dp"
+        android:fitsSystemWindows="true"
+        android:scaleType="fitXY">
+    </ImageView>
+
+    <TextView
+        android:id="@+id/grid_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/action_settings">
+    </TextView>
+
+</LinearLayout>

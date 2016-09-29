@@ -12,7 +12,6 @@
     <string name="fb_login_protocol_scheme">fb948537241887382</string>
 
 
-
     <string name="prompt_name">Name</string>
     <string name="prompt_mobile">Mobile</string>
     <string name="prompt_desc">Description</string>
@@ -126,5 +125,7 @@ Please contact us at info@sillymonks.com if you have any questions about our ter
 
     <string name="banner_ad_unit_id">/6499/example/banner</string>
     <string name="title_activity_testing">TESTING</string>
+    <string name="title_activity_my_profile">MyProfileActivity</string>
+    <string name="section_format">Hello World from section: %1$d</string>
 
 </resources>

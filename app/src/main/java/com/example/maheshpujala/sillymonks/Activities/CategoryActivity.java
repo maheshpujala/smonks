@@ -1,12 +1,7 @@
 package com.example.maheshpujala.sillymonks.Activities;
 
-import android.app.SearchManager;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,21 +11,15 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -125,7 +114,7 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
         adapter.addFrag(new CategoryFragment(), "Movies");
         adapter.addFrag(new CategoryFragment(), "Reviews");
         adapter.addFrag(new CategoryFragment(), "Celebrities");
-        adapter.addFrag(new CategoryFragment(), "Gallery");
+        adapter.addFrag(new CategoryGalleryFragment(), "Gallery");
         viewPager.setAdapter(adapter);
     }
 

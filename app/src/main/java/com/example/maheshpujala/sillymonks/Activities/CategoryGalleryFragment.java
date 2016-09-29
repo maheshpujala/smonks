@@ -3,7 +3,7 @@ package com.example.maheshpujala.sillymonks.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -16,12 +16,9 @@ import com.example.maheshpujala.sillymonks.Adapters.RecyclerAdapter;
 import com.example.maheshpujala.sillymonks.R;
 
 /**
- * Created by maheshpujala on 13/9/16.
+ * Created by maheshpujala on 28/9/16.
  */
-public class CategoryFragment extends Fragment {
-    public CategoryFragment() {
-        // Required empty public constructor
-    }
+public class CategoryGalleryFragment extends Fragment {
 
     RecyclerView home_list;
     private final String[] values = new String[]{
@@ -41,6 +38,9 @@ public class CategoryFragment extends Fragment {
             R.drawable.hollywood,
             R.drawable.creators
     };
+    public CategoryGalleryFragment() {
+        // Required empty public constructor
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,15 +53,13 @@ public class CategoryFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_category, container, false);
         return rootView;
     }
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-
         home_list = (RecyclerView) view.findViewById(R.id.category_list);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(),2);
         home_list.setLayoutManager(layoutManager);
 
-        home_list.setAdapter(new RecyclerAdapter(getActivity(), values, images,1));
+        home_list.setAdapter(new RecyclerAdapter(getActivity(), values, images, 2));
 
         home_list.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
 
@@ -80,7 +78,7 @@ public class CategoryFragment extends Fragment {
                 if (child != null && gestureDetector.onTouchEvent(e)) {
                     int position = rv.getChildAdapterPosition(child);
                     Toast.makeText(getContext(), "Clicked" + position, Toast.LENGTH_SHORT).show();
-                    Intent cat2art = new Intent(getActivity(), ArticleActivity.class);
+                    Intent cat2art = new Intent(getActivity(), GalleryActivity.class);
                     startActivity(cat2art);
                 }
 

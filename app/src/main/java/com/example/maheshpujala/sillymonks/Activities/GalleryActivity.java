@@ -1,27 +1,34 @@
 package com.example.maheshpujala.sillymonks.Activities;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.text.Spanned;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.RatingBar;
-import android.widget.TextView;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.Toast;
 
+import com.example.maheshpujala.sillymonks.Adapters.ImageAdapter;
 import com.example.maheshpujala.sillymonks.R;
 
-public class ArticleActivity extends AppCompatActivity {
-    RatingBar rating;
-    ImageView comment,share,like;
+public class GalleryActivity extends AppCompatActivity {
+    private final Integer[] images = new Integer[]{
+
+            R.drawable.tollywood,
+            R.drawable.bollywood,
+            R.drawable.kollywood,
+            R.drawable.mollywood,
+            R.drawable.hollywood,
+            R.drawable.creators
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_article);
+        setContentView(R.layout.activity_gallery);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -30,31 +37,22 @@ public class ArticleActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        String html = getString(R.string.html_text);
-        Spanned html_spanned = Html.fromHtml(html);
 
-        TextView medium =(TextView)findViewById(R.id.medium_txt);
-        medium.setText(html_spanned);
+        GridView gridview = (GridView) findViewById(R.id.gallery_view);
+        gridview.setAdapter(new ImageAdapter(getApplicationContext(),images));
 
-        rating = (RatingBar) findViewById(R.id.ratingBar);
-        rating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener(){
-
+        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating,
-                                        boolean fromUser) {
-                // TODO Auto-generated method stub
-                Toast.makeText(getApplicationContext(),Float.toString(rating), Toast.LENGTH_LONG).show();
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
 
+                    Toast.makeText(getApplicationContext(), "clicked " + position, Toast.LENGTH_SHORT).show();
+                    Intent it = new Intent(GalleryActivity.this, FullScreenActivity.class);
+                    startActivity(it);
             }
-
         });
-
-        comment =(ImageView)findViewById(R.id.comment);
-        share =(ImageView)findViewById(R.id.share);
-        like =(ImageView)findViewById(R.id.favourite_heart);
-
-
     }
+
     @Override
     public void onBackPressed() {
         Log.e("onBackPressed","___________Entered__________");

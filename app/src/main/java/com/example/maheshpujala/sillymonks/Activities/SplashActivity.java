@@ -1,10 +1,13 @@
 package com.example.maheshpujala.sillymonks.Activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebView;
@@ -13,7 +16,8 @@ import android.widget.Toast;
 import com.example.maheshpujala.sillymonks.R;
 
 public class SplashActivity extends AppCompatActivity {
-
+    SharedPreferences mPrefs;
+    final String welcomeScreenShownPref = "welcomeScreenShown";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // To make activity full screen
@@ -25,8 +29,36 @@ public class SplashActivity extends AppCompatActivity {
         WebView logo = (WebView) findViewById(R.id.view_logo);
         logo.loadUrl("file:///android_asset/logotab.html");
 
-        loadAndParseConfig();
+        loadConfig();
+
         getScreensize();
+    }
+
+    private void loginCheck() {
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Log.e("logincheck",""+mPrefs);
+
+        // second argument is the default to use if the preference can't be found
+        Boolean welcomeScreenShown = mPrefs.getBoolean(welcomeScreenShownPref, false);
+
+        if (!welcomeScreenShown) {
+            // here you can launch another activity if you like
+            // the code below will display a popup
+            Log.e("welcomeScreenShown",""+!welcomeScreenShown);
+
+            Intent start = new Intent(SplashActivity.this,LoginActivity.class);
+            start.putExtra("From Splash","show_skip");
+            startActivity(start);
+            SharedPreferences.Editor editor = mPrefs.edit();
+            editor.putBoolean(welcomeScreenShownPref, true);
+            editor.apply(); // Very important to save the preference
+        }
+        else{
+
+            Intent start = new Intent(SplashActivity.this,MainActivity.class);
+            startActivity(start);
+
+        }
     }
 
     private void getScreensize() {
@@ -38,7 +70,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
 
-    private void loadAndParseConfig() {
+    private void loadConfig() {
         int SPLASH_TIME_OUT = 4200;
         new Handler().postDelayed(new Runnable() {
 
@@ -49,11 +81,8 @@ public class SplashActivity extends AppCompatActivity {
 
             @Override
             public void run() {
-                // This method will be executed once the timer is over
-                // Start your app main activity
-                Intent start = new Intent(SplashActivity.this,MainActivity.class);
-                startActivity(start);
 
+                loginCheck();
                 // close this activity
                 finish();
             }
