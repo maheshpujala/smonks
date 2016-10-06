@@ -130,7 +130,7 @@ Please contact us at info@sillymonks.com if you have any questions about our ter
 
 
     <string name="os_tag">&amp;os=andy</string>
-    <string name="main_url">http://b6f13f3a.ngrok.io</string>
+    <string name="main_url">http://75e65b49.ngrok.io</string>
 
     <string name="landing_url">/api/v1/getAllWoods</string>
     <string name="category_list_url">/api/v1/getWoodCategories?id=</string>

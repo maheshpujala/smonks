@@ -188,8 +188,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
                 grid_text = (TextView) view.findViewById(R.id.grid_text);
                 grid_image = (ImageView) view.findViewById(R.id.grid_image);
             }
-            this.setIsRecyclable(false);
+            this.setIsRecyclable(true);
+
         }
+
     }
 
     public static class ProgressViewHolder extends RecyclerView.ViewHolder {

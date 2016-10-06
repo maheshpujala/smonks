@@ -115,21 +115,21 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-         home = (TextView) findViewById(R.id.home);
+        home = (TextView) findViewById(R.id.home);
         home.setOnClickListener(this);
-         tolly = (TextView) findViewById(R.id.tolly);
+        tolly = (TextView) findViewById(R.id.tolly);
         tolly.setOnClickListener(this);
-         bolly = (TextView) findViewById(R.id.bolly);
+        bolly = (TextView) findViewById(R.id.bolly);
         bolly.setOnClickListener(this);
-         kolly = (TextView) findViewById(R.id.kolly);
+        kolly = (TextView) findViewById(R.id.kolly);
         kolly.setOnClickListener(this);
-         molly = (TextView) findViewById(R.id.molly);
+        molly = (TextView) findViewById(R.id.molly);
         molly.setOnClickListener(this);
-         holly = (TextView) findViewById(R.id.holly);
+        holly = (TextView) findViewById(R.id.holly);
         holly.setOnClickListener(this);
-         creator = (TextView) findViewById(R.id.creator);
+        creator = (TextView) findViewById(R.id.creator);
         creator.setOnClickListener(this);
-         home_img = (ImageView) findViewById(R.id.home_img);
+        home_img = (ImageView) findViewById(R.id.home_img);
         home_img.setOnClickListener(this);
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -141,83 +141,80 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
                 new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
                     @Override
                     public void onTabSelected(TabLayout.Tab tab) {
-                        if(tab.getPosition() == 0){
-                            return ;
-                        }
                         super.onTabSelected(tab);
                         Toast.makeText(getApplicationContext(),"selected"+tab.getPosition(),Toast.LENGTH_SHORT ).show();
                         List <Article> articles = (List<Article>) cat_articles.get(tab.getText());
 
                         currentTabTitle = (String) tab.getText();
+                        Log.e("currentTabTitle",currentTabTitle);
 
                     }
                 });
     }
 
     private void sendRequest() {
-            String url_cat_list =getResources().getString(R.string.main_url)+getResources().getString(R.string.category_list_url)+wood_id+getResources().getString(R.string.os_tag);
+        String url_cat_list =getResources().getString(R.string.main_url)+getResources().getString(R.string.category_list_url)+wood_id+getResources().getString(R.string.os_tag);
         Log.i("------------URL------------",url_cat_list);
 // Request a JsonObject response from the provided URL.
-            JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                    (Request.Method.GET, url_cat_list, null, new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            getData(response);
-                        }
-                    }, new Response.ErrorListener() {
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET, url_cat_list, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        getData(response);
+                    }
+                }, new Response.ErrorListener() {
 
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            // TODO Auto-generated method stub
-                         reportError(error);
-                        }
-                    });
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+                        reportError(error);
+                    }
+                });
 // Add the request to the RequestQueue.
-       VolleyRequest.getInstance().addToRequestQueue(jsObjRequest);
-        }
+        VolleyRequest.getInstance().addToRequestQueue(jsObjRequest);
+    }
 
 
     public void getData(JSONObject json) {
-            try {
+        try {
 
-                JSONArray wood_cat_list = json.getJSONArray("categories");
+            JSONArray wood_cat_list = json.getJSONArray("categories");
 
-                categories = new LinkedHashMap();
-                cat_articles = new LinkedHashMap();
-                articles_total_count = new LinkedHashMap();
+            categories = new LinkedHashMap();
+            cat_articles = new LinkedHashMap();
+            articles_total_count = new LinkedHashMap();
 
-                for (int i = 0; i < wood_cat_list.length(); i++) {
-                    JSONObject jsonobject = wood_cat_list.getJSONObject(i);
+            for (int i = 0; i < wood_cat_list.length(); i++) {
+                JSONObject jsonobject = wood_cat_list.getJSONObject(i);
 
-                    id = jsonobject.getString("id");
-                    name = jsonobject.getString("name");
-                    articles_total_count.put(name,jsonobject.getString("articles_count"));
-                    categories.put(name,id);
+                id = jsonobject.getString("id");
+                name = jsonobject.getString("name");
+                articles_total_count.put(name,jsonobject.getString("articles_count"));
+                categories.put(name,id);
 
-                    JSONArray cat_articles_list = jsonobject.getJSONArray("articles");
-                    articles = new ArrayList<Article>();
+                JSONArray cat_articles_list = jsonobject.getJSONArray("articles");
+                articles = new ArrayList<Article>();
 
-                    for (int k = 0; k < cat_articles_list.length(); k++) {
-                        JSONObject articles_json = cat_articles_list.getJSONObject(k);
+                for (int k = 0; k < cat_articles_list.length(); k++) {
+                    JSONObject articles_json = cat_articles_list.getJSONObject(k);
 
-                        articles.add(new Article(articles_json.getString("id"),
-                                articles_json.getString("title"),
-                                articles_json.getString("large")));
-                    }
-                    cat_articles.put(name,articles);
-
+                    articles.add(new Article(articles_json.getString("id"),
+                            articles_json.getString("title"),
+                            articles_json.getString("large")));
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
+                cat_articles.put(name,articles);
+
             }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         setupViewPager(viewPager);
-        }
+    }
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         Set<String> set = categories.keySet();
-        currentTabTitle= (String) set.toArray()[0];
 
 //populate set
         for (String cat_name : set) {
@@ -234,9 +231,10 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
             CategoryFragment fragment = new CategoryFragment();
             fragment.setArguments(b);
             adapter.addFrag(fragment, cat_name);
+            Log.e("ADDING FRAGEMENT+++++++++",cat_name);
 
         }
-      // adapter.addFrag(new CategoryGalleryFragment(), "Gallery");
+        // adapter.addFrag(new CategoryGalleryFragment(), "Gallery");
         viewPager.setAdapter(adapter);
     }
 
@@ -246,17 +244,17 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
         if (id == R.id.home_img || id == R.id.home){
             finish();
         }
-         if (id == R.id.tolly){
-             tolly.setVisibility(View.GONE);
-             bolly.setVisibility(View.VISIBLE);
-             holly.setVisibility(View.VISIBLE);
-             kolly.setVisibility(View.VISIBLE);
-             molly.setVisibility(View.VISIBLE);
-             creator.setVisibility(View.VISIBLE);
+        if (id == R.id.tolly){
+            tolly.setVisibility(View.GONE);
+            bolly.setVisibility(View.VISIBLE);
+            holly.setVisibility(View.VISIBLE);
+            kolly.setVisibility(View.VISIBLE);
+            molly.setVisibility(View.VISIBLE);
+            creator.setVisibility(View.VISIBLE);
 
-             toolbar.setTitle("Tollywood");
+            toolbar.setTitle("Tollywood");
 
-         }
+        }
         if (id == R.id.bolly){
             bolly.setVisibility(View.GONE);
             tolly.setVisibility(View.VISIBLE);
@@ -310,10 +308,10 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
 
             toolbar.setTitle("Creators");
         }
-            if (id == R.id.publisherAdView) {
-                Toast.makeText(this, "clicked ADVERTISEMENT", Toast.LENGTH_SHORT).show();
+        if (id == R.id.publisherAdView) {
+            Toast.makeText(this, "clicked ADVERTISEMENT", Toast.LENGTH_SHORT).show();
 
-            }
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -322,7 +320,7 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
     @Override
     public boolean onQueryTextSubmit(String query) {
         Toast.makeText(this,""+query,Toast.LENGTH_SHORT).show();
-      //  searchView.setIconified(true);
+        //  searchView.setIconified(true);
         searchView.onActionViewCollapsed();
         return false;
     }
@@ -347,7 +345,7 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
 
         @Override
         public int getCount() {
-            return mFragmentList.size()+1;
+            return mFragmentList.size();
         }
 
         public void addFrag(Fragment fragment, String title) {
@@ -414,7 +412,7 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-           // searchView.onActionViewCollapsed();
+            // searchView.onActionViewCollapsed();
         } else {
             super.onBackPressed();
         }
