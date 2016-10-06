@@ -5,12 +5,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.view.ContextThemeWrapper;
 import android.view.View;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -20,81 +20,76 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.maheshpujala.sillymonks.Adapters.ListAdapter;
 import com.example.maheshpujala.sillymonks.Api.NetworkCheck;
+import com.example.maheshpujala.sillymonks.Api.VolleyRequest;
 import com.example.maheshpujala.sillymonks.R;
+import com.example.maheshpujala.sillymonks.Utils.BounceListView;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener{
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private CoordinatorLayout container;
-    ListView home_list;
+    BounceListView home_list;
     View mDownView;
     int   mDownPosition;
     PublisherAdView mPublisherAdView;
     ImageView profile_pic,fb_button,twitter_button,gplus_button;
     TextView login;
     Bundle bundle;
+    List<String> allNames,allIds,allImages;
+    String id,name,bimages,original;
 
-    private final String[] values = new String[] { "Android List View",
-            "Tollywood",
-            "Bollywood",
-            "Kollywood",
-            "Mollywood",
-            "Hollywood",
-            "Creators",
-    };
-    private final Integer[] images = new Integer[]{
-            R.drawable.drawer_image,
-            R.drawable.tollywood,
-            R.drawable.bollywood,
-            R.drawable.kollywood,
-            R.drawable.mollywood,
-            R.drawable.hollywood,
-            R.drawable.creators
-
-    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        // NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        //  navigationView.setNavigationItemSelectedListener(this);
         profile_pic = (ImageView) findViewById(R.id.profile_image);
         profile_pic.setOnClickListener(this);
         login = (TextView) findViewById(R.id.signin);
         login.setOnClickListener(this);
         TextView abt = (TextView) findViewById(R.id.about);
+
+        Typeface font = Typeface.createFromAsset(getAssets(),"RobotoRegular.ttf");
+        abt.setTypeface(font);
         abt.setOnClickListener(this);
         TextView terms = (TextView) findViewById(R.id.tandc);
         terms.setOnClickListener(this);
@@ -104,7 +99,6 @@ public class MainActivity extends AppCompatActivity
         advt.setOnClickListener(this);
         TextView share = (TextView) findViewById(R.id.sharetheapp);
         share.setOnClickListener(this);
-        container = (CoordinatorLayout) findViewById(R.id.layout_container);
 
         fb_button = (ImageView) findViewById(R.id.fb_button);
         fb_button.setOnClickListener(this);
@@ -113,13 +107,10 @@ public class MainActivity extends AppCompatActivity
         gplus_button = (ImageView) findViewById(R.id.gplus_button);
         gplus_button.setOnClickListener(this);
 
-
+        fromSplash();
         checkConnection();
-        //AdSize customAdSize = new AdSize(400, 250);
 
         mPublisherAdView = (PublisherAdView) findViewById(R.id.publisherAdView);
-       // mPublisherAdView.setAdSizes(customAdSize);
-
         mPublisherAdView.setAdSizes(AdSize.MEDIUM_RECTANGLE);
 
         PublisherAdRequest adRequest = new PublisherAdRequest.Builder()
@@ -128,8 +119,6 @@ public class MainActivity extends AppCompatActivity
                 .addTestDevice("9E24EA1846195D46BA5800679368D5E2")// MOTO G 4.5  marshmallow
                 .addTestDevice("E8A785BC1EC7B41E36D183611BEAE615")// MOTO E  4.3 kitkat
                 .addTestDevice("1DEFD3C3E725D34AD35682EFAC30169E")// Karbon 4     kitkat
-                .addTestDevice("568D4320C2F8B11064876CC8CAE9DAF9")// Genymotion api 19
-
                 .build();
 //        AdSize customAdSize = new AdSize(200, 200);
 //        mPublisherAdView.setAdSizes(customAdSize);
@@ -137,17 +126,14 @@ public class MainActivity extends AppCompatActivity
         mPublisherAdView.loadAd(adRequest);
         mPublisherAdView.setOnClickListener(this);
 
-        home_list = (ListView) findViewById(R.id.list_allwoods);
-
-        home_list.setAdapter(new ListAdapter(this, values, images));
-
+        home_list = (BounceListView) findViewById(R.id.list_allwoods);
         home_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
                 if (position != 0) {
-                    Toast.makeText(getApplicationContext(), "clicked " + position, Toast.LENGTH_SHORT).show();
                     Intent it = new Intent(MainActivity.this, CategoryActivity.class);
+                    it.putExtra("clicked",id);
                     startActivity(it);
                 }
             }
@@ -157,7 +143,6 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-
                 Rect rect = new Rect();
                 int childCount = home_list.getChildCount();
                 int[] listViewCoords = new int[2];
@@ -175,8 +160,6 @@ public class MainActivity extends AppCompatActivity
                 }
                 if (mDownView != null) {
                     try {
-
-
                         mDownPosition = home_list.getPositionForView(mDownView);
                         Log.e("position in on touch", "clicked" + mDownPosition);
                         if (mDownPosition == 0) {
@@ -190,13 +173,35 @@ public class MainActivity extends AppCompatActivity
                 return true;
             }
         });
+
     }
-    private void checkConnection() {
+
+    private void fromSplash() {
+        Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                if (extras.containsKey("FB_id")) {
+                    String fb_id = extras.getString("FB_id");
+                    String fb_name = extras.getString("FB_name");
+                    String fb_email = extras.getString("FB_email");
+                    String fb_gender = extras.getString("FB_gender");
+
+                    login.setText("My Profile");
+                    Picasso.with(this).load("https://graph.facebook.com/" + fb_id + "/picture?type=large").into(profile_pic);
+//Create the bundle
+                    bundle = new Bundle();
+                    bundle.putString("FB_NAME", fb_name);
+                    bundle.putString("FB_EMAIL", fb_email);
+                    bundle.putString("FB_ID", fb_id);
+                    bundle.putString("FB_GENDER", fb_gender);
+                }
+            }
+        }
+
+    public void checkConnection() {
         if (NetworkCheck.isInternetAvailable(MainActivity.this))  //if connection available
         {
-
+        sendRequest();
         } else {
-
             new AlertDialog.Builder(this)
                     .setTitle("Connection error")
                     .setMessage("Unable to connect with the server.Check your internet connection and try again.")
@@ -215,6 +220,81 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void sendRequest() {
+        String url_land =getResources().getString(R.string.main_url)+getResources().getString(R.string.landing_url);
+        Log.i("------------URL------------",url_land);
+// Request a JsonObject response from the provided URL.
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET, url_land, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        getData(response);
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+                        Log.e("response Errorhome", error + "");
+                        if (error instanceof NoConnectionError) {
+                            Log.d("NoConnectionError>>>>>>>>>", "NoConnectionError.......");
+                        } else if (error instanceof AuthFailureError) {
+                            Log.d("AuthFailureError>>>>>>>>>", "AuthFailureError.......");
+                        } else if (error instanceof ServerError) {
+                            Log.d("ServerError>>>>>>>>>", "ServerError.......");
+                        } else if (error instanceof NetworkError) {
+                            Log.d("NetworkError>>>>>>>>>", "NetworkError.......");
+                        } else if (error instanceof ParseError) {
+                            Log.d("ParseError>>>>>>>>>", "ParseError.......");
+                        }else if (error instanceof TimeoutError) {
+                            Log.d("TimeoutError>>>>>>>>>", "TimeoutError.......");
+                            AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(MainActivity.this, R.style.myDialog));
+
+                       // 2. Chain together various setter methods to set the dialog characteristics
+                       builder.setMessage("Unable to connect with the server.Try again after some time.")
+                               .setTitle("Server Error");
+
+                       // 3. Get the AlertDialog from create()
+                       AlertDialog dialog = builder.create();
+
+                            dialog.show();
+                        }
+
+
+                    }
+                });
+// Add the request to the RequestQueue.
+        VolleyRequest.getInstance().addToRequestQueue(jsObjRequest);
+    }
+
+    public void getData(JSONObject json) {
+        try {
+            JSONArray wood =json.getJSONArray("woods") ;
+            allNames = new ArrayList<>();
+            allIds = new ArrayList<>();
+            allImages = new ArrayList<>();
+            allNames.add("");
+            allImages.add("");
+            allIds.add("");
+
+            for (int i = 0; i < wood.length(); i++) {
+                JSONObject jsonobject = wood.getJSONObject(i);
+
+                 id = jsonobject.getString("id");
+                 name = jsonobject.getString("name");
+                 bimages = jsonobject.getString("original");
+
+                allIds.add(id);
+                allNames.add(name);
+                allImages.add(bimages);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        home_list.setAdapter(new ListAdapter(this, allNames, allImages,allIds));
+    }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -224,28 +304,6 @@ public class MainActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
 
     @Override
     public void onClick(View view) {
@@ -263,10 +321,15 @@ public class MainActivity extends AppCompatActivity
                 int requestCode = 6;
                 startActivityForResult(signin,requestCode);
             }
-
         }
+
         if (id == R.id.profile_image) {
             Toast.makeText(this, "clicked profile Image", Toast.LENGTH_SHORT).show();
+            if(login.getText().toString().contains("My Profile")){
+                Intent profile = new Intent(this,MyProfileActivity.class);
+                profile.putExtras(bundle);
+                startActivity(profile);
+            }
             Intent signin = new Intent(this,LoginActivity.class);
             int requestCode = 6;
             startActivityForResult(signin,requestCode);
@@ -310,7 +373,6 @@ public class MainActivity extends AppCompatActivity
                 if (versionCode >= 3002850) {
                     Uri uri = Uri.parse("fb://facewebmodal/f?href=" + facebookUrl);
                     startActivity(new Intent(Intent.ACTION_VIEW, uri));
-                    ;
                 } else {
                     // open the Facebook app using the old method (fb://profile/id or fb://page/id)
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("fb://page/336227679757310")));
@@ -358,19 +420,12 @@ public class MainActivity extends AppCompatActivity
                 startActivity(Intent.createChooser(i, "choose one"));
             }
             catch(Exception e)
-            { //e.toString();
+            {
             }
-
-//            final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
-//            try {
-//                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.ongo.silly_monks" )));
-//            } catch (android.content.ActivityNotFoundException anfe) {
-//                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.ongo.silly_monks")));
-//            }
         }
+
         if (id == R.id.publisherAdView) {
             Toast.makeText(this, "clicked ADVERTISEMENT", Toast.LENGTH_SHORT).show();
-
         }
 
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -391,12 +446,10 @@ public class MainActivity extends AppCompatActivity
                     Picasso.with(this).load("https://graph.facebook.com/" + fb_id + "/picture?type=large").into(profile_pic);
 //Create the bundle
                     bundle = new Bundle();
-//Add your data from getFactualResults method to bundle
                     bundle.putString("FB_NAME", fb_name);
                     bundle.putString("FB_EMAIL", fb_email);
                     bundle.putString("FB_ID", fb_id);
                     bundle.putString("FB_GENDER",fb_gender);
-//Add the bundle to the intent
                     }
 
                 if (data.hasExtra("pname")){

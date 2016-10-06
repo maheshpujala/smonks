@@ -74,10 +74,7 @@
 
 
             </FrameLayout>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:drawable/divider_horizontal_textfield"/>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -86,10 +83,7 @@
                 android:textSize="18sp"
                 android:id="@+id/about"
                 android:background="?android:attr/selectableItemBackground"/>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:drawable/divider_horizontal_textfield"/>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -98,10 +92,7 @@
                 android:textSize="18sp"
                 android:id="@+id/tandc"
                 android:background="?android:attr/selectableItemBackground"/>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:drawable/divider_horizontal_textfield"/>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -110,10 +101,7 @@
                 android:textSize="18sp"
                 android:id="@+id/contact"
                 android:background="?android:attr/selectableItemBackground"/>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:drawable/divider_horizontal_textfield"/>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -122,10 +110,7 @@
                 android:textSize="18sp"
                 android:id="@+id/advertise"
                 android:background="?android:attr/selectableItemBackground"/>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:drawable/divider_horizontal_textfield"/>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

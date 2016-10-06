@@ -26,7 +26,8 @@
             ads:adUnitId="@string/banner_ad_unit_id"/>
 
 
-        <ListView android:id="@+id/list_allwoods"
+        <com.example.maheshpujala.sillymonks.Utils.BounceListView
+            android:id="@+id/list_allwoods"
             android:scrollbars="none"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"

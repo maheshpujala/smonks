@@ -15,6 +15,8 @@ import android.widget.Toast;
 import com.example.maheshpujala.sillymonks.Adapters.RecyclerAdapter;
 import com.example.maheshpujala.sillymonks.R;
 
+import java.util.List;
+
 /**
  * Created by maheshpujala on 28/9/16.
  */
@@ -41,6 +43,7 @@ public class CategoryGalleryFragment extends Fragment {
     public CategoryGalleryFragment() {
         // Required empty public constructor
     }
+    List<String> Names,Ids,Images;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,10 @@ public class CategoryGalleryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_category, container, false);
+        CategoryActivity activity = (CategoryActivity) getActivity();
+//        Names = activity.articlesNames();
+//        Ids = activity.articleIds();
+//        Images = activity.articleImages();
         return rootView;
     }
     @Override
@@ -59,7 +66,7 @@ public class CategoryGalleryFragment extends Fragment {
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(),2);
         home_list.setLayoutManager(layoutManager);
 
-        home_list.setAdapter(new RecyclerAdapter(getActivity(), values, images, 2));
+      //  home_list.setAdapter(new RecyclerAdapter(getActivity(), Names, Images,2));
 
         home_list.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
 

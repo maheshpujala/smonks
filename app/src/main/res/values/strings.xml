@@ -128,4 +128,17 @@ Please contact us at info@sillymonks.com if you have any questions about our ter
     <string name="title_activity_my_profile">MyProfileActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
+
+    <string name="os_tag">&amp;os=andy</string>
+    <string name="main_url">http://b6f13f3a.ngrok.io</string>
+
+    <string name="landing_url">/api/v1/getAllWoods</string>
+    <string name="category_list_url">/api/v1/getWoodCategories?id=</string>
+
+    <string name="articles_load_extra">/api/v1/getCategoryArticles?categoryID=</string>
+    <string name="lastId">&amp;lastArticleID=</string>
+
+
+
+
 </resources>

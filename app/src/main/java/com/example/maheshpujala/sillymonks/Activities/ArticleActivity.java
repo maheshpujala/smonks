@@ -15,7 +15,9 @@ import android.widget.Toast;
 
 import com.example.maheshpujala.sillymonks.R;
 
-public class ArticleActivity extends AppCompatActivity {
+import java.io.Serializable;
+
+public class ArticleActivity extends AppCompatActivity  {
     RatingBar rating;
     ImageView comment,share,like;
     @Override

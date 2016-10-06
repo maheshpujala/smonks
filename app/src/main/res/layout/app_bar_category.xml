@@ -65,20 +65,7 @@
             app:expandedTitleMarginEnd="64dp">
         </android.support.design.widget.CollapsingToolbarLayout>
 
-        <android.support.design.widget.TabLayout
-            android:id="@+id/tabs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:tabGravity="center"
-            android:layout_marginTop="2dp"
-            android:background="@android:color/black"
-            app:tabIndicatorColor="#e54425"
-            app:tabTextColor="#dbd6db"
-            app:tabSelectedTextColor="#dbd6db"
-            app:tabIndicatorHeight="5dp"
-            android:elevation="5dp"
-            app:tabMode="scrollable"
-            android:gravity="bottom"/>
+
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.NestedScrollView
@@ -93,7 +80,21 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="vertical">
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tabGravity="center"
+                android:background="@android:color/black"
+                app:tabIndicatorColor="#e54425"
+                app:tabTextColor="#dbd6db"
+                app:tabSelectedTextColor="#dbd6db"
+                app:tabIndicatorHeight="5dp"
+                app:tabContentStart="96dp"
+                android:elevation="5dp"
+                app:tabMode="scrollable"
+                android:gravity="bottom"/>
             <android.support.v4.view.ViewPager
                 android:id="@+id/viewpager"
                 android:layout_width="match_parent"

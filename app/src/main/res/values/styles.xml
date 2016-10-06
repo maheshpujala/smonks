@@ -24,6 +24,9 @@
         <item name="android:minHeight">20dip</item>
         <item name="android:maxHeight">28dip</item>
     </style>
-
+    <style name="myDialog" parent="Theme.AppCompat.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        ...
+    </style>
 
 </resources>
