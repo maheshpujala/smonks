@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,30 +22,24 @@ import com.google.android.gms.ads.doubleclick.PublisherAdView;
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by maheshpujala on 29/8/16.
  */
-public class ListAdapter extends BaseAdapter {
-    private final List<String> title ,image,id;
-    private final Activity context;
-    private String[] strarray,id_array;
+public class ListAdapter extends ArrayAdapter {
+    private  List<String> title ,image,id;
+    private  Activity context;
 
     public ListAdapter(Activity context, List<String> title, List<String> image,List<String> id) {
+        super(context,R.layout.listview_home);
         this.context = context;
         this.title = title;
         this.image=image;
         this.id=id;
-        for(int i=0;i<=image.size();i++) {
-            strarray = new String[image.size()];
-            strarray = image.toArray(strarray);
-        }
-        for(int i=0;i<=id.size();i++) {
-            id_array = new String[id.size()];
-            id_array = id.toArray(id_array);
-        }
-    }
+         }
 
     @Override
     public int getCount() {
@@ -54,11 +49,6 @@ public class ListAdapter extends BaseAdapter {
     @Override
     public Object getItem(int i) {
         return null;
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return Long.parseLong(id_array[position]);
     }
 
 
@@ -74,11 +64,13 @@ public class ListAdapter extends BaseAdapter {
                 LinearLayout blank =(LinearLayout) rowView.findViewById(R.id.blank);
             } else {
                 rowView = inflater.inflate(R.layout.listview_home, null);
-                TextView wood_name = (TextView) rowView.findViewById(R.id.wood_name_sillymonks);
+                TextView wood_name_tv = (TextView) rowView.findViewById(R.id.wood_name_sillymonks);
                 ImageView cover_image = (ImageView) rowView.findViewById(R.id.wood_cover_image);
-                wood_name.setText(title.get(position));
 
-             Picasso.with(this.context).load(strarray[position]).fit().into(cover_image);
+                wood_name_tv.setText(title.get(position));
+
+                Picasso.with(this.context).load(image.get(position)).fit().into(cover_image);
+                Log.e("picasso","+"+image.get(position));
 
             }
 

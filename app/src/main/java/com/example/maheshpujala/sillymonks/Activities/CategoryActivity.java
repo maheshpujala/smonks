@@ -88,7 +88,7 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        wood_id = getIntent().getExtras().getLong("clicked");
+        wood_id = getIntent().getExtras().getLong("wood_id");
         Log.e("BUNDLE EXTRAS",""+wood_id);
         sendRequest();
 
@@ -229,8 +229,16 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
             Log.e("\ncategory name= "+cat_name,"\nArticles Size= "+ ((List<Article>)cat_articles.get(cat_name)).size());
 
             CategoryFragment fragment = new CategoryFragment();
-            fragment.setArguments(b);
-            adapter.addFrag(fragment, cat_name);
+            CategoryGalleryFragment grid_fragment = new CategoryGalleryFragment();
+
+            if (cat_name.equalsIgnoreCase("celebrities") || cat_name.equalsIgnoreCase("gallery")){
+                grid_fragment.setArguments(b);
+                adapter.addFrag(grid_fragment, cat_name);
+            }else{
+                fragment.setArguments(b);
+                adapter.addFrag(fragment, cat_name);
+            }
+
             Log.e("ADDING FRAGEMENT+++++++++",cat_name);
 
         }

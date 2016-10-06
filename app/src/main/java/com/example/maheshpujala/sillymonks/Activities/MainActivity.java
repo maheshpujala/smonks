@@ -54,6 +54,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity
     ImageView profile_pic,fb_button,twitter_button,gplus_button;
     TextView login;
     Bundle bundle;
-    List<String> allNames,allIds,allImages;
+    List<String> woodNames,woodIds,woodImages;
     String id,name,bimages,original;
 
     @Override
@@ -133,7 +134,7 @@ public class MainActivity extends AppCompatActivity
                                     int position, long id) {
                 if (position != 0) {
                     Intent it = new Intent(MainActivity.this, CategoryActivity.class);
-                    it.putExtra("clicked",id);
+                    it.putExtra("wood_id",id);
                     startActivity(it);
                 }
             }
@@ -269,13 +270,16 @@ public class MainActivity extends AppCompatActivity
 
     public void getData(JSONObject json) {
         try {
+
+
             JSONArray wood =json.getJSONArray("woods") ;
-            allNames = new ArrayList<>();
-            allIds = new ArrayList<>();
-            allImages = new ArrayList<>();
-            allNames.add("");
-            allImages.add("");
-            allIds.add("");
+            woodNames = new ArrayList<>();
+            woodIds = new ArrayList<>();
+            woodImages = new ArrayList<>();
+
+            woodNames.add(0,"");
+            woodImages.add(0,"");
+            woodIds.add(0,"");
 
             for (int i = 0; i < wood.length(); i++) {
                 JSONObject jsonobject = wood.getJSONObject(i);
@@ -284,15 +288,17 @@ public class MainActivity extends AppCompatActivity
                  name = jsonobject.getString("name");
                  bimages = jsonobject.getString("original");
 
-                allIds.add(id);
-                allNames.add(name);
-                allImages.add(bimages);
+
+                woodIds.add(id);
+                woodNames.add(name);
+                woodImages.add(bimages);
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        home_list.setAdapter(new ListAdapter(this, allNames, allImages,allIds));
+        home_list.setAdapter(new ListAdapter(this, woodNames, woodImages,woodIds));
+
     }
 
     @Override

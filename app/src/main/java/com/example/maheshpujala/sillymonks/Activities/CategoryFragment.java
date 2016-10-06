@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ContextThemeWrapper;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -83,8 +84,15 @@ public class CategoryFragment extends Fragment {
         myRecyclerView = (RecyclerView) view.findViewById(R.id.category_list);
         myRecyclerView.setHasFixedSize(true);
 
-        layoutManager = new LinearLayoutManager(getContext());
-        myRecyclerView.setLayoutManager(layoutManager);
+        if (category_name.equalsIgnoreCase("celebrities") || category_name.equalsIgnoreCase("gallery")){
+            RecyclerView.LayoutManager gridLayoutManager = new GridLayoutManager(getContext(),2);
+            myRecyclerView.setLayoutManager(gridLayoutManager);
+        }else{
+            layoutManager = new LinearLayoutManager(getContext());
+            myRecyclerView.setLayoutManager(layoutManager);
+        }
+
+
 
         mAdapter = new RecyclerAdapter(getActivity(), articles,1,myRecyclerView,category_name, (String) articles_total_count.get(category_name));
         myRecyclerView.setAdapter(mAdapter);
@@ -140,6 +148,7 @@ public class CategoryFragment extends Fragment {
 
                         // Call you API, then update the result into dataModels, then call adapter.notifyDataSetChanged().
                         //Update the new data into list object
+
                              getExtraData();
 
                         }
@@ -222,9 +231,14 @@ public class CategoryFragment extends Fragment {
                         }catch (Exception e ){
                             e.printStackTrace();
                         }
+
+
                         articles.addAll(moreArticles);
                         Log.e("$$$$$$$$$Total articles after getting from json$$$$$$$$$ "," ="+articles.size());
                        // mAdapter.notifyDataSetChanged();
+
+
+
                         mAdapter.notifyItemRangeInserted(previous_articles_count, moreArticles.size());
                         mAdapter.setLoaded();
 
