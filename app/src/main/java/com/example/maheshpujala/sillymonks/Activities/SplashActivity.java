@@ -36,7 +36,6 @@ public class SplashActivity extends AppCompatActivity {
 
     private void loginCheck() {
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        Log.e("logincheck",""+mPrefs);
 
         // second argument is the default to use if the preference can't be found
         Boolean welcomeScreenShown = mPrefs.getBoolean(welcomeScreenShownPref, false);
@@ -66,7 +65,6 @@ public class SplashActivity extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int height = displaymetrics.heightPixels;
         int width = displaymetrics.widthPixels;
-        Toast.makeText(this,width+"x"+height,Toast.LENGTH_LONG).show();
     }
 
 

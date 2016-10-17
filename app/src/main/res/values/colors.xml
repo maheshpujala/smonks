@@ -13,5 +13,9 @@
     <color name="card_detailing">#eee</color>
 
     <color name="screen_backgroung">#fff2f2f2</color>
-    <color name="app_theme">#fff15024</color>
+    <color name="app_theme">#F15024</color>
+
+
+    <color name="tag_text_color">#0033cc</color>
+
 </resources>

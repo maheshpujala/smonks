@@ -11,6 +11,8 @@
     <string name="facebook_app_id">948537241887382</string>
     <string name="fb_login_protocol_scheme">fb948537241887382</string>
 
+    <string name="youtube_api_key">AIzaSyB1cHZqFxookTRf73Nf7T5y0oVrCovnHAk</string>
+
 
     <string name="prompt_name">Name</string>
     <string name="prompt_mobile">Mobile</string>
@@ -32,35 +34,16 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
+    <string name="related_articles">Related Articles</string>
+    <string name="search_result">Search Results</string>
+
 
     <dimen name="tab_max_width">264dp</dimen>
     <dimen name="tab_padding_bottom">16dp</dimen>
     <dimen name="tab_label">14sp</dimen>
     <dimen name="custom_tab_layout_height">72dp</dimen>
 
-    <string name="html_text">
-   <![CDATA[
-        <h1>Main Title</h1>
-        <h2>A sub-title</h2>
-        <p>This is some html. Look, here\'s an <u>underline</u>.</p>
-        <p>Look, this is <em>emphasized.</em> And here\'s some <b>bold</b>.</p>
-        <p>This is a UL list:
-        <ul>
-        <li>One</li>
-        <li>Two</li>
-        <li>Three</li>
-        </ul>
-        <p>This is an OL list:
-        <ol>
-        <li>One</li>
-        <li>Two</li>
-        <li>Three</li>
-        </ol>
-        ]]>
-    </string>
 
 
     <string name="silly_about_us">From Jennifer Lawrence to Shahrukh Khan, from Rajinikanth to Kamal Hassan, from Pawan Kalyan to Mohan Lal. Catch up with all your favourite stars, films, and celeb news right here. We’ve got trailers and reviews from Tollywood, Kollywood, Mollywood, Bollywood and Hollywood, so buckle up and settle down for some glitzy fun! Hang on. Movies ain’t your cup of tea? No problem- Silly Monks’ cup is brimming with short films, music and YouTube news too! Album reviews, band news, short film discussions… we’re not even sure you can handle all this. So what are you waiting for? Take a nice big sip!</string>
@@ -123,22 +106,44 @@ Please contact us at info@sillymonks.com if you have any questions about our ter
 @ 2016 Silly Monks Entertainment Pvt Ltd. All Rights Reserved"</string>
 
 
-    <string name="banner_ad_unit_id">/6499/example/banner</string>
+    <string name="banner_ad_unit_id"> /133516651/LeapTest</string>
+
+    <!--<string name="banner_ad_unit_id">/6499/example/banner</string>-->
     <string name="title_activity_testing">TESTING</string>
     <string name="title_activity_my_profile">MyProfileActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
 
     <string name="os_tag">&amp;os=andy</string>
-    <string name="main_url">http://192.168.1.16:3000</string>
+    <!--<string name="main_url">http://192.168.1.16:3000</string>-->
+    <!--<string name="ngrok_main_url">http://f66228b4.ngrok.io</string>-->
+    <string name="main_url">http://cms.sillymonksapp.com</string>
+
+
+    <string name="ad_count">/api/v1/getNativeAdAndArticleCount/15</string>
+    <string name="search_url">/api/v1/getGenericSearchArticles?key=</string>
+    <string name="tag_search_url">/api/v1/getTagSearchArticles?key=</string>
+
+
 
     <string name="landing_url">/api/v1/getAllWoods</string>
     <string name="category_list_url">/api/v1/getWoodCategories?id=</string>
 
+    <string name="celebrity_url">/api/v1/getCelebrityData?id=</string>
+    <string name="gallery_url">/api/v1/getAlbumPhotos?id=</string>
+    <string name="wood_id_url">&amp;woodID=</string>
+
+
     <string name="articles_load_extra">/api/v1/getCategoryArticles?categoryID=</string>
     <string name="lastId">&amp;lastArticleID=</string>
 
+    <string name="article_page_url">/api/v1/getArticleData?id=</string>
+    <string name="related_articles_url">/api/v1/getRelatedArticles?articleID=</string>
+    <string name="categoryId_url"> &amp;categoryID=</string>
 
+
+    <string name="more_articles_url">/api/v1/getMoreRelatedArticles?articleID=</string>
+    <string name="mopub_interstitial_ad_id">6d4ed34709184518870d820a5dd5f27e</string>
 
 
 </resources>

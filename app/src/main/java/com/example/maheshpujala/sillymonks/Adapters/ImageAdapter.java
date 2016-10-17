@@ -1,6 +1,7 @@
 package com.example.maheshpujala.sillymonks.Adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.maheshpujala.sillymonks.R;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * Created by maheshpujala on 28/9/16.
@@ -16,17 +22,17 @@ import com.example.maheshpujala.sillymonks.R;
 
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
-    private final Integer[] Imageid;
+    private final LinkedHashMap ImageUrl;
 
-    public ImageAdapter(Context c,Integer[] Imageid ) {
+    public ImageAdapter(Context c,LinkedHashMap ImageUrl ) {
         mContext = c;
-        this.Imageid = Imageid;
+        this.ImageUrl = ImageUrl;
     }
 
     @Override
     public int getCount() {
         // TODO Auto-generated method stub
-        return Imageid.length;
+        return ImageUrl.size();
     }
 
     @Override
@@ -47,16 +53,15 @@ public class ImageAdapter extends BaseAdapter {
         View grid;
         LayoutInflater inflater = (LayoutInflater) mContext
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
+        List<String> imagesList = new ArrayList<String>(ImageUrl.values());
         if (convertView == null) {
-
             grid = new View(mContext);
             grid = inflater.inflate(R.layout.grid_gallery, null);
-            ImageView imageView = (ImageView)grid.findViewById(R.id.grid_image);
-            imageView.setImageResource(Imageid[position]);
         } else {
             grid = (View) convertView;
         }
+        ImageView imageView = (ImageView)grid.findViewById(R.id.grid_image);
+        Picasso.with(this.mContext).load(imagesList.get(position)).into(imageView);
 
         return grid;
     }

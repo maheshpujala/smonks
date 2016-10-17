@@ -1,6 +1,7 @@
 package com.example.maheshpujala.sillymonks.Adapters;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,6 +17,8 @@ import com.example.maheshpujala.sillymonks.Model.Article;
 import com.example.maheshpujala.sillymonks.R;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 
@@ -26,16 +29,15 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
     private  List<String> title;
     private final Activity context;
     private  List<String> image;
-    private final int responseCode;
     private String[] imageArray;
     List<Article> articles;
-    String category_name,total_articles_count;
+    String category_name,total_articles_count,comment_text,like_text,Days,Hours,Time,Minutes,timeValue;
 
 
-    TextView article_title,grid_text;
+    TextView article_title,grid_text,time_ago,comments_count,likes_count;
     ImageView cover_image,grid_image;
-    private final int VIEW_ITEM = 1;
-    private final int VIEW_PROG = 0;
+    private final int AD_TYPE = 1;
+    private final int CONTENT_TYPE = 0;
 
 
     // The minimum amount of items to have below your current scroll position
@@ -46,26 +48,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
     private OnLoadMoreListener onLoadMoreListener;
 
 
-    public RecyclerAdapter(Activity context, List<String> title, List<String> image, int responseCode) {
-        this.context = context;
-        this.title = title;
-        this.image=image;
-        this.responseCode=responseCode;
-
-        for(int i=0;i<=image.size();i++) {
-            imageArray = new String[image.size()];
-            imageArray = image.toArray(imageArray);
-        }
-        Log.e("Recycler Adapter", "Entered");
-    }
-
-    public RecyclerAdapter(final Activity context, final List<Article> articles, int responseCode, RecyclerView recyclerView, final String category_name,final String total_articles_count) {
+    public RecyclerAdapter(final Activity context, final List<Article> articles, RecyclerView recyclerView, final String category_name,final String total_articles_count) {
         this.context = context;
         this.articles = articles;
-        this.responseCode=responseCode;
         this.category_name=category_name;
         this.total_articles_count=total_articles_count;
-        Log.e("Recycler Adapter", "Entered");
 
         if (recyclerView.getLayoutManager() instanceof LinearLayoutManager) {
 
@@ -78,15 +65,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
                         public void onScrolled(RecyclerView recyclerView,
                                                int dx, int dy) {
                             super.onScrolled(recyclerView, dx, dy);
-                            Log.e("    Recycler Adapter   ", "  addOnScrollListener    ");
                             String current_tabTitle = ((CategoryActivity)context).currentTabTitle.trim();
-                            Log.e("\n Total Items Count in current View ",""+totalItemCount);
-                            Log.e("\n Last VisibleItem in current view",""+lastVisibleItem);
-                            Log.e("\n fixed visible Threshold ",""+visibleThreshold);
-                            Log.e("\n addOnScrollListener","loading  ="+loading);
-                            Log.e("\n category_name  = "+category_name, "currentTabTitle  ="+current_tabTitle);
-                            Log.e("\n total_articles_count ="+total_articles_count,"articles.size ="+articles.size());
-
 
                             if (current_tabTitle.equalsIgnoreCase(category_name) && Integer.parseInt(total_articles_count ) > articles.size() ) {
                                 totalItemCount = linearLayoutManager.getItemCount();
@@ -96,12 +75,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
                                 if (!loading
                                         && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
 
-                                    Log.e("\n !loading "+totalItemCount,"totalItemCount <="+(lastVisibleItem + visibleThreshold));
                                     // End has been reached
                                     // Do something
                                     if (onLoadMoreListener != null) {
-
-                                        Log.e("\n onLoadMoreListener","onLoadMore  ="+onLoadMoreListener);
 
                                         onLoadMoreListener.onLoadMore();
                                     }
@@ -115,54 +91,102 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
         }
     }
 
-
-    @Override
-    public int getItemViewType(int position) {
-        return articles.get(position) != null ? VIEW_ITEM : VIEW_PROG;
-    }
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,int viewType) {
-        RecyclerView.ViewHolder vh;
-        if (responseCode == 1) {
-            if (viewType == VIEW_ITEM) {
-                Log.e("Recycler Adapter", "onCreateViewHolder");
 
-                View article_view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_category, parent, false);
 
-                vh = new ArticleViewHolder(article_view);
-
-            } else {
-                View v = LayoutInflater.from(parent.getContext()).inflate(
-                        R.layout.progress_item, parent, false);
-
-                vh = new ProgressViewHolder(v);
+            if (category_name.equalsIgnoreCase("celebrities") || category_name.equalsIgnoreCase("gallery")){
+                View gallery_view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_gallery, parent, false);
+                return new ArticleViewHolder(gallery_view);
             }
-        }
-        else {
-            View gallery_view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_gallery, parent, false);
-            return new ArticleViewHolder(gallery_view);
-        }
-        return vh;
+            else {
+                View category_view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_category, parent, false);
+                return new ArticleViewHolder(category_view);
+            }
+
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        Log.e("Recycler Adapter", "onBindViewHolder");
-        if (responseCode == 1) {
-            if (holder instanceof ArticleViewHolder) {
-                Article a = articles.get(position);
-                article_title.setText(a.getId() + " - " + a.getTitle());
-                Picasso.with(this.context).load(a.getBannerMedia()).fit().into(cover_image);
-                Log.e("article ID"+a.getId(),"article title"+a.getTitle()+"position"+position);
 
-            } else {
-                ((ProgressViewHolder) holder).progressBar.setIndeterminate(true);
+            Article a = articles.get(position);
+            if (category_name.equalsIgnoreCase("celebrities") || category_name.equalsIgnoreCase("gallery")){
+                grid_text.setText(a.getTitle());
+                Picasso.with(this.context).load(a.getBannerMedia()).fit().into(grid_image);
             }
-        }
-        else{
-            grid_text.setText(title.get(position));
-            //  grid_image.setImageResource(image[position]);
-        }
+            else{
+                if(Integer.parseInt(a.getcommentsCount()) == 0){
+                    comment_text = "No Comments";
+                }else if(Integer.parseInt(a.getcommentsCount()) == 1){
+                    comment_text = a.getcommentsCount()+" Comment";
+                }else{
+                    comment_text = a.getcommentsCount()+" Comments";
+                }
+
+                if(Integer.parseInt(a.getlikesCount()) == 0){
+                    like_text = "No Likes";
+                }else if(Integer.parseInt(a.getlikesCount()) == 1){
+                    like_text = a.getlikesCount()+" Like";
+                }else{
+                    like_text = a.getlikesCount()+" Likes";
+                }
+
+                SimpleDateFormat dates = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+
+                String currentTime =dates.format(new Date());
+
+                try {
+
+                    //Dates to compare
+                    String CurrentDate = currentTime;
+                    String PublishedDate = a.getpublishedAt();
+
+                    Date date1;
+                    Date date2;
+
+
+                    //Setting dates
+                    date1 = dates.parse(CurrentDate);
+                    date2 = dates.parse(PublishedDate);
+
+                    //Comparing dates
+                    long difference = Math.abs(date1.getTime() - date2.getTime());
+                    long differenceDates = difference / (24 * 60 * 60 * 1000);
+
+                    //Convert long to String
+                    Days = Long.toString(differenceDates);
+                    if (Days.contentEquals("0")) {
+                        long differenceHours = difference / (60 * 60 * 1000);
+                        Hours = Long.toString(differenceHours);
+                        if (Hours.contentEquals("0")) {
+                            long differenceMinutes = difference / (60 * 1000);
+                            Minutes = Long.toString(differenceMinutes);
+                            if (Minutes.contentEquals("1")) {
+                                Time = Minutes + " minute ago";
+                            }else{
+                                Time = Minutes + " minutes ago";
+                            }
+                        }else if (Hours.contentEquals("1")) {
+                            Time = Hours + " hour ago";
+                        }else{
+                            Time = Hours + " hours ago";
+                        }
+                    } else if(Days.contentEquals("1")){
+                        Time = Days + " day ago";
+                    }else{
+                        Time = Days + " days ago";
+                    }
+
+                } catch (Exception exception) {
+                    Log.e("DIDN'T WORK", "exception " + exception);
+                }
+
+                article_title.setText(a.getTitle());
+                Picasso.with(this.context).load(a.getBannerMedia()).fit().into(cover_image);
+                time_ago.setText(Time);
+                comments_count.setText(comment_text);
+                likes_count.setText(like_text);
+            }
     }
     public void setLoaded() {
         loading = false;
@@ -176,17 +200,27 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
     public void setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener) {
         this.onLoadMoreListener = onLoadMoreListener;
     }
+    @Override
+    public int getItemViewType(int position)
+    {
+        if (position % 5 == 0){
+            return AD_TYPE;}else {
+            return CONTENT_TYPE;
+        }
+    }
 
     public class ArticleViewHolder extends RecyclerView.ViewHolder {
         public ArticleViewHolder(View view) {
             super(view);
-            Log.e("Recycler Adapter", "ViewHolder");
-            if (responseCode == 1) {
-                article_title = (TextView) view.findViewById(R.id.wood_name_sillymonks);
-                cover_image = (ImageView) view.findViewById(R.id.wood_cover_image);
-            } else {
+            if (category_name.equalsIgnoreCase("celebrities") || category_name.equalsIgnoreCase("gallery")){
                 grid_text = (TextView) view.findViewById(R.id.grid_text);
                 grid_image = (ImageView) view.findViewById(R.id.grid_image);
+            } else {
+                article_title = (TextView) view.findViewById(R.id.wood_name_sillymonks);
+                cover_image = (ImageView) view.findViewById(R.id.wood_cover_image);
+                time_ago = (TextView) view.findViewById(R.id.time_ago);
+                comments_count =(TextView)view.findViewById(R.id.comments_count);
+                likes_count  =(TextView)view.findViewById(R.id.likes_count);
             }
             this.setIsRecyclable(false);
 

@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.example.maheshpujala.sillymonks.R;
 
@@ -39,17 +40,14 @@ public class MyProfileActivity extends AppCompatActivity {
         }
 
 
+       TextView toolbar_title = (TextView)findViewById(R.id.toolbar_title);
+        toolbar_title.setText("Profile");
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
-    }
-    public Bundle getFBData() {
-        Bundle extras = getIntent().getExtras();
-
-        return extras;
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -87,8 +85,6 @@ public class MyProfileActivity extends AppCompatActivity {
             return mFragmentTitleList.get(position);
         }
     }
-
-
 
     @Override
     public void onBackPressed() {

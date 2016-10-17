@@ -1,6 +1,5 @@
 package com.example.maheshpujala.sillymonks.Activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -33,11 +33,16 @@ import com.example.maheshpujala.sillymonks.Adapters.RecyclerAdapter;
 import com.example.maheshpujala.sillymonks.Api.VolleyRequest;
 import com.example.maheshpujala.sillymonks.Model.Article;
 import com.example.maheshpujala.sillymonks.R;
-import com.example.maheshpujala.sillymonks.Utils.EndlessRecyclerViewScrollListener;
+import com.mopub.nativeads.MoPubAdAdapter;
+import com.mopub.nativeads.MoPubNativeAdPositioning;
+import com.mopub.nativeads.MoPubRecyclerAdapter;
+import com.mopub.nativeads.MoPubStaticNativeAdRenderer;
+import com.mopub.nativeads.ViewBinder;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -53,11 +58,13 @@ public class CategoryFragment extends Fragment {
     RecyclerView myRecyclerView;
     List<Article> articles;
     RecyclerView.LayoutManager layoutManager;
-    private RecyclerAdapter mAdapter;
-    protected Handler handler;
-    String category_name,category_id;
+    RecyclerAdapter mAdapter;
+    String category_name,category_id,wood_id;
     LinkedHashMap categories,articles_total_count;
     List<Article> moreArticles;
+    private MoPubRecyclerAdapter mRecyclerAdapter;
+    private MoPubAdAdapter mAdAdapter;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,35 +74,42 @@ public class CategoryFragment extends Fragment {
         articles_total_count= (LinkedHashMap) this.getArguments().getSerializable("articles_total_count");
         category_name = this.getArguments().getString("category_name");
         category_id = (String) categories.get(category_name);
-
-        Log.e("ONCREATE  CATEGORY Fragment","\n");
-        Log.e("\ncategory name== "+category_name,"\narticles_SIZE== "+articles.size());
+        wood_id = this.getArguments().getString("wood_id");
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         View rootView = inflater.inflate(R.layout.fragment_category, container, false);
+        myRecyclerView = (RecyclerView) rootView.findViewById(R.id.category_list);
+        myRecyclerView.setHasFixedSize(true);
+
+        mAdapter = new RecyclerAdapter(getActivity(), articles,myRecyclerView,category_name, (String) articles_total_count.get(category_name));
+        mRecyclerAdapter = new MoPubRecyclerAdapter(getActivity(), mAdapter,
+                MoPubNativeAdPositioning.serverPositioning());
+        MoPubStaticNativeAdRenderer moPubStaticNativeAdRenderer = new MoPubStaticNativeAdRenderer(
+                new ViewBinder.Builder(R.layout.mopub_ad_unit)
+                        .titleId(R.id.native_title)
+                        .textId(R.id.native_text)
+                        .mainImageId(R.id.native_main_image)
+                        .iconImageId(R.id.native_icon_image)
+                        .callToActionId(R.id.native_cta)
+                        .privacyInformationIconImageId(R.id.native_privacy_information_icon_image)
+                        .build()
+        );
+        mRecyclerAdapter.loadAds("2247fb5354a144fc997f0b5e0aede270");
+        mRecyclerAdapter.registerAdRenderer(moPubStaticNativeAdRenderer);
+        myRecyclerView.setAdapter(mRecyclerAdapter);
         return rootView;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        myRecyclerView = (RecyclerView) view.findViewById(R.id.category_list);
-        myRecyclerView.setHasFixedSize(true);
 
-        if (category_name.equalsIgnoreCase("celebrities") || category_name.equalsIgnoreCase("gallery")){
-            RecyclerView.LayoutManager gridLayoutManager = new GridLayoutManager(getContext(),2);
-            myRecyclerView.setLayoutManager(gridLayoutManager);
-        }else{
             layoutManager = new LinearLayoutManager(getContext());
             myRecyclerView.setLayoutManager(layoutManager);
-        }
 
-
-
-        mAdapter = new RecyclerAdapter(getActivity(), articles,1,myRecyclerView,category_name, (String) articles_total_count.get(category_name));
-        myRecyclerView.setAdapter(mAdapter);
 
 
         myRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
@@ -110,10 +124,19 @@ public class CategoryFragment extends Fragment {
             public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
                 View child = rv.findChildViewUnder(e.getX(), e.getY());
                 if (child != null && gestureDetector.onTouchEvent(e)) {
-                    int position = rv.getChildAdapterPosition(child);
-                    Toast.makeText(getContext(), "Clicked" + position, Toast.LENGTH_SHORT).show();
-                    Intent cat2art = new Intent(getActivity(), ArticleActivity.class);
-                    startActivity(cat2art);
+                    int positio = rv.getChildAdapterPosition(child);
+                 int  position=  mRecyclerAdapter.getOriginalPosition(positio);
+                    Article selectedArticle = articles.get(position);
+                    String article_id = selectedArticle.getId();
+                        Intent cat2art = new Intent(getActivity(), ArticleActivity.class);
+                        cat2art.putExtra("articleID",article_id);
+                        cat2art.putExtra("categoryID",category_id);
+                        cat2art.putExtra("categoryName",category_name);
+                        cat2art.putExtra("wood_id",wood_id);
+                        cat2art.putExtra("articles", (Serializable) articles);
+                        cat2art.putExtra("selected_position",""+position);
+
+                        startActivity(cat2art);
                 }
 
                 return false;
@@ -128,87 +151,34 @@ public class CategoryFragment extends Fragment {
             public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
 
             }
-
         });
 
         mAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
-                Log.e("onLoadMore!!!!!!!!!!!","Entered");
-                Log.e("Current Category -----",((CategoryActivity)getActivity()).currentTabTitle);
-                Log.e("Category Name ",category_name);
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
+                if (((CategoryActivity)getActivity()).currentTabTitle.trim().equalsIgnoreCase(category_name) && Integer.parseInt((String) articles_total_count.get(category_name)) > articles.size() ){
+                    // Call you API, then update the result into dataModels, then call adapter.notifyDataSetChanged().
+                    //Update the new data into list object
 
-                        if (((CategoryActivity)getActivity()).currentTabTitle.trim().equalsIgnoreCase(category_name) && Integer.parseInt((String) articles_total_count.get(category_name)) > articles.size() ){
-                            Log.e("----------Total articles size before getting extra data-----------"," ="+articles.size());
-                            Log.e(">>>>>>>>>>>>>>>","getting extra data from url<<<<<<<<<<<<<<");
-
-                        // Call you API, then update the result into dataModels, then call adapter.notifyDataSetChanged().
-                        //Update the new data into list object
-
-                             getExtraData();
-
-                        }
-
-                    }
-                }, 1000);
-
+                    getExtraData();
+                }
             }
         });
 
-
-
-
-//        // Add the scroll listener
-//        myRecyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener((LinearLayoutManager) layoutManager) {
-//            @Override
-//            public void onLoadMore(int page, int totalItemsCount) {
-//                // Triggered only when new data needs to be appended to the list
-//                // Add whatever code is needed to append new items to the bottom of the list
-//                Log.e("onLoadMore","page nO:- "+page+"\ntotalItemsCount:-"+totalItemsCount);
-//                Log.e("((CategoryActivity)getActivity()).getCurrentTabTitle()-----",((CategoryActivity)getActivity()).getCurrentTabTitle());
-//                Log.e("Category Name ",category_name);
-//                if (((CategoryActivity)getActivity()).getCurrentTabTitle().trim().equalsIgnoreCase(category_name) && Integer.parseInt((String) articles_total_count.get(category_name)) > totalItemsCount ){
-//                    Log.e("getting Extra Data","getting extra data");
-//
-//                    List<Article> newArticles =  getExtraData();
-//                    Log.e("Total articles Length-----------",""+articles.size());
-//                    Log.e("New   articles Length##########",""+newArticles.size());
-//
-//
-//                    final int currentSize = mAdapter.getItemCount();
-//                    articles.addAll(newArticles);
-//                    Log.e("Total  articles New Length$$$$$$$$$",""+articles.size());
-//
-//                    Handler handler = new Handler();
-//
-//                    handler.postDelayed(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            mAdapter.notifyItemRangeInserted(currentSize, articles.size() - 1);
-//                        }
-//                    }, 2000);
-//
-//                }
-//
-//
-//            }
-//        });
     }
-
+    @Override
+    public void onResume() {
+        // MoPub recommends loading knew ads when the user returns to your activity.
+        mRecyclerAdapter.loadAds("2247fb5354a144fc997f0b5e0aede270");
+        super.onResume();
+        }
     private void getExtraData() {
         moreArticles = new ArrayList<Article>();
         String lastId =articles.get(articles.size()-1).getId() ;
         final int previous_articles_count = articles.size();
-        Log.e("@@@@@@@@@@@   categoryName @@@@@@@@@@@  "+category_name,"\n  Last ID  ="+lastId);
 
-        //  Log.e("@@@@@@@@@@@  category_name"+category_name,"\n\n\nArticles Count"+articles.size());
         String url_extra_data =getResources().getString(R.string.main_url)+getResources().getString(R.string.articles_load_extra)+category_id+getResources().getString(R.string.lastId)+lastId+getResources().getString(R.string.os_tag);
-        //   Log.e("--------------------","cat_name"+category_name+"\n Cat_id"+category_id+"\n Article title"+articles.get(0).getTitle());
-        Log.e("Extra  articles URL $$$$",""+url_extra_data);
 
 // Request a JsonObject response from the provided URL.
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
@@ -217,27 +187,23 @@ public class CategoryFragment extends Fragment {
                     public void onResponse(JSONObject response) {
                         try {
                             JSONArray extra_articles_list = response.getJSONArray("articles");
-                            Log.e("===========Extra  articles JSONArray Length===========",""+extra_articles_list.length());
 
                             for (int k = 0; k < extra_articles_list.length(); k++) {
                                 JSONObject articles_json = extra_articles_list.getJSONObject(k);
 
                                 moreArticles.add(new Article(articles_json.getString("id"),
                                         articles_json.getString("title"),
-                                        articles_json.getString("large")));
-                                Log.e("!!!!!!!!! More articles IDS !!!!!!!!!!!!!!"," ="+moreArticles.get(k).getId());
+                                        articles_json.getString("large"),
+                                        articles_json.getString("published_at"),
+                                        articles_json.getString("likes_count"),
+                                        articles_json.getString("comments_count")));
 
                             }
                         }catch (Exception e ){
                             e.printStackTrace();
                         }
 
-
                         articles.addAll(moreArticles);
-                        Log.e("$$$$$$$$$Total articles after getting from json$$$$$$$$$ "," ="+articles.size());
-                       // mAdapter.notifyDataSetChanged();
-
-
 
                         mAdapter.notifyItemRangeInserted(previous_articles_count, moreArticles.size());
                         mAdapter.setLoaded();

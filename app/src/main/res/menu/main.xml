@@ -6,5 +6,12 @@
         android:icon="@android:drawable/ic_menu_search"
         android:orderInCategory="100"
         app:showAsAction="always"
+        app:actionViewClass="android.support.v7.widget.SearchView"
         android:title="Search"/>
+    <item
+        android:id="@+id/action_notify"
+        android:icon="@drawable/notification_bell32"
+        android:orderInCategory="200"
+        app:showAsAction="always"
+        android:title="Notification" />
 </menu>

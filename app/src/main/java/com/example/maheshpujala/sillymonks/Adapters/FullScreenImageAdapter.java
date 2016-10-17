@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.maheshpujala.sillymonks.R;
 import com.example.maheshpujala.sillymonks.Utils.TouchImageView;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -22,9 +23,8 @@ public class FullScreenImageAdapter extends PagerAdapter {
     private ArrayList<String> _imagePaths;
     private LayoutInflater inflater;
     private Context mContext;
-    Integer [] image;
-
-    public FullScreenImageAdapter(Activity activity, Integer[] image ) {
+    ArrayList<String> image;
+    public FullScreenImageAdapter(Activity activity, ArrayList<String> image) {
         this._activity = activity;
         mContext = _activity;
         this.image = image;
@@ -32,7 +32,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return 5;
+        return image.size();
     }
 
     @Override
@@ -48,9 +48,9 @@ public class FullScreenImageAdapter extends PagerAdapter {
         View viewLayout = inflater.inflate(R.layout.fragment_fullscreen_image, container, false);
 
         imgDisplay = (TouchImageView) viewLayout.findViewById(R.id.fullscreen_imageView);
-
-        imgDisplay.setImageResource(image[position]);
-
+//        for (int i=0;i<image.size();i++){
+         Picasso.with(this.mContext).load(image.get(position)).into(imgDisplay);
+//        }
         ((ViewPager) container).addView(viewLayout);
 
         return viewLayout;

@@ -8,9 +8,10 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.view.ContextThemeWrapper;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -22,7 +23,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,18 +31,19 @@ import com.android.volley.NetworkError;
 import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.maheshpujala.sillymonks.Adapters.ListAdapter;
 import com.example.maheshpujala.sillymonks.Api.NetworkCheck;
 import com.example.maheshpujala.sillymonks.Api.VolleyRequest;
+import com.example.maheshpujala.sillymonks.Model.SessionManager;
+import com.example.maheshpujala.sillymonks.Model.UserData;
 import com.example.maheshpujala.sillymonks.R;
 import com.example.maheshpujala.sillymonks.Utils.BounceListView;
+import com.example.maheshpujala.sillymonks.Utils.CircleImageView;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
@@ -53,26 +54,38 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+
 public class MainActivity extends AppCompatActivity
-        implements View.OnClickListener{
+        implements View.OnClickListener,Serializable{
     BounceListView home_list;
     View mDownView;
     int   mDownPosition;
     PublisherAdView mPublisherAdView;
-    ImageView profile_pic,fb_button,twitter_button,gplus_button;
+    ImageView fb_button,twitter_button,gplus_button;
+    CircleImageView profile_pic;
     TextView login;
     Bundle bundle;
     List<String> woodNames,woodIds,woodImages;
+    LinkedHashMap woodNames_Map;
     String id,name,bimages,original;
-
+    SessionManager session;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Session class instance
+        session = new SessionManager(getApplicationContext());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -83,7 +96,7 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        profile_pic = (ImageView) findViewById(R.id.profile_image);
+        profile_pic = (CircleImageView) findViewById(R.id.profile_image);
         profile_pic.setOnClickListener(this);
         login = (TextView) findViewById(R.id.signin);
         login.setOnClickListener(this);
@@ -108,8 +121,8 @@ public class MainActivity extends AppCompatActivity
         gplus_button = (ImageView) findViewById(R.id.gplus_button);
         gplus_button.setOnClickListener(this);
 
-        fromSplash();
         checkConnection();
+        checkLogin();
 
         mPublisherAdView = (PublisherAdView) findViewById(R.id.publisherAdView);
         mPublisherAdView.setAdSizes(AdSize.MEDIUM_RECTANGLE);
@@ -134,7 +147,12 @@ public class MainActivity extends AppCompatActivity
                                     int position, long id) {
                 if (position != 0) {
                     Intent it = new Intent(MainActivity.this, CategoryActivity.class);
-                    it.putExtra("wood_id",id);
+                    Bundle b = new Bundle();
+                    b.putSerializable("woodNames_Map",woodNames_Map);
+                    b.putString("wood_id",woodIds.get(position));
+
+                    it.putExtras(b);
+                    //   it.putExtra("wood_names", (Serializable) woodNames);
                     startActivity(it);
                 }
             }
@@ -162,12 +180,10 @@ public class MainActivity extends AppCompatActivity
                 if (mDownView != null) {
                     try {
                         mDownPosition = home_list.getPositionForView(mDownView);
-                        Log.e("position in on touch", "clicked" + mDownPosition);
                         if (mDownPosition == 0) {
                             mPublisherAdView.dispatchTouchEvent(motionEvent);
                         }
                     } catch (Exception e) {
-                        Log.e("Exception", "error");
                     }
                 }
                 view.onTouchEvent(motionEvent);
@@ -177,26 +193,25 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void fromSplash() {
-        Bundle extras = getIntent().getExtras();
-            if (extras != null) {
-                if (extras.containsKey("FB_id")) {
-                    String fb_id = extras.getString("FB_id");
-                    String fb_name = extras.getString("FB_name");
-                    String fb_email = extras.getString("FB_email");
-                    String fb_gender = extras.getString("FB_gender");
+    private void checkLogin() {
+        session = new SessionManager(getApplication());
+        Log.e("SESSION ",""+session.isLoggedIn());
 
-                    login.setText("My Profile");
-                    Picasso.with(this).load("https://graph.facebook.com/" + fb_id + "/picture?type=large").into(profile_pic);
-//Create the bundle
-                    bundle = new Bundle();
-                    bundle.putString("FB_NAME", fb_name);
-                    bundle.putString("FB_EMAIL", fb_email);
-                    bundle.putString("FB_ID", fb_id);
-                    bundle.putString("FB_GENDER", fb_gender);
-                }
+        if(session.isLoggedIn()){
+            List<UserData> userData=session.getUserDetails();
+            Log.e("USER ID  ",  userData.get(0).getId());
+            login.setText("My Profile");
+            if(userData.get(0).getLoginType().contains("google")){
+                Picasso.with(this).load(userData.get(0).getId()).into(profile_pic);
+            }else{
+                Picasso.with(this).load("https://graph.facebook.com/" +userData.get(0).getId()+ "/picture?type=large").into(profile_pic);
             }
         }
+        else{
+            login.setText("Sign In");
+            profile_pic.setImageResource(R.drawable.profile);
+        }
+    }
 
     public void checkConnection() {
         if (NetworkCheck.isInternetAvailable(MainActivity.this))  //if connection available
@@ -223,7 +238,6 @@ public class MainActivity extends AppCompatActivity
 
     public void sendRequest() {
         String url_land =getResources().getString(R.string.main_url)+getResources().getString(R.string.landing_url);
-        Log.i("------------URL------------",url_land);
 // Request a JsonObject response from the provided URL.
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, url_land, null, new Response.Listener<JSONObject>() {
@@ -261,7 +275,6 @@ public class MainActivity extends AppCompatActivity
                             dialog.show();
                         }
 
-
                     }
                 });
 // Add the request to the RequestQueue.
@@ -270,16 +283,16 @@ public class MainActivity extends AppCompatActivity
 
     public void getData(JSONObject json) {
         try {
-
-
             JSONArray wood =json.getJSONArray("woods") ;
             woodNames = new ArrayList<>();
             woodIds = new ArrayList<>();
             woodImages = new ArrayList<>();
 
+            woodNames_Map = new LinkedHashMap();
+
             woodNames.add(0,"");
-            woodImages.add(0,"");
             woodIds.add(0,"");
+            woodImages.add(0,"");
 
             for (int i = 0; i < wood.length(); i++) {
                 JSONObject jsonobject = wood.getJSONObject(i);
@@ -288,16 +301,16 @@ public class MainActivity extends AppCompatActivity
                  name = jsonobject.getString("name");
                  bimages = jsonobject.getString("original");
 
-
                 woodIds.add(id);
                 woodNames.add(name);
                 woodImages.add(bimages);
-            }
 
+                woodNames_Map.put(id,name);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        home_list.setAdapter(new ListAdapter(this, woodNames, woodImages,woodIds));
+        home_list.setAdapter(new ListAdapter(this, woodNames, woodImages,woodIds,2));
 
     }
 
@@ -310,6 +323,11 @@ public class MainActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
+    @Override
+    public void onResume(){
+        super.onResume();
+        checkLogin();
+    }
 
     @Override
     public void onClick(View view) {
@@ -317,23 +335,18 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.signin) {
             String login_check = login.getText().toString();
             if(login_check.contains("My Profile")){
-                Toast.makeText(this, "clicked My Profile", Toast.LENGTH_SHORT).show();
                 Intent profile = new Intent(this,MyProfileActivity.class);
-                profile.putExtras(bundle);
                 startActivity(profile);
             }else{
-                Toast.makeText(this, "clicked SIGN IN", Toast.LENGTH_SHORT).show();
                 Intent signin = new Intent(this,LoginActivity.class);
                 int requestCode = 6;
                 startActivityForResult(signin,requestCode);
             }
         }
-
         if (id == R.id.profile_image) {
             Toast.makeText(this, "clicked profile Image", Toast.LENGTH_SHORT).show();
             if(login.getText().toString().contains("My Profile")){
                 Intent profile = new Intent(this,MyProfileActivity.class);
-                profile.putExtras(bundle);
                 startActivity(profile);
             }
             Intent signin = new Intent(this,LoginActivity.class);
@@ -441,38 +454,29 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 6) {
             if (resultCode == Activity.RESULT_OK) {
-                if (data.hasExtra("FB_id")) {
-                    String fb_id=data.getStringExtra("FB_id");
-                    String fb_name=data.getStringExtra("FB_name");
-                    String fb_email=data.getStringExtra("FB_email");
-                    String fb_gender=data.getStringExtra("FB_gender");
 
-                    login.setText("My Profile");
-
-                    Picasso.with(this).load("https://graph.facebook.com/" + fb_id + "/picture?type=large").into(profile_pic);
-//Create the bundle
-                    bundle = new Bundle();
-                    bundle.putString("FB_NAME", fb_name);
-                    bundle.putString("FB_EMAIL", fb_email);
-                    bundle.putString("FB_ID", fb_id);
-                    bundle.putString("FB_GENDER",fb_gender);
-                    }
-
-                if (data.hasExtra("pname")){
-                    String g_name=data.getStringExtra("pname");
-                    String g_email=data.getStringExtra("pemail");
-                    Log.e("User Gplus_DETAILS", g_name+g_email);
-                    login.setText("My Profile");
-
-                    Picasso.with(this).load(data.getStringExtra("pphoto")).resize(200, 200).into(profile_pic);
-                    // Saving user credentials on successful login case
-//                    PrefUtils.saveToPrefs(NavigationDrawer.this, PREFS_LOGIN_USERNAME_KEY, g_name);
-//                    PrefUtils.saveToPrefs(NavigationDrawer.this, PREFS_LOGIN_EMAIL_KEY, g_email);
-                }
             }
             }
             if (resultCode == Activity.RESULT_CANCELED) {
-                //Write your code if there's no result
+
             }
         }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.notification, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+
+            case R.id.action_notify:
+                Intent notify = new Intent(this,NotificationsAndAlerts.class);
+                startActivity(notify);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

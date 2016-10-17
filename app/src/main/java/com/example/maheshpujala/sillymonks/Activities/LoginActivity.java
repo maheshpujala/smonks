@@ -44,6 +44,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import com.example.maheshpujala.sillymonks.Model.SessionManager;
 import com.example.maheshpujala.sillymonks.R;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -60,8 +61,12 @@ import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.model.people.Person;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -83,6 +88,8 @@ public class LoginActivity extends AppCompatActivity {
     private String accessToken;
     Button skip;
     boolean skipVisible = false;
+    SessionManager session;
+
 
 
     @Override
@@ -94,14 +101,16 @@ public class LoginActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-       showSkip();
+        // Session Manager
+        session = new SessionManager(getApplicationContext());
 
-        // Set Up Social Logins
+        showSkip();
+
+        // Set Up Fb Plugin
         mFacebookSignInButton = (LoginButton) findViewById(R.id.fb_login_button);
-
         getLoginDetails(mFacebookSignInButton);
 
-
+//G+ Plugin
         mGoogleSignInButton = (SignInButton) findViewById(R.id.gplus_signin_button);
         setGooglePlusButtonText(mGoogleSignInButton,"Google");
         mGoogleSignInButton.setOnClickListener(new OnClickListener() {
@@ -144,7 +153,6 @@ public class LoginActivity extends AppCompatActivity {
                 newString= null;
             } else {
                 newString= extras.getString("From Splash");
-
                 if (newString.contains("show_skip")){
                     skip =(Button) findViewById(R.id.skip_button);
                     skip.setVisibility(View.VISIBLE);
@@ -154,42 +162,24 @@ public class LoginActivity extends AppCompatActivity {
                         public void onClick(View view) {
                             Intent main = new Intent(LoginActivity.this,MainActivity.class);
                             startActivity(main);
-                            finish(); Log.e("login","finish");
+                            finish();
                         }
                     });
-
                 }
             }
-
         }
     }
-
     /*
           Initialize the facebook sdk and then callback manager will handle the login responses.
        */
     protected void facebookSDKInitialize() {
 
         FacebookSdk.sdkInitialize(getApplicationContext());
-
         mFacebookCallbackManager = CallbackManager.Factory.create();
-        AppEventsLogger.activateApp(this);
+        AppEventsLogger.activateApp(getApplication());
 
     }
-    protected void setGooglePlusButtonText(SignInButton signInButton,
-                                           String buttonText) {
-        for (int i = 0; i < signInButton.getChildCount(); i++) {
-            View v = signInButton.getChildAt(i);
 
-            if (v instanceof TextView) {
-                TextView tv = (TextView) v;
-                tv.setTextSize(15);
-                tv.setTypeface(null, Typeface.NORMAL);
-                tv.setText(buttonText);
-                tv.setGravity(Gravity.CENTER);
-                return;
-            }
-        }
-    }
     protected void getLoginDetails(LoginButton mFacebookSignInButton){
         // Callback registration
         mFacebookSignInButton.setReadPermissions(Arrays.asList("email"));
@@ -218,13 +208,27 @@ public class LoginActivity extends AppCompatActivity {
                 }
         );
     }
+    protected void setGooglePlusButtonText(SignInButton signInButton,
+                                           String buttonText) {
+        for (int i = 0; i < signInButton.getChildCount(); i++) {
+            View v = signInButton.getChildAt(i);
 
+            if (v instanceof TextView) {
+                TextView tv = (TextView) v;
+                tv.setTextSize(15);
+                tv.setTypeface(null, Typeface.NORMAL);
+                tv.setText(buttonText);
+                tv.setGravity(Gravity.CENTER);
+                return;
+            }
+        }
+    }
     private void signInWithGoogle() {
         if(mGoogleApiClient != null) {
             mGoogleApiClient.disconnect();
         }
-
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestScopes(new Scope(Scopes.PLUS_LOGIN))
                 .requestEmail()
                 .build();
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -244,18 +248,25 @@ public class LoginActivity extends AppCompatActivity {
             if(result.isSuccess()) {
                 final GoogleApiClient client = mGoogleApiClient;
                 GoogleSignInAccount acct = result.getSignInAccount();
+
                 String personName = acct.getDisplayName();
                 String personEmail = acct.getEmail();
                 Uri pPhoto = acct.getPhotoUrl();
+           //     String gender = acct.getGender();
                 String personPhoto =pPhoto.toString();
-                Intent googleIntent = getIntent();
 
-                googleIntent.putExtra("pname",personName);
-                googleIntent.putExtra("pemail", personEmail);
-                googleIntent.putExtra("pphoto", personPhoto);
+                if (skipVisible){
+                    Intent begin = new Intent(LoginActivity.this,MainActivity.class);
+                    startActivity(begin);
+                    session.createLoginSession(personPhoto,personName, personEmail,"Male","google");
+                    finish();
+                }else{
+                    Intent googleIntent = getIntent();
+                    setResult(Activity.RESULT_OK, googleIntent);
+                    session.createLoginSession(personPhoto,personName, personEmail,"Male","google");
+                    finish();
+                }
 
-                setResult(Activity.RESULT_OK, googleIntent);
-                finish();
 
             } else {
                 handleSignInResult(null);
@@ -290,23 +301,16 @@ public class LoginActivity extends AppCompatActivity {
                                 String mGender =bFacebookData.getString("gender");
                                 Log.e("onCompleted facebook Bundle",""+mFbid+mFullname+mEmail+mGender);
 
-
                                 if (skipVisible){
                                     Log.e("Skipvisible","Entereed");
                                     Intent begin = new Intent(LoginActivity.this,MainActivity.class);
-                                    begin.putExtra("FB_id", mFbid);
-                                    begin.putExtra("FB_name", mFullname);
-                                    begin.putExtra("FB_email", mEmail);
-                                    begin.putExtra("FB_gender", mGender);
                                     startActivity(begin);
+                                    session.createLoginSession(mFbid,mFullname, mEmail,mGender,"facebook");
                                     finish();
                                 }else{
                                     Intent returnIntent = getIntent();
-                                    returnIntent.putExtra("FB_id", mFbid);
-                                    returnIntent.putExtra("FB_name", mFullname);
-                                    returnIntent.putExtra("FB_email", mEmail);
-                                    returnIntent.putExtra("FB_gender", mGender);
                                     setResult(Activity.RESULT_OK, returnIntent);
+                                    session.createLoginSession(mFbid,mFullname, mEmail,mGender,"facebook");
                                 finish();
                             }
                             }
@@ -341,10 +345,7 @@ public class LoginActivity extends AppCompatActivity {
         return bundle;
     }
 
-
-
     private void attemptLogin() {
-
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);

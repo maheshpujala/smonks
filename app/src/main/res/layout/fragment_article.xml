@@ -5,25 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.maheshpujala.sillymonks.Activities.ArticleActivity">
-
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:elevation="4dp"
-            app:popupTheme="@style/AppTheme.PopupOverlay">
-
-        </android.support.v7.widget.Toolbar>
-
-    </android.support.design.widget.AppBarLayout>
-
     <ScrollView
         android:id="@+id/scrollView3"
         android:layout_width="match_parent"
@@ -42,30 +23,48 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
                 <ImageView
-                    android:id="@+id/imageView"
+                    android:id="@+id/article_banner"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/tollywood" />
+                    android:scaleType="fitXY" />
 
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@android:drawable/ic_media_play"
+                        android:id="@+id/play_image"
+                        android:visibility="gone"
+                        android:layout_gravity="center"/>
+                </FrameLayout>
                 <TextView
-                    android:id="@+id/textView3"
+                    android:id="@+id/article_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:gravity="center"
-                    android:text="Large Text"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
                 <TextView
-                    android:id="@+id/medium_txt"
+                    android:id="@+id/article_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:gravity="center"
-                    android:text="Medium Text"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:gravity="left|right"/>
+
+
+                 <com.google.android.flexbox.FlexboxLayout
+                    android:id="@+id/layout_tags"
+                     app:flexWrap="wrap"
+                     app:alignItems="stretch"
+                     app:alignContent="stretch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                 </com.google.android.flexbox.FlexboxLayout>
 
                 <RelativeLayout
                     android:id="@+id/rlRevRatings"
@@ -169,24 +168,31 @@
 
                 </RelativeLayout>
             </LinearLayout>
+            <LinearLayout
+                android:id="@+id/native_ad_container"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </LinearLayout>
 <RelativeLayout
+    android:id="@+id/layout_related_articles"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/sillymonks_mall_stroke">
     <TextView
-        android:id="@+id/text"
+        android:id="@+id/text_heading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Related Articles"
         android:textColor="@color/app_theme"
         android:gravity="center_horizontal|center"
+        android:textSize="20sp"
         android:textStyle="bold"/>
             <HorizontalScrollView
                 android:id="@+id/featuredHorzScrollView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scrollbars="none"
-                android:layout_below="@+id/text">
+                android:layout_below="@+id/text_heading">
 
 
                 <LinearLayout
@@ -198,86 +204,103 @@
                         android:layout_width="140dp"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
-                        android:layout_margin="3dp">
+                        android:layout_margin="3dp"
+                        android:background="@drawable/sillymonks_mall_stroke">
 
                         <ImageView
                             android:id="@+id/hztl_image1"
                             android:layout_width="match_parent"
                             android:layout_height="200dp"
-                            android:background="@drawable/bollywood"
+                            android:background="@drawable/drawer_image"
                             android:scaleType="fitXY" />
 
                         <TextView
                             android:id="@+id/movie_name1"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:gravity="center"
-                            android:text="Movie Name " />
+                            android:maxLines="2"
+                            android:ellipsize="end"
+                            android:clickable="true"/>
 
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="140dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:orientation="vertical"
-                        android:layout_margin="3dp">
+                        android:layout_margin="3dp"
+                        android:background="@drawable/sillymonks_mall_stroke">
 
 
                     <ImageView
                             android:id="@+id/hztl_image2"
                             android:layout_width="match_parent"
                             android:layout_height="200dp"
-                            android:background="@drawable/bollywood"
-                            android:scaleType="fitXY" />
+                        android:background="@drawable/drawer_image"
+                        android:scaleType="fitXY" />
 
                         <TextView
                             android:id="@+id/movie_name2"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:gravity="center"
-                            android:text="Movie Name Movie Name " />
+                            android:maxLines="2"
+                            android:ellipsize="end"
+                            android:clickable="true"/>
+
 
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="140dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:orientation="vertical"
-                        android:layout_margin="3dp">
+                        android:layout_margin="3dp"
+                        android:background="@drawable/sillymonks_mall_stroke">
 
 
-                        <ImageView
+
+                    <ImageView
                             android:id="@+id/hztl_image3"
                             android:layout_width="match_parent"
                             android:layout_height="200dp"
-                            android:background="@drawable/bollywood"
+                            android:background="@drawable/drawer_image"
                             android:scaleType="fitXY" />
 
                         <TextView
                             android:id="@+id/movie_name3"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:gravity="center"
-                            android:text="Movie Name" />
+                            android:maxLines="2"
+                            android:ellipsize="end"
+                            android:clickable="true"/>
 
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="140dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:orientation="vertical"
-                        android:layout_margin="3dp">
+                        android:layout_margin="3dp"
+                        android:background="@drawable/sillymonks_mall_stroke">
 
-                        <ImageView
+
+                    <ImageView
                             android:id="@+id/hztl_image4"
                             android:layout_width="match_parent"
                             android:layout_height="200dp"
-                            android:background="@drawable/bollywood"
+                            android:background="@drawable/drawer_image"
                             android:scaleType="fitXY" />
 
                         <TextView
                             android:id="@+id/movie_name4"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:gravity="center"
-                            android:text="Movie Name" />
+                            android:maxLines="2"
+                            android:ellipsize="end"
+                            android:text="Movie Name"
+                            android:clickable="true"/>
+
 
                     </LinearLayout>
 
@@ -285,6 +308,7 @@
                         android:layout_width="140dp"
                         android:layout_height="match_parent">
                         <TextView
+                            android:id="@+id/more_articles"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:text="More"
@@ -298,5 +322,6 @@
 </RelativeLayout>
 
         </LinearLayout>
+
     </ScrollView>
 </RelativeLayout>

@@ -9,17 +9,17 @@ import java.io.Serializable;
 
 public class Article implements Serializable {
 
-    private String id;
-    private String title;
-    private String bannerMedia;
+    private String id,title,bannerMedia,publishedAt,likesCount,commentsCount;
 
 
-
-
-    public Article(String id,String title,String bannerMedia) {
+    public Article(String id,String title,String bannerMedia,String publishedAt,String likesCount,String commentsCount) {
         this.id = id;
         this.title = title;
         this.bannerMedia = bannerMedia;
+        this.publishedAt = publishedAt;
+        this.likesCount = likesCount;
+        this.commentsCount = commentsCount;
+
     }
     public String getId() {
         return id;
@@ -32,6 +32,19 @@ public class Article implements Serializable {
     public String getBannerMedia() {
         return bannerMedia;
     }
+
+    public String getpublishedAt() {
+        return publishedAt;
+    }
+
+    public String getlikesCount() {
+        return likesCount;
+    }
+
+    public String getcommentsCount() {
+        return commentsCount;
+    }
+
 
     @Override
     public String toString(){
