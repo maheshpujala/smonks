@@ -25,6 +25,7 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.bumptech.glide.Glide;
 import com.example.maheshpujala.sillymonks.Adapters.ImageAdapter;
 import com.example.maheshpujala.sillymonks.Api.VolleyRequest;
 import com.example.maheshpujala.sillymonks.Model.SessionManager;
@@ -40,7 +41,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -154,9 +154,9 @@ public class MyProfileFragment extends Fragment {
         email.setText(user_data.get(0).getEmail());
         gender.setText(user_data.get(0).getGender());
         if(user_data.get(0).getId().contains("jpg")){
-            Picasso.with(getContext()).load(user_data.get(0).getId()).into(pic);
+            Glide.with(getContext()).load(user_data.get(0).getId()).into(pic);
         }else{
-            Picasso.with(getContext()).load("https://graph.facebook.com/" +user_data.get(0).getId()+ "/picture?type=large").into(pic);
+            Glide.with(getContext()).load("https://graph.facebook.com/" +user_data.get(0).getId()+ "/picture?type=large").into(pic);
         }
     }
 

@@ -12,10 +12,10 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.maheshpujala.sillymonks.Activities.CategoryActivity;
 import com.example.maheshpujala.sillymonks.Model.Article;
 import com.example.maheshpujala.sillymonks.R;
-import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -112,7 +112,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
             Article a = articles.get(position);
             if (category_name.equalsIgnoreCase("celebrities") || category_name.equalsIgnoreCase("gallery")){
                 grid_text.setText(a.getTitle());
-                Picasso.with(this.context).load(a.getBannerMedia()).fit().into(grid_image);
+                Glide.with(this.context).load(a.getBannerMedia()).into(grid_image);
             }
             else{
                 if(Integer.parseInt(a.getcommentsCount()) == 0){
@@ -182,7 +182,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
                 }
 
                 article_title.setText(a.getTitle());
-                Picasso.with(this.context).load(a.getBannerMedia()).fit().into(cover_image);
+                Glide.with(this.context).load(a.getBannerMedia()).into(cover_image);
                 time_ago.setText(Time);
                 comments_count.setText(comment_text);
                 likes_count.setText(like_text);

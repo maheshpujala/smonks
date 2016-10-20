@@ -29,6 +29,7 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.bumptech.glide.Glide;
 import com.example.maheshpujala.sillymonks.Api.VolleyRequest;
 import com.example.maheshpujala.sillymonks.Model.Article;
 import com.example.maheshpujala.sillymonks.R;
@@ -39,7 +40,6 @@ import com.facebook.ads.AdListener;
 import com.facebook.ads.MediaView;
 import com.facebook.ads.NativeAd;
 import com.google.android.flexbox.FlexboxLayout;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -296,24 +296,15 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
 
     private void setRelatedArticles() {
 
-        Picasso.with(getContext()).load(relatedArticlesList.get(0).getBannerMedia()).into(hztl_image1);
-        Picasso.with(getContext()).load(relatedArticlesList.get(1).getBannerMedia()).into(hztl_image2);
-        Picasso.with(getContext()).load(relatedArticlesList.get(2).getBannerMedia()).into(hztl_image3);
-        Picasso.with(getContext()).load(relatedArticlesList.get(3).getBannerMedia()).into(hztl_image4);
+        Glide.with(getContext()).load(relatedArticlesList.get(0).getBannerMedia()).into(hztl_image1);
+        Glide.with(getContext()).load(relatedArticlesList.get(1).getBannerMedia()).into(hztl_image2);
+        Glide.with(getContext()).load(relatedArticlesList.get(2).getBannerMedia()).into(hztl_image3);
+        Glide.with(getContext()).load(relatedArticlesList.get(3).getBannerMedia()).into(hztl_image4);
         movie_name1.setText(relatedArticlesList.get(0).getTitle());
         movie_name2.setText(relatedArticlesList.get(1).getTitle());
         movie_name3.setText(relatedArticlesList.get(2).getTitle());
         movie_name4.setText(relatedArticlesList.get(3).getTitle());
-//        Picasso.with(getContext()).load(relatedArticlesImage.get(0)).into(hztl_image1);
-//        Picasso.with(getContext()).load(relatedArticlesImage.get(1)).into(hztl_image2);
-//        Picasso.with(getContext()).load(relatedArticlesImage.get(2)).into(hztl_image3);
-//        Picasso.with(getContext()).load(relatedArticlesImage.get(3)).into(hztl_image4);
-//        movie_name1.setText(relatedArticlesTitle.get(0));
-//        movie_name2.setText(relatedArticlesTitle.get(1));
-//        movie_name3.setText(relatedArticlesTitle.get(2));
-//        movie_name4.setText(relatedArticlesTitle.get(3));
     }
-
 
     public void getData(JSONObject json) {
         try {
@@ -341,7 +332,7 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
 
     private void setDataInViews() {
 
-        Picasso.with(getContext()).load(banner_image).into(article_banner);
+        Glide.with(getContext()).load(banner_image).into(article_banner);
         article_title.setText(title);
         article_description.setText(Html.fromHtml(description));
 

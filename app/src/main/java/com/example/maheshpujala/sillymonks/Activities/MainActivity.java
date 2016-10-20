@@ -36,6 +36,7 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.bumptech.glide.Glide;
 import com.example.maheshpujala.sillymonks.Adapters.ListAdapter;
 import com.example.maheshpujala.sillymonks.Api.NetworkCheck;
 import com.example.maheshpujala.sillymonks.Api.VolleyRequest;
@@ -48,7 +49,6 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -201,9 +201,9 @@ public class MainActivity extends AppCompatActivity
             List<UserData> userData=session.getUserDetails();
             login.setText("My Profile");
             if(userData.get(0).getLoginType().contains("google")){
-                Picasso.with(this).load(userData.get(0).getId()).into(profile_pic);
+                Glide.with(this).load(userData.get(0).getId()).into(profile_pic);
             }else{
-                Picasso.with(this).load("https://graph.facebook.com/" +userData.get(0).getId()+ "/picture?type=large").into(profile_pic);
+                Glide.with(this).load("https://graph.facebook.com/" +userData.get(0).getId()+ "/picture?type=large").into(profile_pic);
             }
         }
         else{

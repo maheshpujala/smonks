@@ -9,8 +9,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.maheshpujala.sillymonks.R;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -61,7 +61,7 @@ public class ImageAdapter extends BaseAdapter {
             grid = (View) convertView;
         }
         ImageView imageView = (ImageView)grid.findViewById(R.id.grid_image);
-        Picasso.with(this.mContext).load(imagesList.get(position)).into(imageView);
+        Glide.with(this.mContext).load(imagesList.get(position)).into(imageView);
 
         return grid;
     }

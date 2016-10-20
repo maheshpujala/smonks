@@ -9,9 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.maheshpujala.sillymonks.R;
 import com.example.maheshpujala.sillymonks.Utils.TouchImageView;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -49,7 +49,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
         imgDisplay = (TouchImageView) viewLayout.findViewById(R.id.fullscreen_imageView);
 //        for (int i=0;i<image.size();i++){
-         Picasso.with(this.mContext).load(image.get(position)).into(imgDisplay);
+         Glide.with(this.mContext).load(image.get(position)).into(imgDisplay);
 //        }
         ((ViewPager) container).addView(viewLayout);
 

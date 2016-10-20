@@ -11,12 +11,12 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.maheshpujala.sillymonks.Activities.FavouritesFragment;
 import com.example.maheshpujala.sillymonks.Model.Article;
 import com.example.maheshpujala.sillymonks.R;
 import com.example.maheshpujala.sillymonks.Utils.EnhancedListView;
 import com.example.maheshpujala.sillymonks.Utils.SquareImageView;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,7 +86,7 @@ public class Favourite_ListAdapter extends BaseAdapter{
 		List<Article> articles= new ArrayList<Article>(favouritesMap.values()) ;
 		Log.e("articles---from map",""+articles);
 
-		Picasso.with(mContext).load(articles.get(position).getThumbImage()).into(holder.favouriteImage);
+		Glide.with(mContext).load(articles.get(position).getThumbImage()).into(holder.favouriteImage);
 		holder.favouriteText.setText(articles.get(position).getTitle());
 		holder.favDescText.setText(Html.fromHtml(articles.get(position).getDescription()));
 

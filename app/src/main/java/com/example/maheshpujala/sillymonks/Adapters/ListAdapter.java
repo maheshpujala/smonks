@@ -16,11 +16,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.maheshpujala.sillymonks.Model.Article;
 import com.example.maheshpujala.sillymonks.R;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
-import com.squareup.picasso.Picasso;
 
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -108,8 +108,8 @@ public class ListAdapter extends BaseAdapter {
 
                 wood_name_tv.setText(wood_titles.get(position));
 
-                Picasso.with(this.context).load(wood_images.get(position)).fit().into(cover_image);
-                Log.e("picasso","+"+wood_images.get(position));
+                Glide.with(this.context).load(wood_images.get(position)).into(cover_image);
+                Log.e("Glide","+"+wood_images.get(position));
 
             }
         }else{
@@ -192,7 +192,7 @@ public class ListAdapter extends BaseAdapter {
             comments_count.setText(comment_text);
             likes_count.setText(like_text);
             wood_name_tv.setText(articlesList.get(position).getTitle());
-            Picasso.with(this.context).load(articlesList.get(position).getBannerMedia()).fit().into(cover_image);
+            Glide.with(this.context).load(articlesList.get(position).getBannerMedia()).into(cover_image);
         }
 
         return rowView;
