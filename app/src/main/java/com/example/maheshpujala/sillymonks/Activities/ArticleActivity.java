@@ -5,16 +5,13 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.maheshpujala.sillymonks.Model.Article;
 import com.example.maheshpujala.sillymonks.R;
@@ -41,6 +38,7 @@ public class ArticleActivity extends AppCompatActivity implements MoPubInterstit
     private CallbackManager mFacebookCallbackManager;
     private MoPubInterstitial mInterstitial;
     int swipeCount = 2;
+    Intent getIds;
 
 
 
@@ -48,7 +46,7 @@ public class ArticleActivity extends AppCompatActivity implements MoPubInterstit
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         facebookSDKInitialize();
-        setContentView(R.layout.article_activity);
+        setContentView(R.layout.activity_article);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -65,16 +63,24 @@ public class ArticleActivity extends AppCompatActivity implements MoPubInterstit
             Log.e("mopub inter", "" + e.getLocalizedMessage());
         }
 
-        Intent getIds = getIntent();
+        getIds = getIntent();
+
         articleID = getIds.getExtras().getString("articleID");
         categoryID = getIds.getExtras().getString("categoryID");
-        categoryName = getIds.getExtras().getString("categoryName");
         wood_id = getIds.getExtras().getString("wood_id");
         articles = (List<Article>) getIds.getExtras().getSerializable("articles");
         selected_position = getIds.getExtras().getString("selected_position");
         Log.e("selected_position",""+selected_position);
+        if(getIds.getExtras().getString("identifyActivity").equalsIgnoreCase("RelatedArticles")){
+            Log.e("identifyActivity ENTERED",""+getIds.getExtras().getString("identifyActivity"));
+            toolbar_title.setText(articles.get(Integer.parseInt(selected_position)).getFirstCatName());
+            Log.e("TOOLBAR TITLE SET",""+articles.get(Integer.parseInt(selected_position)).getFirstCatName());
 
-        toolbar_title.setText(categoryName);
+        }else{
+            toolbar_title.setText(getIds.getExtras().getString("categoryName"));
+            Log.e("TOOLBAR TITLE SET IGNORING CASE",""+getIds.getExtras().getString("categoryName"));
+
+        }
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
         ArticleAdapter adapter = new ArticleAdapter(getSupportFragmentManager());
@@ -95,6 +101,14 @@ public class ArticleActivity extends AppCompatActivity implements MoPubInterstit
                     }
                 }
                 swipeCount++;
+                Log.e("onPageScrolled Arg",""+arg0);
+                Article article = articles.get(arg0);
+
+                if(getIds.getExtras().getString("identifyActivity").equalsIgnoreCase("relatedArticles")){
+                    toolbar_title.setText(article.getFirstCatName());
+                }else{
+                    toolbar_title.setText(getIds.getExtras().getString("categoryName"));
+                }
 
             }
 
@@ -176,6 +190,8 @@ public class ArticleActivity extends AppCompatActivity implements MoPubInterstit
             b.putString("categoryName",categoryName);
             b.putSerializable("articles", (Serializable) articles);
             fragment.setArguments(b);
+            Log.e("getIds.getExtras().getString(\"identifyActivity\")",""+getIds.getExtras().getString("identifyActivity"));
+            Log.e("article.getFirstCatName()",""+article.getFirstCatName());
 
             return fragment;
         }

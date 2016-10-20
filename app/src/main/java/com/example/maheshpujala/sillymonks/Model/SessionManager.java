@@ -30,6 +30,9 @@ public class SessionManager {
     // All Shared Preferences Keys
     private static final String IS_LOGIN = "IsLoggedIn";
 
+    // Smonks Id
+    public static final String KEY_SMONKSID= "sMonksId";
+
     // User name (make variable public to access from outside)
     public static final String KEY_NAME = "name";
 
@@ -56,9 +59,11 @@ public class SessionManager {
     /**
      * Create login session
      * */
-    public void createLoginSession(String id,String name, String email,String gender,String login_type){
+    public void createLoginSession(String sMonksId,String id,String name, String email,String gender,String login_type){
         // Storing login value as TRUE
         editor.putBoolean(IS_LOGIN, true);
+        // Storing id in pref
+        editor.putString(KEY_SMONKSID, sMonksId);
 
         // Storing id in pref
         editor.putString(KEY_ID, id);
@@ -109,7 +114,7 @@ public class SessionManager {
     public  List<UserData> getUserDetails(){
         List<UserData> user = new ArrayList<UserData>();
         // user name
-        user.add(new UserData(pref.getString(KEY_ID, null),pref.getString(KEY_NAME, null),pref.getString(KEY_EMAIL, null),pref.getString(KEY_GENDER, null),pref.getString(KEY_LOGIN_TYPE,null)));
+        user.add(new UserData(pref.getString(KEY_SMONKSID, null),pref.getString(KEY_ID, null),pref.getString(KEY_NAME, null),pref.getString(KEY_EMAIL, null),pref.getString(KEY_GENDER, null),pref.getString(KEY_LOGIN_TYPE,null)));
 
         // return user
         return user;

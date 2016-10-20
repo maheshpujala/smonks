@@ -111,6 +111,7 @@ public class CategoryGridFragment extends Fragment {
                         startActivity(cat2gal);
                     } else {
                         Intent cat2art = new Intent(getActivity(), ArticleActivity.class);
+                        cat2art.putExtra("identifyActivity","categoryActivity");
                         cat2art.putExtra("articleID", article_id);
                         cat2art.putExtra("categoryID", category_id);
                         cat2art.putExtra("categoryName", category_name);

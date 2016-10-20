@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <RelativeLayout
+        android:id="@+id/favourite_relative_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dip"
+        android:layout_marginTop="5dip"
+       >
+
+        <com.example.maheshpujala.sillymonks.Utils.SquareImageView
+            android:id="@+id/favourite_image"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/splash_image" />
+
+        <LinearLayout
+            android:id="@+id/favou_des_linear"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/favourite_image"
+            android:layout_centerVertical="true"
+            android:layout_margin="8dp"
+            android:layout_toLeftOf="@+id/favourite_icon"
+            android:layout_toRightOf="@+id/favourite_image"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/favourite_text"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textColor="@color/user_name_country_color"
+                android:textSize="@dimen/Content_heading_size" />
+
+            <TextView
+                android:id="@+id/fav_description"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:ellipsize="end"
+                android:lines="2"
+                android:textColor="@color/addcart_prod_button_color"
+                android:textSize="@dimen/fav_desc_size" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/view1"
+            android:layout_width="1dp"
+            android:layout_height="fill_parent"
+            android:layout_toLeftOf="@+id/favourite_icon"
+            android:background="@color/cart_background_stroke"
+            android:minHeight="72dp"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/favourite_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:contentDescription="wood_name"
+            android:src="@android:drawable/btn_dialog"
+             />
+    </RelativeLayout>
+
+</LinearLayout>

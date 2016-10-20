@@ -57,6 +57,15 @@
             android:name=".Activities.LoginActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".Activities.SignUpActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".Activities.ForgotPasswordActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".Activities.EditProfileActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".Activities.ContactAndAdvertise"
             android:screenOrientation="portrait" />
         <activity

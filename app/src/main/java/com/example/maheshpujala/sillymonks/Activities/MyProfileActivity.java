@@ -53,7 +53,7 @@ public class MyProfileActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFrag(new MyProfileFragment(), "My Profile");
-        adapter.addFrag(new FavouritiesFragment(), "Favourites");
+        adapter.addFrag(new FavouritesFragment(), "Favourites");
         viewPager.setAdapter(adapter);
     }
 

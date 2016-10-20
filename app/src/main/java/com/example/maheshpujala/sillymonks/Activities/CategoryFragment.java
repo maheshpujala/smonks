@@ -44,6 +44,7 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -60,17 +61,17 @@ public class CategoryFragment extends Fragment {
     RecyclerView.LayoutManager layoutManager;
     RecyclerAdapter mAdapter;
     String category_name,category_id,wood_id;
-    LinkedHashMap categories,articles_total_count;
+    LinkedHashMap articles_total_count;
     List<Article> moreArticles;
     private MoPubRecyclerAdapter mRecyclerAdapter;
     private MoPubAdAdapter mAdAdapter;
-
+    HashMap categories;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         articles = (List<Article>) this.getArguments().getSerializable("articles");
-        categories = (LinkedHashMap) this.getArguments().getSerializable("categories");
+        categories = (HashMap) this.getArguments().getSerializable("categories");
         articles_total_count= (LinkedHashMap) this.getArguments().getSerializable("articles_total_count");
         category_name = this.getArguments().getString("category_name");
         category_id = (String) categories.get(category_name);
@@ -129,6 +130,7 @@ public class CategoryFragment extends Fragment {
                     Article selectedArticle = articles.get(position);
                     String article_id = selectedArticle.getId();
                         Intent cat2art = new Intent(getActivity(), ArticleActivity.class);
+                        cat2art.putExtra("identifyActivity","categoryArticles" );
                         cat2art.putExtra("articleID",article_id);
                         cat2art.putExtra("categoryID",category_id);
                         cat2art.putExtra("categoryName",category_name);

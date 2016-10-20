@@ -107,11 +107,7 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
         params = new FlexboxLayout.LayoutParams(FlexboxLayout.LayoutParams.WRAP_CONTENT,
                 FlexboxLayout.LayoutParams.WRAP_CONTENT);
         params.setMargins(8, 5, 8, 5);
-        if (categoryName.equalsIgnoreCase("Celebrities")) {
-            text_heading.setText("Related Celebrities");
-        }else{
-            text_heading.setText("Related Articles");
-        }
+        text_heading.setText("Related Articles");
 
         play_image = (ImageView) view.findViewById(R.id.play_image);
         play_image.setOnClickListener(this);
@@ -215,13 +211,9 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
 // above to retrieve the ad properties. For example:
 
     public void sendRequest(String articleId, String categoryId, String wood_id) {
-        if (categoryName.equalsIgnoreCase("Celebrities")) {
-
-            articlePageURL = getResources().getString(R.string.main_url) + getResources().getString(R.string.celebrity_url) + articleId + getResources().getString(R.string.os_tag);
-        } else {
 
             articlePageURL = getResources().getString(R.string.main_url) + getResources().getString(R.string.article_page_url) + articleId + getResources().getString(R.string.os_tag);
-        }
+        Log.e("articlePageURL",""+articlePageURL);
         final String relatedArticlesURL = getResources().getString(R.string.main_url) + getResources().getString(R.string.related_articles_url) + articleId + getResources().getString(R.string.categoryId_url) + categoryId + getResources().getString(R.string.wood_id_url) + wood_id;
         Log.e("relatedArticlesURL", relatedArticlesURL);
 // Request a JsonObject response from the provided URL.
@@ -273,13 +265,14 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
 
             for (int k = 0; k < related_articles_array.length(); k++) {
                 JSONObject relatedArticles = related_articles_array.getJSONObject(k);
-
-                relatedArticlesList.add(new Article(relatedArticles.getString("id"),
+                Article a = new Article(relatedArticles.getString("id"),
                         relatedArticles.getString("title"),
                         relatedArticles.getString("large"),
                         relatedArticles.getString("published_at"),
                         relatedArticles.getString("likes_count"),
-                        relatedArticles.getString("comments_count")));
+                        relatedArticles.getString("comments_count"));
+                a.setFirstCategoryName(relatedArticles.getString("first_cageory_name"));
+                relatedArticlesList.add(a);
 
 //                related_article_id = relatedArticles.getString("id");
 //                related_article_title = relatedArticles.getString("title");
@@ -324,14 +317,6 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
 
     public void getData(JSONObject json) {
         try {
-            if (categoryName.equalsIgnoreCase("celebrities")) {
-                JSONObject celebrity_data = json.getJSONObject("celebrity");
-                id = celebrity_data.getString("id");
-                title = celebrity_data.getString("name");
-                category_name_fromJson = celebrity_data.getString("category_name");
-                description = celebrity_data.getString("profile");
-                banner_image = celebrity_data.getString("original");
-            } else {
                 JSONObject article_data = json.getJSONObject("article");
                 id = article_data.getString("id");
                 title = article_data.getString("title");
@@ -347,7 +332,6 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
 
                 for (int k = 0; k < articleTags.length(); k++) {
                     tags.add(articleTags.get(k).toString());
-                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -361,16 +345,11 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
         article_title.setText(title);
         article_description.setText(Html.fromHtml(description));
 
-        if (categoryName.equalsIgnoreCase("celebrities")) {
-        } else {
             if (youtube_id.length() > 0) {
                 play_image.setVisibility(View.VISIBLE);
-            }
 
             setTags();
         }
-
-
     }
 
     private void setTags() {
@@ -415,7 +394,6 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
             Log.e("relatedArticleId", "" + relatedArticleId);
             relatedArticleClick(relatedArticleId,0);
 
-
         }
         if (id == R.id.hztl_image2 || id == R.id.movie_name2) {
             relatedArticleId = relatedArticlesList.get(1).getId();
@@ -437,7 +415,7 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
         }
         if (id == R.id.more_articles) {
             getActivity().finish();
-            Intent moreArticles = new Intent(getContext(), RelatedArticles.class);
+            Intent moreArticles = new Intent(getContext(),RelatedArticles.class);
             moreArticles.putExtra("identifyActivity", "RelatedArticles");
             moreArticles.putExtra("categoryID", categoryID);
             moreArticles.putExtra("articleID", articleID);
@@ -453,18 +431,16 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
     private void relatedArticleClick(String relatedArticleId,int selected_position) {
         getActivity().finish();
         Intent articleScreen = new Intent(getContext(), ArticleActivity.class);
+        articleScreen.putExtra("identifyActivity","relatedArticles" );
         articleScreen.putExtra("articles", (Serializable) relatedArticlesList);
         articleScreen.putExtra("previousArticles", (Serializable) articlesList);
         articleScreen.putExtra("articleID", relatedArticleId);
         articleScreen.putExtra("categoryID", categoryID);
         articleScreen.putExtra("selected_position",""+selected_position);
-        if (categoryName.equalsIgnoreCase("celebrities")) {
-            articleScreen.putExtra("categoryName", categoryName);
-        } else {
-            articleScreen.putExtra("categoryName", category_name_fromJson);
-        }
+//        articleScreen.putExtra("firstCategoryName", relatedArticlesList.get(selected_position).getFirstCatName());
         articleScreen.putExtra("wood_id", wood_id);
         startActivity(articleScreen);
+        Log.e("categoryName ======== relatedArticleClick",""+relatedArticlesList.get(selected_position).getFirstCatName());
     }
 
     private void reportError(VolleyError error) {

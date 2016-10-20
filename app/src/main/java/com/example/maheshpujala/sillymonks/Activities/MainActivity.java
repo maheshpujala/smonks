@@ -199,7 +199,6 @@ public class MainActivity extends AppCompatActivity
 
         if(session.isLoggedIn()){
             List<UserData> userData=session.getUserDetails();
-            Log.e("USER ID  ",  userData.get(0).getId());
             login.setText("My Profile");
             if(userData.get(0).getLoginType().contains("google")){
                 Picasso.with(this).load(userData.get(0).getId()).into(profile_pic);
@@ -299,7 +298,7 @@ public class MainActivity extends AppCompatActivity
 
                  id = jsonobject.getString("id");
                  name = jsonobject.getString("name");
-                 bimages = jsonobject.getString("original");
+                 bimages = jsonobject.getString("medium");
 
                 woodIds.add(id);
                 woodNames.add(name);
@@ -454,6 +453,7 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 6) {
             if (resultCode == Activity.RESULT_OK) {
+              //  checkLogin();
 
             }
             }

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/login_page_background">
+
+
+    <ScrollView
+        android:id="@+id/main_scroll"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+        <EditText
+            android:id="@+id/current_pwd"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:hint="current password"
+            android:inputType="textEmailAddress" />
+
+        <EditText
+            android:id="@+id/new_pwd"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="new password"
+            android:inputType="textEmailAddress" />
+
+        <EditText
+            android:id="@+id/re_new_pwd"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:hint="confirm password"
+            android:inputType="textEmailAddress" />
+
+        <Button
+            android:id="@+id/change_pwd_on_screen"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:padding="10dp"
+            android:background="@color/app_theme"
+            android:text="change password"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+
+</RelativeLayout>

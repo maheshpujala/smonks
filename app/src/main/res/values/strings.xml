@@ -18,7 +18,13 @@
     <string name="prompt_mobile">Mobile</string>
     <string name="prompt_desc">Description</string>
     <string name="prompt_sbmt">SUBMIT</string>
+    <string name="no_favourites">You have no favourites</string>
 
+    <string name="elv_undo">Undo</string>
+    <string name="elv_undo_all">Undo All</string>
+    <string name="elv_item_deleted">Item deleted</string>
+    <string name="elv_n_items_deleted">%1$s items deleted</string>
+    <string name="insights_tab_text">Insights</string>
 
     <string name="advertise">Advertise With Us</string>
     <string name="contact">Contact Us</string>
@@ -115,7 +121,7 @@ Please contact us at info@sillymonks.com if you have any questions about our ter
 
 
     <string name="os_tag">&amp;os=andy</string>
-    <!--<string name="main_url">http://192.168.1.16:3000</string>-->
+    <!--<string name="main_url">http://192.168.1.14:3000</string>-->
     <!--<string name="ngrok_main_url">http://f66228b4.ngrok.io</string>-->
     <string name="main_url">http://cms.sillymonksapp.com</string>
 
@@ -144,6 +150,31 @@ Please contact us at info@sillymonks.com if you have any questions about our ter
 
     <string name="more_articles_url">/api/v1/getMoreRelatedArticles?articleID=</string>
     <string name="mopub_interstitial_ad_id">6d4ed34709184518870d820a5dd5f27e</string>
+
+    <string name="user_registration_url">/api/v1/PostUserRegistrationFromApp?</string>
+    <string name="firstname_url">first_name=</string>
+    <string name="lastname_url">&amp;last_name=</string>
+    <string name="email_url">&amp;email=</string>
+    <string name="password_url">&amp;password=</string>
+
+    <string name="social_registration_url">/api/v1/PostUserRegistrationWithSocial?</string>
+    <string name="pluginType_url">&amp;type=</string>
+
+    <string name="user_login_url">/api/v1/PostUserLogin?email=</string>
+    <string name="user_logout_url">/api/v1/PostUserLogout</string>
+
+    <string name="update_user_url">/api/v1/PostUserProfileUpdate?id=</string>
+    <string name="change_password_url"> /api/v1/PostUserChangePassword?current_password=</string>
+    <string name="user_id_url">&amp;id=</string>
+    <string name="new_password_url">&amp;password=</string>
+    <string name="confirm_password_url">&amp;password_confirmation=</string>
+
+
+
+    <string name="forgotPassword_url">/api/v1/PostUserForgotPassword?email=</string>
+
+    <string name="user_favourites_url">/api/v1/getUserFavourites?id=</string>
+
 
 
 </resources>

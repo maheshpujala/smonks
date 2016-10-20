@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/toolbar_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginLeft="-72dp"
+                    android:text="TEXT"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"/>
+            </LinearLayout>
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
+
+    <ScrollView
+        android:id="@+id/main_scroll"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <LinearLayout
+            android:id="@+id/edit_text_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp" >
+
+                <com.example.maheshpujala.sillymonks.Utils.CircleImageView
+                    android:id="@+id/logo"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    android:padding="12dp"
+                    android:src="@drawable/profile">
+                </com.example.maheshpujala.sillymonks.Utils.CircleImageView>
+
+                <Button
+                    android:id="@+id/change_picture"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_margin="10dp"
+                    android:layout_toRightOf="@+id/logo"
+                    android:background="#FEC106"
+                    android:text="change picture" />
+
+                <Button
+                    android:id="@+id/change_pwd"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@+id/change_picture"
+                    android:layout_margin="10dp"
+                    android:layout_toRightOf="@+id/logo"
+                    android:background="#FEC106"
+                    android:text="change password"/>
+            </RelativeLayout>
+            <EditText
+                android:id="@+id/firstName_edit"
+                android:layout_width="fill_parent"
+                android:layout_height="45dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:hint="First Name"
+                android:imeOptions="flagNoFullscreen"
+                android:inputType="textCapSentences"
+                android:paddingLeft="10dp"
+                android:maxLines="1" />
+
+            <EditText
+                android:id="@+id/lastName_edit"
+                android:layout_width="fill_parent"
+                android:layout_height="45dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:hint="Last Name"
+                android:imeOptions="flagNoFullscreen"
+                android:inputType="textCapSentences"
+                android:paddingLeft="10dp"
+                android:maxLines="1" />
+
+            <EditText
+                android:id="@+id/emailAddress_edit"
+                android:layout_width="fill_parent"
+                android:layout_height="45dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:hint="Email"
+                android:imeOptions="flagNoExtractUi"
+                android:paddingLeft="10dp"
+                android:maxLines="1" />
+
+            <EditText
+                android:id="@+id/gender_edit"
+                android:layout_width="fill_parent"
+                android:layout_height="45dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:hint="Gender"
+                android:imeOptions="flagNoExtractUi"
+                android:inputType="textCapSentences"
+                android:paddingLeft="10dp"
+                android:maxLines="1" />
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical" >
+
+                <Button
+                    android:id="@+id/save_changes"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="50dp"
+                    android:background="@color/app_theme"
+                    android:minHeight="48dp"
+                    android:text="save changes"
+                    android:textColor="@android:color/white"
+                    android:textSize="20sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+    <include
+        android:id="@+id/layout_change_pwd"
+        layout="@layout/change_pwd"
+        android:gravity="center_vertical"
+        android:visibility="gone" >
+    </include>
+
+        </LinearLayout>

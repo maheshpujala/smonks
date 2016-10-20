@@ -99,11 +99,12 @@ public class RelatedArticles extends AppCompatActivity implements SearchView.OnQ
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
                 Intent it = new Intent(RelatedArticles.this, ArticleActivity.class);
+                     it.putExtra("identifyActivity","RelatedArticles" );
                 if (toolbar_title.getText().toString().trim().contains(getResources().getString(R.string.search_result))){
 
                     it.putExtra("articleID",searchedArticlesList.get(position).getId());
                     it.putExtra("categoryID",fCategoryId.get(position));
-                    it.putExtra("categoryName",fCategoryName.get(position));
+//                    it.putExtra("categoryName",fCategoryName.get(position));
                     it.putExtra("wood_id",fWoodId.get(position));
                     it.putExtra("articles", (Serializable) searchedArticlesList);
                     it.putExtra("selected_position",""+position);
@@ -112,7 +113,7 @@ public class RelatedArticles extends AppCompatActivity implements SearchView.OnQ
 
                     it.putExtra("articleID",articlesList.get(position).getId());
                     it.putExtra("categoryID",categoryID);
-                    it.putExtra("categoryName",categoryName);
+//                    it.putExtra("categoryName",categoryName);
                     it.putExtra("wood_id",wood_id);
                     it.putExtra("articles", (Serializable) articlesList);
                     it.putExtra("selected_position",""+position);
@@ -153,17 +154,18 @@ public class RelatedArticles extends AppCompatActivity implements SearchView.OnQ
             searchedArticlesList = new ArrayList<Article>();
 
             for (int i = 0; i < searchedArticles.length(); i++) {
-                JSONObject jsonobject = searchedArticles.getJSONObject(i);
+                JSONObject search = searchedArticles.getJSONObject(i);
+                Article a = new Article(search.getString("id"),
+                        search.getString("title"),
+                        search.getString("large"),
+                        search.getString("published_at"),
+                        search.getString("likes_count"),
+                        search.getString("comments_count"));
+                a.setFirstCategoryName(search.getString("first_cageory_name"));
+                searchedArticlesList.add(a);
 
-                searchedArticlesList.add(new Article(jsonobject.getString("id"),
-                        jsonobject.getString("title"),
-                        jsonobject.getString("original"),
-                        jsonobject.getString("published_at"),
-                        jsonobject.getString("likes_count"),
-                        jsonobject.getString("comments_count")));
-                fCategoryId.add(jsonobject.getString("first_cageory_id"));
-                fCategoryName.add(jsonobject.getString("first_cageory_name"));
-                fWoodId.add(jsonobject.getString("first_wood_id"));
+                fCategoryId.add(search.getString("first_cageory_id"));
+                fWoodId.add(search.getString("first_wood_id"));
 
             }
         } catch (JSONException e) {
@@ -230,14 +232,14 @@ public class RelatedArticles extends AppCompatActivity implements SearchView.OnQ
             articlesList = new ArrayList<Article>();
             for (int k = 0; k < more_articles_array.length(); k++) {
                 JSONObject relatedArticles = more_articles_array.getJSONObject(k);
-
-                articlesList.add(new Article(relatedArticles.getString("id"),
+                Article a = new Article(relatedArticles.getString("id"),
                         relatedArticles.getString("title"),
-                        relatedArticles.getString("original"),
+                        relatedArticles.getString("large"),
                         relatedArticles.getString("published_at"),
                         relatedArticles.getString("likes_count"),
-                        relatedArticles.getString("comments_count")));
-
+                        relatedArticles.getString("comments_count"));
+                a.setFirstCategoryName(relatedArticles.getString("first_cageory_name"));
+                articlesList.add(a);
 
             }
         } catch (JSONException e) {
