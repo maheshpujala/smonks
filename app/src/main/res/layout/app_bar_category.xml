@@ -83,7 +83,6 @@
             app:expandedTitleMarginEnd="64dp">
         </android.support.design.widget.CollapsingToolbarLayout>
 
-
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.NestedScrollView
@@ -91,7 +90,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/collapsing"
-        android:clipToPadding="false"
+        android:clipToPadding="true"
         android:background="@android:color/white"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -99,27 +98,39 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-            <android.support.design.widget.TabLayout
-                android:id="@+id/tabs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:tabGravity="center"
-                android:scrollbars="none"
-                android:background="@android:color/black"
-                app:tabIndicatorColor="#e54425"
-                app:tabTextColor="#dbd6db"
-                app:tabSelectedTextColor="#dbd6db"
-                app:tabIndicatorHeight="5dp"
-                app:tabContentStart="120dp"
-                android:elevation="5dp"
-                app:tabMode="scrollable"
-                android:gravity="bottom"/>
+            <!--<android.support.design.widget.TabLayout-->
+                <!--android:id="@+id/tabs"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--app:tabGravity="center"-->
+                <!--android:scrollbars="none"-->
+                <!--android:background="@android:color/black"-->
+                <!--app:tabIndicatorColor="#e54425"-->
+                <!--app:tabTextColor="#dbd6db"-->
+                <!--app:tabSelectedTextColor="#dbd6db"-->
+                <!--app:tabIndicatorHeight="5dp"-->
+                <!--app:tabContentStart="120dp"-->
+                <!--android:elevation="5dp"-->
+                <!--app:tabMode=""-->
+                <!--android:gravity="bottom"/>-->
             <android.support.v4.view.ViewPager
                 android:id="@+id/viewpager"
+                android:layout_below="@+id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="5dp"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+                <android.support.v4.view.PagerTabStrip
+                    android:id="@+id/pagerTabStrip"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@android:color/black"
+                    android:layout_gravity="top"
+                    android:textAlignment="center"
+                    style="@style/PagerTabStripText"
+                    />
+
+            </android.support.v4.view.ViewPager>
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>

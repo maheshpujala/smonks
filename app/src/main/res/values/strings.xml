@@ -121,9 +121,9 @@ Please contact us at info@sillymonks.com if you have any questions about our ter
 
 
     <string name="os_tag">&amp;os=andy</string>
-    <!--<string name="main_url">http://192.168.1.14:3000</string>-->
+    <string name="main_url">http://192.168.1.14:3000</string>
     <!--<string name="ngrok_main_url">http://f66228b4.ngrok.io</string>-->
-    <string name="main_url">http://cms.sillymonksapp.com</string>
+    <!--<string name="main_url">http://cms.sillymonksapp.com</string>-->
 
 
     <string name="ad_count">/api/v1/getNativeAdAndArticleCount/15</string>
@@ -147,6 +147,10 @@ Please contact us at info@sillymonks.com if you have any questions about our ter
     <string name="related_articles_url">/api/v1/getRelatedArticles?articleID=</string>
     <string name="categoryId_url"> &amp;categoryID=</string>
 
+    <string name="isLiked_url">/api/v1/getIsFavorite?articleID=</string>
+    <string name="userLiked_url">/api/v1/getLikeArticle?articleID=</string>
+    <string name="userDisliked_url">/api/v1/getDislikeArticle?articleID=</string>
+    <string name="userId_url">&amp;userID=</string>
 
     <string name="more_articles_url">/api/v1/getMoreRelatedArticles?articleID=</string>
     <string name="mopub_interstitial_ad_id">6d4ed34709184518870d820a5dd5f27e</string>
@@ -168,7 +172,6 @@ Please contact us at info@sillymonks.com if you have any questions about our ter
     <string name="user_id_url">&amp;id=</string>
     <string name="new_password_url">&amp;password=</string>
     <string name="confirm_password_url">&amp;password_confirmation=</string>
-
 
 
     <string name="forgotPassword_url">/api/v1/PostUserForgotPassword?email=</string>

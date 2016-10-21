@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
@@ -12,6 +13,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.NestedScrollView;
@@ -72,7 +74,8 @@ import java.util.TreeMap;
  */
 public class CategoryActivity extends AppCompatActivity implements  View.OnClickListener {
     private Toolbar toolbar;
-    private TabLayout tabLayout;
+   // private TabLayout tabLayout;
+    PagerTabStrip pagerTabStrip;
     private ViewPager viewPager;
     SearchView searchView;
     TextView home,toolbar_title;
@@ -134,7 +137,6 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
         scrollView = (NestedScrollView) findViewById (R.id.scroll_nested);
         scrollView.setFillViewport (true);
         scrollView.setNestedScrollingEnabled(true);
-
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -179,21 +181,26 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
         });
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
+        pagerTabStrip =(PagerTabStrip) findViewById(R.id.pagerTabStrip);
+        pagerTabStrip.setTabIndicatorColor(Color.parseColor("#e54425"));
 
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
 
+//        int selectedPagePos = pagerTabStrip.indexOfChild(pagerTabStrip.getFocusedChild());
 
-        tabLayout.addOnTabSelectedListener(
-                new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
-                    @Override
-                    public void onTabSelected(TabLayout.Tab tab) {
-                        super.onTabSelected(tab);
-                        List <Article> articles = (List<Article>) cat_articles.get(tab.getText());
-                        currentTabTitle = (String) tab.getText();
+        //  tabLayout = (TabLayout) findViewById(R.id.tabs);
+      //  tabLayout.setupWithViewPager(viewPager);
 
-                    }
-                });
+//
+//        tabLayout.addOnTabSelectedListener(
+//                new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
+//                    @Override
+//                    public void onTabSelected(TabLayout.Tab tab) {
+//                        super.onTabSelected(tab);
+//                        List <Article> articles = (List<Article>) cat_articles.get(tab.getText());
+//                        currentTabTitle = (String) tab.getText();
+//
+//                    }
+//                });
 
 
     }
@@ -266,6 +273,8 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         Set<String> set = categories.keySet();
 
+     //   adapter.getPageTitle(selectedPagePos)
+
 //populate set
         for (String cat_name : set) {
             Bundle b = new Bundle();
@@ -329,7 +338,7 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
 
         public void addFrag(Fragment fragment, String title) {
             mFragmentList.add(fragment);
-            mFragmentTitleList.add("          "+title+"          ");
+            mFragmentTitleList.add(title);
         }
 
         @Override

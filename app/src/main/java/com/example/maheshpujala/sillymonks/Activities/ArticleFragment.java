@@ -1,5 +1,6 @@
 package com.example.maheshpujala.sillymonks.Activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -9,6 +10,7 @@ import android.support.v7.view.ContextThemeWrapper;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -32,14 +34,19 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.bumptech.glide.Glide;
 import com.example.maheshpujala.sillymonks.Api.VolleyRequest;
 import com.example.maheshpujala.sillymonks.Model.Article;
+import com.example.maheshpujala.sillymonks.Model.SessionManager;
+import com.example.maheshpujala.sillymonks.Model.UserData;
 import com.example.maheshpujala.sillymonks.R;
 import com.facebook.ads.Ad;
 import com.facebook.ads.AdChoicesView;
 import com.facebook.ads.AdError;
 import com.facebook.ads.AdListener;
+import com.facebook.ads.AdSettings;
 import com.facebook.ads.MediaView;
 import com.facebook.ads.NativeAd;
+import com.facebook.login.LoginManager;
 import com.google.android.flexbox.FlexboxLayout;
+import com.google.android.gms.auth.api.Auth;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,19 +62,22 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
 
     RatingBar rating;
     ImageView comment, share, like;
-    String articlePageURL, categoryName, categoryID, wood_id, articleID, id, title, category_name_fromJson, likes, banner_image, youtube_id, brightcove_link, description, related_article_id, related_article_title, related_article_image, relatedArticleId;
-    TextView text_heading, article_title, article_description, movie_name1, movie_name2, movie_name3, movie_name4, more_articles;
+    String articlePageURL, categoryName, categoryID, wood_id, articleID, id, title, category_name_fromJson, likes, banner_image, youtube_id, brightcove_link, description,comments,related_article_id, related_article_title, related_article_image, relatedArticleId;
+    Float average_rating;
+    TextView text_heading, article_title, article_description,text_like, movie_name1, movie_name2, movie_name3, movie_name4, more_articles,text_rating;
     ImageView article_banner, play_image, hztl_image1, hztl_image2, hztl_image3, hztl_image4;
     FlexboxLayout layout_tags;
     List<String> tags, relatedArticlesId, relatedArticlesTitle, relatedArticlesImage;
     FlexboxLayout.LayoutParams params;
     List<Article> relatedArticlesList,articlesList;
     RelativeLayout layout_related_articles;
-
+    boolean isLikedByUser;
     private NativeAd nativeAd;
     private LinearLayout nativeAdContainer;
     private LinearLayout adView;
     private AdChoicesView adChoicesView;
+    SessionManager session;
+    List<UserData> userData;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,6 +88,9 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
         wood_id = arguments.getString("wood_id");
         categoryName = arguments.getString("categoryName");
         articlesList = (List<Article>) arguments.getSerializable("articles");
+
+        session = new SessionManager(getContext());
+        userData = session.getUserDetails();
 
         sendRequest(articleID,categoryID,wood_id);
     }
@@ -113,20 +126,23 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
         play_image.setOnClickListener(this);
 
         rating = (RatingBar) view.findViewById(R.id.ratingBar);
-        rating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating,
-                                        boolean fromUser) {
-                // TODO Auto-generated method stub
-                Toast.makeText(getApplicationContext(), Float.toString(rating), Toast.LENGTH_LONG).show();
-            }
-
-        });
+        rating.setOnTouchListener(new View.OnTouchListener() {
+                                      @Override
+                                      public boolean onTouch(View v, MotionEvent event) {
+                                          if (event.getAction() == MotionEvent.ACTION_UP) {
+                                              // TODO perform your action here
+                                              Log.e("setOnTouchListener","RATING BAR");
+                                              showRatingDialog();
+                                          }
+                                          return true;
+                                      }
+                                  });
 
         comment = (ImageView) view.findViewById(R.id.comment);
         share = (ImageView) view.findViewById(R.id.share);
         like = (ImageView) view.findViewById(R.id.favourite_heart);
+        text_like = (TextView) view.findViewById(R.id.text_like);
+        text_rating = (TextView) view.findViewById(R.id.text_rating);
         hztl_image1 = (ImageView) view.findViewById(R.id.hztl_image1);
         hztl_image2 = (ImageView) view.findViewById(R.id.hztl_image2);
         hztl_image3 = (ImageView) view.findViewById(R.id.hztl_image3);
@@ -145,10 +161,14 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
         movie_name3.setOnClickListener(this);
         movie_name4.setOnClickListener(this);
         more_articles.setOnClickListener(this);
+        like.setOnClickListener(this);
+        share.setOnClickListener(this);
+        comment.setOnClickListener(this);
         showNativeAd();
     }
 
     private void showNativeAd() {
+        AdSettings.addTestDevice("74c31e936f85fe7dae895251d175f7cc");
         nativeAd = new NativeAd(getContext(), "948537241887382_1177898238951280");
         nativeAd.setAdListener(new AdListener() {
 
@@ -210,12 +230,9 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
 // to build your customized native UI. Modify the onAdLoaded function
 // above to retrieve the ad properties. For example:
 
-    public void sendRequest(String articleId, String categoryId, String wood_id) {
-
-            articlePageURL = getResources().getString(R.string.main_url) + getResources().getString(R.string.article_page_url) + articleId + getResources().getString(R.string.os_tag);
-        Log.e("articlePageURL",""+articlePageURL);
+    public void sendRequest(final String articleId, String categoryId, String wood_id) {
+        articlePageURL = getResources().getString(R.string.main_url) + getResources().getString(R.string.article_page_url) + articleId + getResources().getString(R.string.os_tag);
         final String relatedArticlesURL = getResources().getString(R.string.main_url) + getResources().getString(R.string.related_articles_url) + articleId + getResources().getString(R.string.categoryId_url) + categoryId + getResources().getString(R.string.wood_id_url) + wood_id;
-        Log.e("relatedArticlesURL", relatedArticlesURL);
 // Request a JsonObject response from the provided URL.
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, articlePageURL, null, new Response.Listener<JSONObject>() {
@@ -223,6 +240,7 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
                     public void onResponse(JSONObject response) {
                         getData(response);
                         getRelatedArticles(relatedArticlesURL);
+                        isLiked(articleId);
                     }
                 }, new Response.ErrorListener() {
 
@@ -234,6 +252,37 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
 // Add the request to the RequestQueue.
         VolleyRequest.getInstance().addToRequestQueue(jsObjRequest);
     }
+
+    public void isLiked(String articleId) {
+
+      final String  isLikedURL = getResources().getString(R.string.main_url) + getResources().getString(R.string.isLiked_url) + articleId + getResources().getString(R.string.userId_url)+userData.get(0).getSmonksId();
+
+        // Request a JsonObject response from the provided URL.
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET, isLikedURL, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONObject likes=response.getJSONObject("likes") ;
+                            isLikedByUser = likes.getBoolean("liked");
+                            if(isLikedByUser){
+                                like.setImageResource(R.drawable.heart);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        reportError(error);
+                    }
+                });
+// Add the request to the RequestQueue.
+        VolleyRequest.getInstance().addToRequestQueue(jsObjRequest);
+    }
+
 
     private void getRelatedArticles(String relatedArticlesUrl) {
         // Request a JsonObject response from the provided URL.
@@ -257,10 +306,6 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
     private void getRelatedData(JSONObject response) {
         try {
             JSONArray related_articles_array = response.getJSONArray("articles");
-//            relatedArticlesId = new ArrayList<String>();
-//            relatedArticlesTitle = new ArrayList<String>();
-//            relatedArticlesImage = new ArrayList<String>();
-
             relatedArticlesList = new ArrayList<Article>();
 
             for (int k = 0; k < related_articles_array.length(); k++) {
@@ -273,14 +318,6 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
                         relatedArticles.getString("comments_count"));
                 a.setFirstCategoryName(relatedArticles.getString("first_cageory_name"));
                 relatedArticlesList.add(a);
-
-//                related_article_id = relatedArticles.getString("id");
-//                related_article_title = relatedArticles.getString("title");
-//                related_article_image = relatedArticles.getString("original");
-//
-//                relatedArticlesId.add(related_article_id);
-//                relatedArticlesTitle.add(related_article_title);
-//                relatedArticlesImage.add(related_article_image);
 
             }
 
@@ -308,7 +345,14 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
 
     public void getData(JSONObject json) {
         try {
+
                 JSONObject article_data = json.getJSONObject("article");
+            JSONArray articleTags = article_data.getJSONArray("tags");
+            tags = new ArrayList<String>();
+
+            for (int k = 0; k < articleTags.length(); k++) {
+                tags.add(articleTags.get(k).toString());
+            }
                 id = article_data.getString("id");
                 title = article_data.getString("title");
                 category_name_fromJson = article_data.getString("category_name");
@@ -317,13 +361,10 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
                 youtube_id = article_data.getString("youtube_link");
                 brightcove_link = article_data.getString("brightcove_link");
                 description = article_data.getString("description");
-                JSONArray articleTags = article_data.getJSONArray("tags");
+                average_rating = Float.valueOf(article_data.getString("average_rating"));
+                comments = article_data.getString("comments");
 
-                tags = new ArrayList<String>();
 
-                for (int k = 0; k < articleTags.length(); k++) {
-                    tags.add(articleTags.get(k).toString());
-            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -335,12 +376,15 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
         Glide.with(getContext()).load(banner_image).into(article_banner);
         article_title.setText(title);
         article_description.setText(Html.fromHtml(description));
-
-            if (youtube_id.length() > 0) {
-                play_image.setVisibility(View.VISIBLE);
-
-            setTags();
+        text_like.setText("Likes :"+likes);
+        if (youtube_id.length() > 0) {
+             play_image.setVisibility(View.VISIBLE);
         }
+        setTags();
+        rating.setRating(average_rating);
+        text_rating.setText("Avg. user ratings:"+average_rating+"/5");
+
+
     }
 
     private void setTags() {
@@ -375,6 +419,29 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         int id = v.getId();
 
+        if(id == R.id.favourite_heart){
+            setLike();
+        }
+
+        if(id == R.id.share){
+            try{
+                Intent i = new Intent(Intent.ACTION_SEND);
+                i.setType("text/plain");
+                i.putExtra(Intent.EXTRA_SUBJECT, "SillyMonks Ride On Digital");
+                String sAux = "\nLet me share you this article\n\n";
+                sAux = sAux + "http://sillymonksapp.com/share/show_article/"+"wood_name"+"/"+"categoryName"+"/"+"articleID";
+                i.putExtra(Intent.EXTRA_TEXT, sAux);
+                startActivity(Intent.createChooser(i, "choose one"));
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        if (id == R.id.comment){
+        }
+
+
         if (id == R.id.play_image) {
             Intent youtubeActivity = new Intent(getContext(), YoutubeActivity.class);
             youtubeActivity.putExtra("YoutubeId", youtube_id);
@@ -382,25 +449,21 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
         }
         if (id == R.id.hztl_image1 || id == R.id.movie_name1) {
             relatedArticleId = relatedArticlesList.get(0).getId();
-            Log.e("relatedArticleId", "" + relatedArticleId);
             relatedArticleClick(relatedArticleId,0);
 
         }
         if (id == R.id.hztl_image2 || id == R.id.movie_name2) {
             relatedArticleId = relatedArticlesList.get(1).getId();
-            Log.e("relatedArticleId", "" + relatedArticleId);
             relatedArticleClick(relatedArticleId,1);
 
         }
         if (id == R.id.hztl_image3 || id == R.id.movie_name3) {
             relatedArticleId = relatedArticlesList.get(2).getId();
-            Log.e("relatedArticleId", "" + relatedArticleId);
             relatedArticleClick(relatedArticleId,2);
 
         }
         if (id == R.id.hztl_image4 || id == R.id.movie_name4) {
             relatedArticleId = relatedArticlesList.get(3).getId();
-            Log.e("relatedArticleId", "" + relatedArticleId);
             relatedArticleClick(relatedArticleId,3);
 
         }
@@ -412,11 +475,82 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
             moreArticles.putExtra("articleID", articleID);
             moreArticles.putExtra("categoryName", category_name_fromJson);
             moreArticles.putExtra("wood_id", wood_id);
-            Log.e("FROM ARTICLE ACTIVYT" + "articleID=" + articleID + "categoryID=" + categoryID, "categoryName=" + categoryName + "wood_id=" + wood_id);
 
             startActivity(moreArticles);
 
         }
+
+    }
+
+    private void showRatingDialog() {
+        final AlertDialog.Builder popDialog = new AlertDialog.Builder(getContext());
+        final RatingBar rating = new RatingBar(getContext());
+        rating.setMax(5);
+        popDialog.setIcon(android.R.drawable.btn_star_big_on);
+        popDialog.setTitle("User Rating ");
+        popDialog.setView(rating);
+
+        // Button OK
+        popDialog.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                rating.setRating(rating.getProgress());
+                dialog.dismiss();
+            }
+        })
+                .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+        popDialog.create();
+        popDialog.show();
+    }
+
+
+    private void setLike() {
+        if(isLikedByUser){
+            like.setImageResource(R.drawable.mt_heart);
+            isLikedByUser =false;
+        }else{
+            like.setImageResource(R.drawable.heart);
+            isLikedByUser =true;
+        }
+        sendLike();
+
+    }
+
+    private void sendLike() {
+        String sendLikeUrl;
+        if(isLikedByUser){
+            sendLikeUrl = getResources().getString(R.string.main_url)+getResources().getString(R.string.userLiked_url)+articleID
+                    +getResources().getString(R.string.userId_url)+userData.get(0).getSmonksId();
+        }else{
+            sendLikeUrl = getResources().getString(R.string.main_url)+getResources().getString(R.string.userDisliked_url)+articleID
+                    +getResources().getString(R.string.userId_url)+userData.get(0).getSmonksId();
+        }
+
+        // Request a JsonObject response from the provided URL.
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET, sendLikeUrl, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONObject likes_data = response.getJSONObject("likes");
+                            String likesCount = likes_data.getString("likes_count");
+                            text_like.setText("Likes :"+likesCount);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        reportError(error);
+                    }
+                });
+// Add the request to the RequestQueue.
+        VolleyRequest.getInstance().addToRequestQueue(jsObjRequest);
     }
 
     private void relatedArticleClick(String relatedArticleId,int selected_position) {
@@ -431,7 +565,6 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
 //        articleScreen.putExtra("firstCategoryName", relatedArticlesList.get(selected_position).getFirstCatName());
         articleScreen.putExtra("wood_id", wood_id);
         startActivity(articleScreen);
-        Log.e("categoryName ======== relatedArticleClick",""+relatedArticlesList.get(selected_position).getFirstCatName());
     }
 
     private void reportError(VolleyError error) {

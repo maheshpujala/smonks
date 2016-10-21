@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v7.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -127,7 +128,7 @@ public class MainActivity extends AppCompatActivity
         mPublisherAdView = (PublisherAdView) findViewById(R.id.publisherAdView);
         mPublisherAdView.setAdSizes(AdSize.MEDIUM_RECTANGLE);
 
-        PublisherAdRequest adRequest = new PublisherAdRequest.Builder()
+        final PublisherAdRequest adRequest = new PublisherAdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
                 .addTestDevice("90EE0E29646EF0CBAC99567D3827BAF5")// My Genymotion
                 .addTestDevice("9E24EA1846195D46BA5800679368D5E2")// MOTO G 4.5  marshmallow
@@ -195,6 +196,7 @@ public class MainActivity extends AppCompatActivity
 
     private void checkLogin() {
         session = new SessionManager(getApplication());
+
         Log.e("SESSION ",""+session.isLoggedIn());
 
         if(session.isLoggedIn()){

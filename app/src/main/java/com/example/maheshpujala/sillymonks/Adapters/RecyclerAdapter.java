@@ -65,9 +65,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
                         public void onScrolled(RecyclerView recyclerView,
                                                int dx, int dy) {
                             super.onScrolled(recyclerView, dx, dy);
-                            String current_tabTitle = ((CategoryActivity)context).currentTabTitle.trim();
+                          //  String current_tabTitle = ((CategoryActivity)context).currentTabTitle.trim();
 
-                            if (current_tabTitle.equalsIgnoreCase(category_name) && Integer.parseInt(total_articles_count ) > articles.size() ) {
+                        //    if (current_tabTitle.equalsIgnoreCase(category_name) && Integer.parseInt(total_articles_count ) > articles.size() ) {
+
+                            if (Integer.parseInt(total_articles_count ) > articles.size() ) {
                                 totalItemCount = linearLayoutManager.getItemCount();
                                 lastVisibleItem = linearLayoutManager
                                         .findLastVisibleItemPosition();

@@ -85,7 +85,16 @@ public class CategoryFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_category, container, false);
         myRecyclerView = (RecyclerView) rootView.findViewById(R.id.category_list);
         myRecyclerView.setHasFixedSize(true);
+        myRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                Log.e("RECYCLER VIEW","ONSCROLL LISTNER      "+ myRecyclerView.computeVerticalScrollOffset());
+                myRecyclerView.stopNestedScroll();
 
+                Log.e("RECYCLER VIEW","GET PARENT+++++++++++      "+ myRecyclerView.getParent());
+            }
+        });
         mAdapter = new RecyclerAdapter(getActivity(), articles,myRecyclerView,category_name, (String) articles_total_count.get(category_name));
         mRecyclerAdapter = new MoPubRecyclerAdapter(getActivity(), mAdapter,
                 MoPubNativeAdPositioning.serverPositioning());
@@ -146,7 +155,6 @@ public class CategoryFragment extends Fragment {
 
             @Override
             public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
             }
 
             @Override
@@ -158,9 +166,11 @@ public class CategoryFragment extends Fragment {
         mAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
+                Log.e("RECYCLER ADAPTER++++++",""+category_name );
 
-                if (((CategoryActivity)getActivity()).currentTabTitle.trim().equalsIgnoreCase(category_name) && Integer.parseInt((String) articles_total_count.get(category_name)) > articles.size() ){
-                    // Call you API, then update the result into dataModels, then call adapter.notifyDataSetChanged().
+              //  if (((CategoryActivity)getActivity()).currentTabTitle.trim().equalsIgnoreCase(category_name) && Integer.parseInt((String) articles_total_count.get(category_name)) > articles.size() ){
+                if (Integer.parseInt((String) articles_total_count.get(category_name)) > articles.size() ){
+                // Call you API, then update the result into dataModels, then call adapter.notifyDataSetChanged().
                     //Update the new data into list object
 
                     getExtraData();
