@@ -41,6 +41,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -126,7 +128,12 @@ public class RelatedArticles extends AppCompatActivity implements SearchView.OnQ
     }
 
     private void sendSearchRequest(String query) {
-        String url_cat_list =getResources().getString(R.string.main_url)+getResources().getString(R.string.search_url)+query;
+        String url_cat_list = null;
+        try {
+            url_cat_list = getResources().getString(R.string.main_url)+getResources().getString(R.string.search_url)+ URLEncoder.encode(query, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, url_cat_list, null, new Response.Listener<JSONObject>() {
                     @Override

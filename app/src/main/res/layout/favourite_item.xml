@@ -27,7 +27,7 @@
             android:layout_alignTop="@+id/favourite_image"
             android:layout_centerVertical="true"
             android:layout_margin="8dp"
-            android:layout_toLeftOf="@+id/favourite_icon"
+            android:layout_toLeftOf="@+id/delete_icon"
             android:layout_toRightOf="@+id/favourite_image"
             android:orientation="vertical" >
 
@@ -54,13 +54,13 @@
             android:id="@+id/view1"
             android:layout_width="1dp"
             android:layout_height="fill_parent"
-            android:layout_toLeftOf="@+id/favourite_icon"
+            android:layout_toLeftOf="@+id/delete_icon"
             android:background="@color/cart_background_stroke"
             android:minHeight="72dp"
             android:visibility="gone" />
 
         <ImageView
-            android:id="@+id/favourite_icon"
+            android:id="@+id/delete_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"

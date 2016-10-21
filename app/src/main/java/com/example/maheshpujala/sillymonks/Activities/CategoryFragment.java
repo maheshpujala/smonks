@@ -89,10 +89,8 @@ public class CategoryFragment extends Fragment {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                Log.e("RECYCLER VIEW","ONSCROLL LISTNER      "+ myRecyclerView.computeVerticalScrollOffset());
                 myRecyclerView.stopNestedScroll();
 
-                Log.e("RECYCLER VIEW","GET PARENT+++++++++++      "+ myRecyclerView.getParent());
             }
         });
         mAdapter = new RecyclerAdapter(getActivity(), articles,myRecyclerView,category_name, (String) articles_total_count.get(category_name));

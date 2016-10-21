@@ -19,6 +19,8 @@
     <string name="prompt_desc">Description</string>
     <string name="prompt_sbmt">SUBMIT</string>
     <string name="no_favourites">You have no favourites</string>
+    <string name="no_comments">There are no comments yet.\nBe the first to comment.</string>
+
 
     <string name="elv_undo">Undo</string>
     <string name="elv_undo_all">Undo All</string>
@@ -121,9 +123,9 @@ Please contact us at info@sillymonks.com if you have any questions about our ter
 
 
     <string name="os_tag">&amp;os=andy</string>
-    <string name="main_url">http://192.168.1.14:3000</string>
+    <!--<string name="main_url">http://192.168.1.14:3000</string>-->
     <!--<string name="ngrok_main_url">http://f66228b4.ngrok.io</string>-->
-    <!--<string name="main_url">http://cms.sillymonksapp.com</string>-->
+    <string name="main_url">http://cms.sillymonksapp.com</string>
 
 
     <string name="ad_count">/api/v1/getNativeAdAndArticleCount/15</string>
@@ -151,6 +153,15 @@ Please contact us at info@sillymonks.com if you have any questions about our ter
     <string name="userLiked_url">/api/v1/getLikeArticle?articleID=</string>
     <string name="userDisliked_url">/api/v1/getDislikeArticle?articleID=</string>
     <string name="userId_url">&amp;userID=</string>
+
+    <string name="userRating_url">/api/v1/getRateAnArticle?articleID=</string>
+    <string name="value_url">&amp;value=</string>
+
+    <string name="userComment_url">/api/v1/getCommentOnArticle?articleID=</string>
+    <string name="body_url">&amp;body=</string>
+
+
+
 
     <string name="more_articles_url">/api/v1/getMoreRelatedArticles?articleID=</string>
     <string name="mopub_interstitial_ad_id">6d4ed34709184518870d820a5dd5f27e</string>

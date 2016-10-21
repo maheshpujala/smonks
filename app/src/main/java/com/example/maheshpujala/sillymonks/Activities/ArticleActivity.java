@@ -76,11 +76,12 @@ public class ArticleActivity extends AppCompatActivity implements MoPubInterstit
             toolbar_title.setText(articles.get(Integer.parseInt(selected_position)).getFirstCatName());
             Log.e("TOOLBAR TITLE SET",""+articles.get(Integer.parseInt(selected_position)).getFirstCatName());
 
-        }else{
+        }else if (getIds.getExtras().getString("identifyActivity").equalsIgnoreCase("FavoriteArticles")) {
+            toolbar_title.setText(getIds.getExtras().getString("categoryName"));
+        }else
             toolbar_title.setText(getIds.getExtras().getString("categoryName"));
             Log.e("TOOLBAR TITLE SET IGNORING CASE",""+getIds.getExtras().getString("categoryName"));
 
-        }
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
         ArticleAdapter adapter = new ArticleAdapter(getSupportFragmentManager());
@@ -101,7 +102,6 @@ public class ArticleActivity extends AppCompatActivity implements MoPubInterstit
                     }
                 }
                 swipeCount++;
-                Log.e("onPageScrolled Arg",""+arg0);
                 Article article = articles.get(arg0);
 
                 if(getIds.getExtras().getString("identifyActivity").equalsIgnoreCase("relatedArticles")){
@@ -190,8 +190,6 @@ public class ArticleActivity extends AppCompatActivity implements MoPubInterstit
             b.putString("categoryName",categoryName);
             b.putSerializable("articles", (Serializable) articles);
             fragment.setArguments(b);
-            Log.e("getIds.getExtras().getString(\"identifyActivity\")",""+getIds.getExtras().getString("identifyActivity"));
-            Log.e("article.getFirstCatName()",""+article.getFirstCatName());
 
             return fragment;
         }

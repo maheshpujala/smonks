@@ -28,6 +28,7 @@ public class Favourite_ListAdapter extends BaseAdapter{
 	EnhancedListView favouritesListView;
 	LinkedHashMap favouritesMap;
 	FavouritesFragment favouritesFragment;
+
 	public Favourite_ListAdapter(Context mContext, LinkedHashMap favouritesMap, FavouritesFragment favouritesFragment, EnhancedListView favouritesListView) {
 		this.mContext=mContext;
 		this.favouritesMap =favouritesMap;
@@ -56,7 +57,7 @@ public class Favourite_ListAdapter extends BaseAdapter{
 		} catch (Exception e) {}
 	}
 
-	public void insert(int position, String item) {
+	public void insert(int position, Article item) {
 		try {
 			favouritesMap.put(position, item);
 			notifyDataSetChanged();
@@ -67,10 +68,12 @@ public class Favourite_ListAdapter extends BaseAdapter{
 		TextView favouriteText,favDescText;
 		ImageView favIcon;
 		SquareImageView favouriteImage;
+		ImageView delete_icon;
+
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, View convertView, ViewGroup parent) {
 		LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		ViewHolder holder = new ViewHolder();
 		if (convertView == null) {
@@ -78,7 +81,13 @@ public class Favourite_ListAdapter extends BaseAdapter{
 			holder.favouriteImage = (SquareImageView) convertView.findViewById(R.id.favourite_image);
 			holder.favouriteText = (TextView) convertView.findViewById(R.id.favourite_text);
 			holder.favDescText = (TextView) convertView.findViewById(R.id.fav_description);
-			holder.favIcon = (ImageView) convertView.findViewById(R.id.favourite_icon);
+			holder.delete_icon =(ImageView) convertView.findViewById(R.id.delete_icon);
+			holder.delete_icon.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					favouritesListView.delete(position);
+				}
+			});
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();

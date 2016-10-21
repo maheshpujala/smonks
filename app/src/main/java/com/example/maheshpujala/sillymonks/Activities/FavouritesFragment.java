@@ -2,7 +2,9 @@ package com.example.maheshpujala.sillymonks.Activities;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -10,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -37,6 +40,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -48,7 +52,7 @@ import java.util.List;
 public class FavouritesFragment extends Fragment  {
     SessionManager session;
     List<UserData> userData;
-    List<Article> favouritesList;
+    List<String> favouritesListID;
     LinkedHashMap favouritesMap;
     private Context mContext;
     private LinearLayout inflated_layout;
@@ -93,11 +97,12 @@ public class FavouritesFragment extends Fragment  {
         try {
             JSONArray favourites = response.getJSONArray("favourites");
             Log.e("JSON ARRAY favourites",""+favourites);
-            favouritesList = new ArrayList<Article>();
+            favouritesListID = new ArrayList<String>();
             favouritesMap = new LinkedHashMap<String, Article>();
             for (int k = 0; k < favourites.length(); k++) {
                 JSONObject favArticles = favourites.getJSONObject(k);
-                favouritesMap.put(favArticles.getString("id"),new Article(favArticles.getString("id"),
+                favouritesListID.add(favArticles.getString("id"));
+                favouritesMap.put(k,new Article(favArticles.getString("id"),
                         favArticles.getString("first_cageory_id"),
                         favArticles.getString("first_cageory_name"),
                         favArticles.getString("first_wood_id"),
@@ -127,7 +132,6 @@ public class FavouritesFragment extends Fragment  {
         }
         // Inflate the layout for this fragment
         inflated_layout = (LinearLayout) inflater.inflate(R.layout.fragment_favourities, null);
-
         favouritesListView = (EnhancedListView) inflated_layout.findViewById(R.id.favourites_listview);
         notAvailable = (TextView) inflated_layout.findViewById(R.id.not_available);
 
@@ -140,12 +144,25 @@ public class FavouritesFragment extends Fragment  {
 
             @Override
             public EnhancedListView.Undoable onDismiss(EnhancedListView listView, final int position) {
-                final String item = (String) favAdapter.getItem(position);
+               final Article item = (Article) favAdapter.getItem(position);
+              final  String articleID=favouritesListID.get(position);
                 favAdapter.remove(position);
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        sendRemoveFavourite(articleID);
+
+                    }
+                }, 2200);
+
+                Log.e("favADPATER",""+position);
                 return new EnhancedListView.Undoable() {
                     @Override
                     public void undo() {
-                        favAdapter.insert(position, item);
+                        Log.e("favADPATER  UNDOOOOOO","------");
+
+                       favAdapter.insert(position, item);
 
                     }
                 };
@@ -153,7 +170,8 @@ public class FavouritesFragment extends Fragment  {
         });
 
         favouritesListView.setUndoStyle(EnhancedListView.UndoStyle.SINGLE_POPUP);
-        favouritesListView.setUndoHideDelay(8000);
+        favouritesListView.setUndoHideDelay(2000);
+        favouritesListView.setRequireTouchBeforeDismiss(false);
         favouritesListView.enableSwipeToDismiss();
         favouritesListView.setSwipingLayout(R.id.favourite_relative_main);
         favouritesListView.setSwipeDirection(EnhancedListView.SwipeDirection.BOTH);
@@ -161,10 +179,42 @@ public class FavouritesFragment extends Fragment  {
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Toast.makeText(getContext(),"NOT YET IMPLEMENTED",Toast.LENGTH_SHORT).show();
+                     Article a= (Article) favouritesMap.get(position);
+                    Intent it = new Intent(getContext(), ArticleActivity.class);
+                     it.putExtra("identifyActivity","FavoriteArticles" );
+                    it.putExtra("articleID",favouritesListID.get(position));
+                    it.putExtra("categoryID",a.getFirstCatId());
+                    it.putExtra("categoryName","Favorites");
+                    it.putExtra("wood_id",a.getFirstWoodId());
+                    it.putExtra("articles", new ArrayList<Article>(favouritesMap.values()));
+                    it.putExtra("selected_position",""+position);
+                    startActivity(it);
+
             }
         });
     }
+
+    private void sendRemoveFavourite(String articleID) {
+        String favourites_url =getResources().getString(R.string.main_url)+getResources().getString(R.string.userDisliked_url)+articleID+getResources().getString(R.string.userId_url)+userData.get(0).getSmonksId();
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET, favourites_url, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        getFavourites(response);
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+                        reportError(error);
+                    }
+                });
+// Add the request to the RequestQueue.
+        VolleyRequest.getInstance().addToRequestQueue(jsObjRequest);
+    }
+
 
     private void reportError(VolleyError error) {
         Log.e("response Errorhome", error + "");

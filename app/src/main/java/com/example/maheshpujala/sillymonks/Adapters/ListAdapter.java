@@ -24,9 +24,11 @@ import com.google.android.gms.ads.doubleclick.PublisherAdView;
 
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -41,6 +43,7 @@ public class ListAdapter extends BaseAdapter {
     TextView wood_name_tv,time_ago,comments_count,likes_count;
     ImageView cover_image;
     String comment_text,like_text,Days,Hours,Time,Minutes;
+    Map commentsMap;
 
 
     public ListAdapter(Activity context, List<String> wood_titles, List<String> wood_images,List<String> wood_ids,int response) {
@@ -60,14 +63,24 @@ public class ListAdapter extends BaseAdapter {
         this.wood_titles = wood_titles;
         this.response = response;
     }
+    public ListAdapter(Activity context, Map commentsMap, int response) {
+        this.context = context;
+        this.commentsMap = commentsMap;
+        this.response = response;
+    }
 
     @Override
     public int getCount() {
         int count;
-        if(wood_titles == null){
-            count = articlesList.size();
-        }else{
+        if (response == 1){
             count = wood_titles.size();
+        }else if (response == 2){
+            count = wood_titles.size();
+
+        }else if (response == 3){
+            count = commentsMap.size();
+        }else{
+            count = articlesList.size();
         }
         return count;
     }
@@ -109,9 +122,23 @@ public class ListAdapter extends BaseAdapter {
                 wood_name_tv.setText(wood_titles.get(position));
 
                 Glide.with(this.context).load(wood_images.get(position)).into(cover_image);
-                Log.e("Glide","+"+wood_images.get(position));
 
             }
+        }else if(response ==3){
+            rowView = inflater.inflate(R.layout.listview_comments, null);
+
+            ImageView user_dp = (ImageView) rowView.findViewById(R.id.user_dp);
+            TextView userName = (TextView) rowView.findViewById(R.id.userName);
+            TextView rating_text = (TextView) rowView.findViewById(R.id.rating_text);
+            TextView textViewComment = (TextView) rowView.findViewById(R.id.textViewComment);
+
+            List<String> comments;
+            comments= (List<String>) commentsMap.get(position);
+
+            Glide.with(this.context).load(comments.get(0)).into(user_dp);
+            userName.setText(comments.get(1));
+            rating_text.setText(comments.get(2));
+            textViewComment.setText(comments.get(3));
         }else{
             rowView = inflater.inflate(R.layout.recyclerview_category, null);
              wood_name_tv = (TextView) rowView.findViewById(R.id.wood_name_sillymonks);

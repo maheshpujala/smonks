@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context="com.example.maheshpujala.sillymonks.Activities.ArticleActivity">
     <ScrollView
-        android:id="@+id/scrollView3"
+        android:id="@+id/articleScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/view"
@@ -101,7 +101,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="30dp"
                                 android:layout_marginTop="3dp"
-                                android:isIndicator="false"
+                                android:isIndicator="true"
                                 android:max="5"
                                 android:numStars="5"
                                 android:rating="0"
@@ -320,7 +320,33 @@
                 </LinearLayout>
             </HorizontalScrollView>
 </RelativeLayout>
-
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="User Comments"
+                android:textColor="@color/app_theme"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:gravity="center"/>
+            <ListView
+                android:id="@+id/listForComments"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none"
+                android:layout_gravity="center"
+                android:layout_margin="5dp" />
+            <TextView
+                android:id="@+id/textForNoComments"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/no_comments"
+                android:padding="5dp"
+                android:gravity="center"/>
+            </LinearLayout>
         </LinearLayout>
 
     </ScrollView>
