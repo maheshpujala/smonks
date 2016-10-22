@@ -8,7 +8,6 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.v7.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,8 +38,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.bumptech.glide.Glide;
 import com.example.maheshpujala.sillymonks.Adapters.ListAdapter;
-import com.example.maheshpujala.sillymonks.Api.NetworkCheck;
-import com.example.maheshpujala.sillymonks.Api.VolleyRequest;
+import com.example.maheshpujala.sillymonks.Network.Connectivity;
+import com.example.maheshpujala.sillymonks.Network.VolleyRequest;
 import com.example.maheshpujala.sillymonks.Model.SessionManager;
 import com.example.maheshpujala.sillymonks.Model.UserData;
 import com.example.maheshpujala.sillymonks.R;
@@ -56,12 +55,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -203,9 +197,9 @@ public class MainActivity extends AppCompatActivity
             List<UserData> userData=session.getUserDetails();
             login.setText("My Profile");
             if(userData.get(0).getLoginType().contains("google")){
-                Glide.with(this).load(userData.get(0).getId()).into(profile_pic);
+                Glide.with(profile_pic.getContext()).load(userData.get(0).getId()).into(profile_pic);
             }else{
-                Glide.with(this).load("https://graph.facebook.com/" +userData.get(0).getId()+ "/picture?type=large").into(profile_pic);
+                Glide.with(profile_pic.getContext()).load("https://graph.facebook.com/" +userData.get(0).getId()+ "/picture?type=large").into(profile_pic);
             }
         }
         else{
@@ -215,26 +209,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void checkConnection() {
-        if (NetworkCheck.isInternetAvailable(MainActivity.this))  //if connection available
+        if (Connectivity.isConnected(MainActivity.this))  //if connection available
         {
         sendRequest();
         } else {
-            new AlertDialog.Builder(this)
-                    .setTitle("Connection error")
-                    .setMessage("Unable to connect with the server.Check your internet connection and try again.")
-                    .setPositiveButton("TRY AGAIN", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                           checkConnection();
-                        }
-                    })
-//                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            // do nothing
-//                        }
-//                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
+            if (Connectivity.showDialog(MainActivity.this)){
+                sendRequest();
+            }
         }
+
     }
 
     public void sendRequest() {
@@ -328,6 +311,7 @@ public class MainActivity extends AppCompatActivity
     public void onResume(){
         super.onResume();
         checkLogin();
+        checkConnection();
     }
 
     @Override

@@ -2,11 +2,9 @@ package com.example.maheshpujala.sillymonks.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ContextThemeWrapper;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,8 +13,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
@@ -30,7 +26,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.maheshpujala.sillymonks.Adapters.OnLoadMoreListener;
 import com.example.maheshpujala.sillymonks.Adapters.RecyclerAdapter;
-import com.example.maheshpujala.sillymonks.Api.VolleyRequest;
+import com.example.maheshpujala.sillymonks.Network.VolleyRequest;
 import com.example.maheshpujala.sillymonks.Model.Article;
 import com.example.maheshpujala.sillymonks.R;
 import com.mopub.nativeads.MoPubAdAdapter;
@@ -61,9 +57,9 @@ public class CategoryFragment extends Fragment {
     RecyclerView.LayoutManager layoutManager;
     RecyclerAdapter mAdapter;
     String category_name,category_id,wood_id;
-    LinkedHashMap articles_total_count;
+    HashMap articles_total_count;
     List<Article> moreArticles;
-    private MoPubRecyclerAdapter mRecyclerAdapter;
+    private MoPubRecyclerAdapter moPubAdapter;
     private MoPubAdAdapter mAdAdapter;
     HashMap categories;
 
@@ -72,7 +68,7 @@ public class CategoryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         articles = (List<Article>) this.getArguments().getSerializable("articles");
         categories = (HashMap) this.getArguments().getSerializable("categories");
-        articles_total_count= (LinkedHashMap) this.getArguments().getSerializable("articles_total_count");
+        articles_total_count= (HashMap) this.getArguments().getSerializable("articles_total_count");
         category_name = this.getArguments().getString("category_name");
         category_id = (String) categories.get(category_name);
         wood_id = this.getArguments().getString("wood_id");
@@ -93,53 +89,53 @@ public class CategoryFragment extends Fragment {
 //
 //            }
 //        });
-        myRecyclerView.setOnTouchListener(new View.OnTouchListener() {
-
-            int dragthreshold = 30;
-            int downX;
-            int downY;
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        downX = (int) event.getRawX();
-                        downY = (int) event.getRawY();
-                        Log.e("VIEW Y____DOWN",""+v);
-                        Log.e("_DOWN_downX=="+downX,"_DOWN_downY=="+downY);
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        int distanceX = Math.abs((int) event.getRawX() - downX);
-                        int distanceY = Math.abs((int) event.getRawY() - downY);
-                        Log.e("VIEW Y____MOVE",""+v.getY());
-
-                        Log.e("distanceX="+distanceX,"distanceY="+distanceY);
+//        myRecyclerView.setOnTouchListener(new View.OnTouchListener() {
 //
-//                        if (distanceY > distanceX && distanceY > dragthreshold) {
-//                            viewPager.getParent().requestDisallowInterceptTouchEvent(false);
-//                            scrollView.getParent().requestDisallowInterceptTouchEvent(true);
-//                        } else if (distanceX > distanceY && distanceX > dragthreshold) {
-//                            viewPager.getParent().requestDisallowInterceptTouchEvent(true);
-//                            scrollView.getParent().requestDisallowInterceptTouchEvent(false);
-//                        }
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        downX = (int) event.getRawX();
-                        downY = (int) event.getRawY();
-                        Log.e("VIEW Y____UP",""+v.getY());
-
-                        Log.e("UP downX=="+downX,"UP downY=="+downY);
-
-//                        scrollView.getParent().requestDisallowInterceptTouchEvent(false);
-//                        viewPager.getParent().requestDisallowInterceptTouchEvent(false);
-                        break;
-                }
-                return false;
-            }
-        });
+//            int dragthreshold = 30;
+//            int downX;
+//            int downY;
+//
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//
+//                switch (event.getAction()) {
+//                    case MotionEvent.ACTION_DOWN:
+//                        downX = (int) event.getRawX();
+//                        downY = (int) event.getRawY();
+//                        Log.e("VIEW Y____DOWN",""+v);
+//                        Log.e("_DOWN_downX=="+downX,"_DOWN_downY=="+downY);
+//                        break;
+//                    case MotionEvent.ACTION_MOVE:
+//                        int distanceX = Math.abs((int) event.getRawX() - downX);
+//                        int distanceY = Math.abs((int) event.getRawY() - downY);
+//                        Log.e("VIEW Y____MOVE",""+v.getY());
+//
+//                        Log.e("distanceX="+distanceX,"distanceY="+distanceY);
+////
+////                        if (distanceY > distanceX && distanceY > dragthreshold) {
+////                            viewPager.getParent().requestDisallowInterceptTouchEvent(false);
+////                            scrollView.getParent().requestDisallowInterceptTouchEvent(true);
+////                        } else if (distanceX > distanceY && distanceX > dragthreshold) {
+////                            viewPager.getParent().requestDisallowInterceptTouchEvent(true);
+////                            scrollView.getParent().requestDisallowInterceptTouchEvent(false);
+////                        }
+//                        break;
+//                    case MotionEvent.ACTION_UP:
+//                        downX = (int) event.getRawX();
+//                        downY = (int) event.getRawY();
+//                        Log.e("VIEW Y____UP",""+v.getY());
+//
+//                        Log.e("UP downX=="+downX,"UP downY=="+downY);
+//
+////                        scrollView.getParent().requestDisallowInterceptTouchEvent(false);
+////                        viewPager.getParent().requestDisallowInterceptTouchEvent(false);
+//                        break;
+//                }
+//                return false;
+//            }
+//        });
         mAdapter = new RecyclerAdapter(getActivity(), articles,myRecyclerView,category_name, (String) articles_total_count.get(category_name));
-        mRecyclerAdapter = new MoPubRecyclerAdapter(getActivity(), mAdapter,
+        moPubAdapter = new MoPubRecyclerAdapter(getActivity(), mAdapter,
                 MoPubNativeAdPositioning.serverPositioning());
         MoPubStaticNativeAdRenderer moPubStaticNativeAdRenderer = new MoPubStaticNativeAdRenderer(
                 new ViewBinder.Builder(R.layout.mopub_ad_unit)
@@ -151,9 +147,9 @@ public class CategoryFragment extends Fragment {
                         .privacyInformationIconImageId(R.id.native_privacy_information_icon_image)
                         .build()
         );
-        mRecyclerAdapter.loadAds("2247fb5354a144fc997f0b5e0aede270");
-        mRecyclerAdapter.registerAdRenderer(moPubStaticNativeAdRenderer);
-        myRecyclerView.setAdapter(mRecyclerAdapter);
+        moPubAdapter.loadAds("e6784f6a4d7a4b84a9134580a6dbc400");
+        moPubAdapter.registerAdRenderer(moPubStaticNativeAdRenderer);
+        myRecyclerView.setAdapter(moPubAdapter);
         return rootView;
     }
 
@@ -178,9 +174,14 @@ public class CategoryFragment extends Fragment {
                 View child = rv.findChildViewUnder(e.getX(), e.getY());
                 if (child != null && gestureDetector.onTouchEvent(e)) {
                     int positio = rv.getChildAdapterPosition(child);
-                 int  position=  mRecyclerAdapter.getOriginalPosition(positio);
-                    Article selectedArticle = articles.get(position);
-                    String article_id = selectedArticle.getId();
+                    Log.e("CHILD POSITON",""+positio);
+                    Log.e("moPubAdapter.isAd(positio)=",""+moPubAdapter.isAd(positio));
+                    if(!moPubAdapter.isAd(positio)){
+                        int  position=  moPubAdapter.getOriginalPosition(positio);
+                        Log.e("ORGINAL POSITON"+position,"articles List"+articles);
+
+                        Article selectedArticle = articles.get(position);
+                        String article_id = selectedArticle.getId();
                         Intent cat2art = new Intent(getActivity(), ArticleActivity.class);
                         cat2art.putExtra("identifyActivity","categoryArticles" );
                         cat2art.putExtra("articleID",article_id);
@@ -191,6 +192,8 @@ public class CategoryFragment extends Fragment {
                         cat2art.putExtra("selected_position",""+position);
 
                         startActivity(cat2art);
+                    }
+
                 }
 
                 return false;
@@ -220,12 +223,12 @@ public class CategoryFragment extends Fragment {
                 }
             }
         });
-
+        moPubAdapter.notifyDataSetChanged();
     }
     @Override
     public void onResume() {
         // MoPub recommends loading knew ads when the user returns to your activity.
-        mRecyclerAdapter.loadAds("2247fb5354a144fc997f0b5e0aede270");
+        moPubAdapter.loadAds("e6784f6a4d7a4b84a9134580a6dbc400");
         super.onResume();
         }
     private void getExtraData() {

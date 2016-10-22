@@ -24,14 +24,11 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.maheshpujala.sillymonks.Api.VolleyRequest;
+import com.example.maheshpujala.sillymonks.Network.VolleyRequest;
 import com.example.maheshpujala.sillymonks.R;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Locale;
 
 /**
  * Created by maheshpujala on 18/10/16.

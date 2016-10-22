@@ -49,7 +49,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
         imgDisplay = (TouchImageView) viewLayout.findViewById(R.id.fullscreen_imageView);
 //        for (int i=0;i<image.size();i++){
-         Glide.with(this.mContext).load(image.get(position)).into(imgDisplay);
+         Glide.with(imgDisplay.getContext()).load(image.get(position)).into(imgDisplay);
 //        }
         ((ViewPager) container).addView(viewLayout);
 

@@ -1,4 +1,4 @@
-package com.example.maheshpujala.sillymonks.Api;
+package com.example.maheshpujala.sillymonks.Network;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

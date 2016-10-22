@@ -118,7 +118,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
             Article a = articles.get(position);
             if (category_name.equalsIgnoreCase("celebrities") || category_name.equalsIgnoreCase("gallery")){
                 grid_text.setText(a.getTitle());
-                Glide.with(this.context).load(a.getBannerMedia()).into(grid_image);
+                Glide.with(grid_image.getContext()).load(a.getBannerMedia()).into(grid_image);
             }
             else{
                 if(Integer.parseInt(a.getcommentsCount()) == 0){
@@ -188,7 +188,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
                 }
 
                 article_title.setText(a.getTitle());
-                Glide.with(this.context).load(a.getBannerMedia()).into(cover_image);
+                Glide.with(cover_image.getContext()).load(a.getBannerMedia()).into(cover_image);
                 time_ago.setText(Time);
                 comments_count.setText(comment_text);
                 likes_count.setText(like_text);

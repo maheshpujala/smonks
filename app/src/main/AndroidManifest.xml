@@ -15,7 +15,7 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
-        android:name="com.example.maheshpujala.sillymonks.Api.VolleyRequest"
+        android:name="com.example.maheshpujala.sillymonks.Network.VolleyRequest"
         android:allowBackup="true"
         android:icon="@drawable/drawer_image"
         android:label="@string/app_name"

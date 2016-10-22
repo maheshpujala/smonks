@@ -2,10 +2,7 @@ package com.example.maheshpujala.sillymonks.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,29 +11,13 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
-import com.android.volley.ParseError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.ServerError;
-import com.android.volley.TimeoutError;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.maheshpujala.sillymonks.Adapters.OnLoadMoreListener;
 import com.example.maheshpujala.sillymonks.Adapters.RecyclerAdapter;
-import com.example.maheshpujala.sillymonks.Api.VolleyRequest;
 import com.example.maheshpujala.sillymonks.Model.Article;
 import com.example.maheshpujala.sillymonks.R;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -54,7 +35,7 @@ public class CategoryGridFragment extends Fragment {
     RecyclerView.LayoutManager layoutManager;
     RecyclerAdapter mAdapter;
     String category_name,category_id,wood_id;
-    LinkedHashMap categories,articles_total_count;
+    HashMap categories,articles_total_count;
     List<Article> moreArticles;
 
 
@@ -62,8 +43,8 @@ public class CategoryGridFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         articles = (List<Article>) this.getArguments().getSerializable("articles");
-        categories = (LinkedHashMap) this.getArguments().getSerializable("categories");
-        articles_total_count= (LinkedHashMap) this.getArguments().getSerializable("articles_total_count");
+        categories = (HashMap) this.getArguments().getSerializable("categories");
+        articles_total_count= (HashMap) this.getArguments().getSerializable("articles_total_count");
         category_name = this.getArguments().getString("category_name");
         category_id = (String) categories.get(category_name);
         wood_id = this.getArguments().getString("wood_id");

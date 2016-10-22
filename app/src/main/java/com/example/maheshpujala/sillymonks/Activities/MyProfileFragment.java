@@ -2,7 +2,6 @@ package com.example.maheshpujala.sillymonks.Activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -11,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,8 +24,7 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.bumptech.glide.Glide;
-import com.example.maheshpujala.sillymonks.Adapters.ImageAdapter;
-import com.example.maheshpujala.sillymonks.Api.VolleyRequest;
+import com.example.maheshpujala.sillymonks.Network.VolleyRequest;
 import com.example.maheshpujala.sillymonks.Model.SessionManager;
 import com.example.maheshpujala.sillymonks.Model.UserData;
 import com.example.maheshpujala.sillymonks.R;
@@ -39,24 +36,19 @@ import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.maheshpujala.sillymonks.Model.SessionManager.KEY_NAME;
 import static com.facebook.FacebookSdk.getApplicationContext;
-import static com.mopub.common.SharedPreferencesHelper.getSharedPreferences;
 
 /**
  * Created by maheshpujala on 28/9/16.
  */
 public class MyProfileFragment extends Fragment {
-    TextView f_name,email,gender,name,logout,editProfile;
+    TextView f_name,email,gender,name,logout,editProfile,GenderView;
     CircleImageView pic;
     List<UserData> user_data;
     SessionManager session;
@@ -95,6 +87,7 @@ public class MyProfileFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        GenderView  = (TextView) view.findViewById(R.id.GenderView);
         f_name = (TextView) view.findViewById(R.id.user_name);
         name = (TextView) view.findViewById(R.id.user_fname);
         email = (TextView) view.findViewById(R.id.user_email);
@@ -152,11 +145,17 @@ public class MyProfileFragment extends Fragment {
         f_name.setText(user_data.get(0).getName());
         name.setText(user_data.get(0).getName());
         email.setText(user_data.get(0).getEmail());
-        gender.setText(user_data.get(0).getGender());
-        if(user_data.get(0).getId().contains("jpg")){
-            Glide.with(getContext()).load(user_data.get(0).getId()).into(pic);
+        if(user_data.get(0).getGender().length()<1){
+            GenderView.setVisibility(View.GONE);
         }else{
-            Glide.with(getContext()).load("https://graph.facebook.com/" +user_data.get(0).getId()+ "/picture?type=large").into(pic);
+            GenderView.setVisibility(View.VISIBLE);
+            gender.setText(user_data.get(0).getGender());
+        }
+
+        if(user_data.get(0).getId().contains("jpg")){
+            Glide.with(pic.getContext()).load(user_data.get(0).getId()).into(pic);
+        }else{
+            Glide.with(pic.getContext()).load("https://graph.facebook.com/" +user_data.get(0).getId()+ "/picture?type=large").into(pic);
         }
     }
 

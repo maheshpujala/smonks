@@ -12,11 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
@@ -29,7 +26,7 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.maheshpujala.sillymonks.Adapters.Favourite_ListAdapter;
-import com.example.maheshpujala.sillymonks.Api.VolleyRequest;
+import com.example.maheshpujala.sillymonks.Network.VolleyRequest;
 import com.example.maheshpujala.sillymonks.Model.Article;
 import com.example.maheshpujala.sillymonks.Model.SessionManager;
 import com.example.maheshpujala.sillymonks.Model.UserData;
@@ -40,7 +37,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -59,6 +55,7 @@ public class FavouritesFragment extends Fragment  {
     private EnhancedListView favouritesListView;
     private TextView notAvailable;
     Favourite_ListAdapter favAdapter;
+    int favCount;
     public FavouritesFragment() {
         // Required empty public constructor
     }
@@ -110,10 +107,10 @@ public class FavouritesFragment extends Fragment  {
                         favArticles.getString("small"),
                         favArticles.getString("description")));
             }
-            Log.e("fav==================",""+favouritesMap);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+         favCount = favouritesMap.size();
         if(favouritesMap.size()==0){
             notAvailable.setVisibility(View.VISIBLE);
         }else{
@@ -151,19 +148,17 @@ public class FavouritesFragment extends Fragment  {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        sendRemoveFavourite(articleID);
-
+                        if(favCount == favouritesMap.size()){
+                        }else{
+                            sendRemoveFavourite(articleID);
+                        }
                     }
                 }, 2200);
 
-                Log.e("favADPATER",""+position);
                 return new EnhancedListView.Undoable() {
                     @Override
                     public void undo() {
-                        Log.e("favADPATER  UNDOOOOOO","------");
-
                        favAdapter.insert(position, item);
-
                     }
                 };
             }
@@ -189,7 +184,6 @@ public class FavouritesFragment extends Fragment  {
                     it.putExtra("articles", new ArrayList<Article>(favouritesMap.values()));
                     it.putExtra("selected_position",""+position);
                     startActivity(it);
-
             }
         });
     }

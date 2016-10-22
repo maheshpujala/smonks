@@ -1,31 +1,11 @@
-package com.example.maheshpujala.sillymonks.Api;
+package com.example.maheshpujala.sillymonks.Network;
 
 import android.app.Application;
-import android.content.Context;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.view.ContextThemeWrapper;
 import android.text.TextUtils;
-import android.util.Log;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
-import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.ServerError;
-import com.android.volley.TimeoutError;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.maheshpujala.sillymonks.Activities.MainActivity;
-import com.example.maheshpujala.sillymonks.R;
-
-import org.json.JSONObject;
-
-import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * Created by maheshpujala on 1/10/16.

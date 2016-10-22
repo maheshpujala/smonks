@@ -37,7 +37,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.bumptech.glide.Glide;
 import com.example.maheshpujala.sillymonks.Adapters.ListAdapter;
-import com.example.maheshpujala.sillymonks.Api.VolleyRequest;
+import com.example.maheshpujala.sillymonks.Network.VolleyRequest;
 import com.example.maheshpujala.sillymonks.Model.Article;
 import com.example.maheshpujala.sillymonks.Model.SessionManager;
 import com.example.maheshpujala.sillymonks.Model.UserData;
@@ -359,12 +359,11 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
     }
 
     private void setRelatedArticles() {
-        if(context != null){
-            Glide.with(context).load(relatedArticlesList.get(0).getBannerMedia()).into(hztl_image1);
-            Glide.with(context).load(relatedArticlesList.get(1).getBannerMedia()).into(hztl_image2);
-            Glide.with(context).load(relatedArticlesList.get(2).getBannerMedia()).into(hztl_image3);
-            Glide.with(context).load(relatedArticlesList.get(3).getBannerMedia()).into(hztl_image4);
-        }
+
+            Glide.with(hztl_image1.getContext()).load(relatedArticlesList.get(0).getBannerMedia()).into(hztl_image1);
+            Glide.with(hztl_image2.getContext()).load(relatedArticlesList.get(1).getBannerMedia()).into(hztl_image2);
+            Glide.with(hztl_image3.getContext()).load(relatedArticlesList.get(2).getBannerMedia()).into(hztl_image3);
+            Glide.with(hztl_image4.getContext()).load(relatedArticlesList.get(3).getBannerMedia()).into(hztl_image4);
 
         movie_name1.setText(relatedArticlesList.get(0).getTitle());
         movie_name2.setText(relatedArticlesList.get(1).getTitle());
@@ -415,10 +414,9 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
     }
 
     private void setDataInViews() {
-if (context != null){
-    Glide.with(context).load(banner_image).into(article_banner);
 
-}
+    Glide.with(article_banner.getContext()).load(banner_image).into(article_banner);
+
         article_title.setText(title);
         article_description.setText(Html.fromHtml(description));
         text_like.setText("Likes :"+likes);

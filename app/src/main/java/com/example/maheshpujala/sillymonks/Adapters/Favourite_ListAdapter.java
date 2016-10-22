@@ -93,13 +93,11 @@ public class Favourite_ListAdapter extends BaseAdapter{
 			holder = (ViewHolder) convertView.getTag();
 		}
 		List<Article> articles= new ArrayList<Article>(favouritesMap.values()) ;
-		Log.e("articles---from map",""+articles);
 
-		Glide.with(mContext).load(articles.get(position).getThumbImage()).into(holder.favouriteImage);
+		Glide.with(holder.favouriteImage.getContext()).load(articles.get(position).getThumbImage()).into(holder.favouriteImage);
 		holder.favouriteText.setText(articles.get(position).getTitle());
 		holder.favDescText.setText(Html.fromHtml(articles.get(position).getDescription()));
 
-		Log.e("articles.get(position).getTitle()",""+articles.get(position).getTitle());
 
 		return convertView;
 

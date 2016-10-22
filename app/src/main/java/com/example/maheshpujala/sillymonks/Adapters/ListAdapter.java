@@ -121,7 +121,7 @@ public class ListAdapter extends BaseAdapter {
 
                 wood_name_tv.setText(wood_titles.get(position));
 
-                Glide.with(this.context).load(wood_images.get(position)).into(cover_image);
+                Glide.with(cover_image.getContext()).load(wood_images.get(position)).into(cover_image);
 
             }
         }else if(response ==3){
@@ -135,7 +135,7 @@ public class ListAdapter extends BaseAdapter {
             List<String> comments;
             comments= (List<String>) commentsMap.get(position);
 
-            Glide.with(this.context).load(comments.get(0)).into(user_dp);
+            Glide.with(user_dp.getContext()).load(comments.get(0)).into(user_dp);
             userName.setText(comments.get(1));
             rating_text.setText(comments.get(2));
             textViewComment.setText(comments.get(3));
@@ -219,7 +219,7 @@ public class ListAdapter extends BaseAdapter {
             comments_count.setText(comment_text);
             likes_count.setText(like_text);
             wood_name_tv.setText(articlesList.get(position).getTitle());
-            Glide.with(this.context).load(articlesList.get(position).getBannerMedia()).into(cover_image);
+            Glide.with(cover_image.getContext()).load(articlesList.get(position).getBannerMedia()).into(cover_image);
         }
 
         return rowView;

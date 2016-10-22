@@ -115,6 +115,8 @@ Please contact us at info@sillymonks.com if you have any questions about our ter
 
 
     <string name="banner_ad_unit_id"> /133516651/LeapTest</string>
+    <string name="mopub_interstitial_ad_id">6d4ed34709184518870d820a5dd5f27e</string>
+
 
     <!--<string name="banner_ad_unit_id">/6499/example/banner</string>-->
     <string name="title_activity_testing">TESTING</string>
@@ -164,7 +166,6 @@ Please contact us at info@sillymonks.com if you have any questions about our ter
 
 
     <string name="more_articles_url">/api/v1/getMoreRelatedArticles?articleID=</string>
-    <string name="mopub_interstitial_ad_id">6d4ed34709184518870d820a5dd5f27e</string>
 
     <string name="user_registration_url">/api/v1/PostUserRegistrationFromApp?</string>
     <string name="firstname_url">first_name=</string>
