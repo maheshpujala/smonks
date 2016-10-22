@@ -75,10 +75,10 @@
             android:id="@+id/collapsing"
             android:layout_width="match_parent"
             android:layout_height="250dp"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed"
             android:fitsSystemWindows="true"
             android:background="@android:color/transparent"
-            app:layout_collapseMode="pin"
+            app:layout_collapseMode="parallax"
             app:expandedTitleMarginStart="48dp"
             app:expandedTitleMarginEnd="64dp">
         </android.support.design.widget.CollapsingToolbarLayout>
@@ -89,15 +89,11 @@
         android:id="@+id/scroll_nested"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/collapsing"
         android:clipToPadding="true"
         android:background="@android:color/white"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+
             <!--<android.support.design.widget.TabLayout-->
                 <!--android:id="@+id/tabs"-->
                 <!--android:layout_width="match_parent"-->
@@ -119,6 +115,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="5dp"
+                android:fitsSystemWindows="true"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
                 <android.support.v4.view.PagerTabStrip
                     android:id="@+id/pagerTabStrip"
@@ -131,7 +128,6 @@
                     />
 
             </android.support.v4.view.ViewPager>
-        </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>

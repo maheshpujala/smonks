@@ -85,12 +85,57 @@ public class CategoryFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_category, container, false);
         myRecyclerView = (RecyclerView) rootView.findViewById(R.id.category_list);
         myRecyclerView.setHasFixedSize(true);
-        myRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                myRecyclerView.stopNestedScroll();
+//        myRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//                myRecyclerView.stopNestedScroll();
+//
+//            }
+//        });
+        myRecyclerView.setOnTouchListener(new View.OnTouchListener() {
 
+            int dragthreshold = 30;
+            int downX;
+            int downY;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        downX = (int) event.getRawX();
+                        downY = (int) event.getRawY();
+                        Log.e("VIEW Y____DOWN",""+v);
+                        Log.e("_DOWN_downX=="+downX,"_DOWN_downY=="+downY);
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        int distanceX = Math.abs((int) event.getRawX() - downX);
+                        int distanceY = Math.abs((int) event.getRawY() - downY);
+                        Log.e("VIEW Y____MOVE",""+v.getY());
+
+                        Log.e("distanceX="+distanceX,"distanceY="+distanceY);
+//
+//                        if (distanceY > distanceX && distanceY > dragthreshold) {
+//                            viewPager.getParent().requestDisallowInterceptTouchEvent(false);
+//                            scrollView.getParent().requestDisallowInterceptTouchEvent(true);
+//                        } else if (distanceX > distanceY && distanceX > dragthreshold) {
+//                            viewPager.getParent().requestDisallowInterceptTouchEvent(true);
+//                            scrollView.getParent().requestDisallowInterceptTouchEvent(false);
+//                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        downX = (int) event.getRawX();
+                        downY = (int) event.getRawY();
+                        Log.e("VIEW Y____UP",""+v.getY());
+
+                        Log.e("UP downX=="+downX,"UP downY=="+downY);
+
+//                        scrollView.getParent().requestDisallowInterceptTouchEvent(false);
+//                        viewPager.getParent().requestDisallowInterceptTouchEvent(false);
+                        break;
+                }
+                return false;
             }
         });
         mAdapter = new RecyclerAdapter(getActivity(), articles,myRecyclerView,category_name, (String) articles_total_count.get(category_name));

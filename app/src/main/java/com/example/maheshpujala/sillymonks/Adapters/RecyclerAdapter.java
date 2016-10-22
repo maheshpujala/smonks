@@ -54,7 +54,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
         this.category_name=category_name;
         this.total_articles_count=total_articles_count;
 
-        if (recyclerView.getLayoutManager() instanceof LinearLayoutManager) {
+//        if (recyclerView.getLayoutManager() instanceof LinearLayoutManager) {
 
             final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView
                     .getLayoutManager();
@@ -66,7 +66,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
                                                int dx, int dy) {
                             super.onScrolled(recyclerView, dx, dy);
                           //  String current_tabTitle = ((CategoryActivity)context).currentTabTitle.trim();
+//Log.e("dx=="+dx,"dy=="+dy);
+//                            Log.e("recyclerview","Vertical Scroll Ofset"+recyclerView.computeVerticalScrollOffset());
+                            recyclerView.offsetChildrenVertical(0);
 
+//                            Log.e("recyclerView.getY()==",""+recyclerView.getY());
                         //    if (current_tabTitle.equalsIgnoreCase(category_name) && Integer.parseInt(total_articles_count ) > articles.size() ) {
 
                             if (Integer.parseInt(total_articles_count ) > articles.size() ) {
@@ -90,7 +94,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
 
                         }
                     });
-        }
+//        }
     }
 
     @Override
