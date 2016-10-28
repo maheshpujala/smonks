@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebView;
-import android.widget.Toast;
 
 import com.example.maheshpujala.sillymonks.R;
 
@@ -31,7 +30,6 @@ public class SplashActivity extends AppCompatActivity {
 
         loadConfig();
 
-        getScreensize();
     }
 
     private void loginCheck() {
@@ -58,13 +56,6 @@ public class SplashActivity extends AppCompatActivity {
             startActivity(start);
 
         }
-    }
-
-    private void getScreensize() {
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        int height = displaymetrics.heightPixels;
-        int width = displaymetrics.widthPixels;
     }
 
 

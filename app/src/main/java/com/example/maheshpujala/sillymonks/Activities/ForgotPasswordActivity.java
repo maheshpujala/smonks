@@ -1,5 +1,6 @@
 package com.example.maheshpujala.sillymonks.Activities;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -7,14 +8,17 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkError;
 import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
@@ -36,6 +40,8 @@ import org.json.JSONObject;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
     EditText email_address_holder;
+    ProgressDialog progressdialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,12 +54,25 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-
+        progressdialog = new ProgressDialog(ForgotPasswordActivity.this);
+        progressdialog.setMessage("Please Wait....");
+        progressdialog.setCancelable(false);
         TextView toolbar_title = (TextView) findViewById(R.id.toolbar_title);
         toolbar_title.setText("Forgot Password");
 
+       final Button send_button=(Button)findViewById(R.id.send_button);
         email_address_holder =(EditText)findViewById(R.id.email_address_holder);
-        Button send_button=(Button)findViewById(R.id.send_button);
+        email_address_holder.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+                if (id == R.id.send || id == EditorInfo.IME_NULL) {
+                    send_button.performClick();
+                    return true;
+                }
+                return false;
+            }
+        });
+
         send_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,6 +81,8 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 }
                 else{
                     sendRequest();
+                    progressdialog.show();
+
                 }
             }
         });
@@ -75,6 +96,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
+                            progressdialog.dismiss();
                             Toast.makeText(getApplicationContext(),response.getString("message"),Toast.LENGTH_SHORT).show();
                             if(response.getBoolean("is_registered")){
                               finish();
@@ -87,10 +109,14 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
                         reportError(error);
                     }
                 });
+        int MY_SOCKET_TIMEOUT_MS = 15000;
+        jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(
+                MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 // Add the request to the RequestQueue.
         VolleyRequest.getInstance().addToRequestQueue(jsObjRequest);
     }
@@ -133,13 +159,11 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                         }
                     })
                     .show();
+
+progressdialog.dismiss();
         }
     }
     private boolean isEmailValid(String s) {
-        if (s == null) {
-            return false;
-        } else {
-            return android.util.Patterns.EMAIL_ADDRESS.matcher(s).matches();
-        }
+        return s != null && android.util.Patterns.EMAIL_ADDRESS.matcher(s).matches();
     }
 }

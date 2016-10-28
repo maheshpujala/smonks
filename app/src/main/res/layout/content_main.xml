@@ -7,13 +7,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    android:id="@+id/layout"
     tools:showIn="@layout/app_bar_main"
     tools:context=".Activities.MainActivity">
 
 
     <FrameLayout
-        android:id="@+id/main_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
@@ -24,7 +22,6 @@
             android:layout_height="wrap_content"
             ads:adSize="BANNER"
             ads:adUnitId="@string/banner_ad_unit_id"/>
-
 
         <com.example.maheshpujala.sillymonks.Utils.BounceListView
             android:id="@+id/list_allwoods"

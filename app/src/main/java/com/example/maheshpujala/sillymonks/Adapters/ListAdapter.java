@@ -2,40 +2,30 @@ package com.example.maheshpujala.sillymonks.Adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.maheshpujala.sillymonks.Model.Article;
 import com.example.maheshpujala.sillymonks.R;
-import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
-import com.google.android.gms.ads.doubleclick.PublisherAdView;
 
-import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by maheshpujala on 29/8/16.
  */
 public class ListAdapter extends BaseAdapter {
-    private  List<String> wood_titles ,wood_images,wood_ids;
+    private  List<String> wood_titles;
+    private List<String> wood_images;
     private  Activity context;
     private  int response;
     String responseCode;
@@ -50,13 +40,14 @@ public class ListAdapter extends BaseAdapter {
         this.context = context;
         this.wood_titles = wood_titles;
         this.wood_images=wood_images;
-        this.wood_ids=wood_ids;
+        List<String> wood_ids1 = wood_ids;
         this.response=response;
 
     }
     public ListAdapter(Activity context, List<Article> articlesList) {
         this.context = context;
         this.articlesList = articlesList;
+
     }
     public ListAdapter(Activity context, List<String> wood_titles,int response) {
         this.context = context;
@@ -104,7 +95,7 @@ public class ListAdapter extends BaseAdapter {
         View rowView = null;
         if (response == 1){
 
-            rowView = inflater.inflate(R.layout.listview_navigation, null);
+            rowView = inflater.inflate(R.layout.listview_navigation, parent,false);
             TextView nav_text = (TextView) rowView.findViewById(R.id.nav_text);
             nav_text.setText(wood_titles.get(position));
 
@@ -112,20 +103,19 @@ public class ListAdapter extends BaseAdapter {
 
             if (position == 0) {
 
-                rowView = inflater.inflate(R.layout.listview_dummy, null);
+                rowView = inflater.inflate(R.layout.listview_dummy, parent,false);
                 LinearLayout blank =(LinearLayout) rowView.findViewById(R.id.blank);
             } else {
-                rowView = inflater.inflate(R.layout.listview_home, null);
+                rowView = inflater.inflate(R.layout.listview_home, parent,false);
                 TextView wood_name_tv = (TextView) rowView.findViewById(R.id.wood_name_sillymonks);
                 ImageView cover_image = (ImageView) rowView.findViewById(R.id.wood_cover_image);
 
                 wood_name_tv.setText(wood_titles.get(position));
-
                 Glide.with(cover_image.getContext()).load(wood_images.get(position)).into(cover_image);
 
             }
         }else if(response ==3){
-            rowView = inflater.inflate(R.layout.listview_comments, null);
+            rowView = inflater.inflate(R.layout.listview_comments, parent,false);
 
             ImageView user_dp = (ImageView) rowView.findViewById(R.id.user_dp);
             TextView userName = (TextView) rowView.findViewById(R.id.userName);
@@ -140,7 +130,7 @@ public class ListAdapter extends BaseAdapter {
             rating_text.setText(comments.get(2));
             textViewComment.setText(comments.get(3));
         }else{
-            rowView = inflater.inflate(R.layout.recyclerview_category, null);
+            rowView = inflater.inflate(R.layout.recyclerview_category,parent,false);
              wood_name_tv = (TextView) rowView.findViewById(R.id.wood_name_sillymonks);
              cover_image = (ImageView) rowView.findViewById(R.id.wood_cover_image);
             time_ago = (TextView) rowView.findViewById(R.id.time_ago);

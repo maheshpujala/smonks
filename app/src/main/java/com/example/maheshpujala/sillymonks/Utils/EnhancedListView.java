@@ -287,7 +287,7 @@ public class EnhancedListView extends ListView {
         }
     }
 
-    private class HideUndoPopupHandler extends Handler {
+    private  class HideUndoPopupHandler extends Handler {
 
         /**
          * Subclasses must implement this to receive messages.
@@ -318,9 +318,9 @@ public class EnhancedListView extends ListView {
     private int mUndoHideDelay = 5000;
     private int mSwipingLayout;
 
-    private List<Undoable> mUndoActions = new ArrayList<Undoable>();
-    private SortedSet<PendingDismissData> mPendingDismisses = new TreeSet<PendingDismissData>();
-    private List<View> mAnimatedViews = new LinkedList<View>();
+    private List<Undoable> mUndoActions = new ArrayList<>();
+    private SortedSet<PendingDismissData> mPendingDismisses = new TreeSet<>();
+    private List<View> mAnimatedViews = new LinkedList<>();
     private int mDismissAnimationRefCount;
 
     private boolean mSwipePaused;

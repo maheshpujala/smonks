@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/view"
@@ -41,11 +43,12 @@
         android:layout_height="fill_parent" >
 
         <LinearLayout
-            android:id="@+id/edit_text_layout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:orientation="vertical" >
+            android:orientation="vertical"
+            android:descendantFocusability="beforeDescendants"
+            android:focusableInTouchMode="true">
 
             <RelativeLayout
                 android:layout_width="fill_parent"
@@ -53,7 +56,7 @@
                 android:layout_marginBottom="10dp" >
 
                 <com.example.maheshpujala.sillymonks.Utils.CircleImageView
-                    android:id="@+id/logo"
+                    android:id="@+id/profilePic"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
                     android:layout_centerVertical="true"
@@ -69,7 +72,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_margin="10dp"
-                    android:layout_toRightOf="@+id/logo"
+                    android:layout_toRightOf="@+id/profilePic"
                     android:background="#FEC106"
                     android:text="change picture" />
 
@@ -80,7 +83,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_below="@+id/change_picture"
                     android:layout_margin="10dp"
-                    android:layout_toRightOf="@+id/logo"
+                    android:layout_toRightOf="@+id/profilePic"
                     android:background="#FEC106"
                     android:text="change password"/>
             </RelativeLayout>
@@ -94,6 +97,7 @@
                 android:imeOptions="flagNoFullscreen"
                 android:inputType="textCapSentences"
                 android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:maxLines="1" />
 
             <EditText
@@ -106,6 +110,7 @@
                 android:imeOptions="flagNoFullscreen"
                 android:inputType="textCapSentences"
                 android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:maxLines="1" />
 
             <EditText
@@ -117,6 +122,7 @@
                 android:hint="Email"
                 android:imeOptions="flagNoExtractUi"
                 android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:maxLines="1" />
 
             <EditText
@@ -126,9 +132,12 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:hint="Gender"
-                android:imeOptions="flagNoExtractUi"
+                android:imeActionId="@+id/update"
+                android:imeActionLabel="Update"
+                android:imeOptions="actionDone"
                 android:inputType="textCapSentences"
                 android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:maxLines="1" />
             <LinearLayout
                 android:id="@+id/linearLayout"

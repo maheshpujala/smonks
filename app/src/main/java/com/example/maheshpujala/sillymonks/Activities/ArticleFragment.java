@@ -1,5 +1,6 @@
 package com.example.maheshpujala.sillymonks.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -37,6 +38,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.bumptech.glide.Glide;
 import com.example.maheshpujala.sillymonks.Adapters.ListAdapter;
+import com.example.maheshpujala.sillymonks.Network.Connectivity;
 import com.example.maheshpujala.sillymonks.Network.VolleyRequest;
 import com.example.maheshpujala.sillymonks.Model.Article;
 import com.example.maheshpujala.sillymonks.Model.SessionManager;
@@ -69,7 +71,7 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
 
     RatingBar rating;
     ImageView comment, share, like;
-    String articlePageURL, categoryName, categoryID, wood_id, articleID, id, title, category_name_fromJson, likes, banner_image, youtube_id, brightcove_link, description,comments,related_article_id, related_article_title, related_article_image, relatedArticleId;
+    String articlePageURL, categoryName, categoryID, wood_id, articleID, id, title, category_name_fromJson, likes, banner_image, youtube_id, brightcove_link, description,comments,related_article_id, related_article_title, related_article_image, relatedArticleId,imageSize;
     Float average_rating;
     TextView text_heading, article_title, article_description,text_like, movie_name1, movie_name2, movie_name3, movie_name4, more_articles,text_rating,ratingText,textForNoComments;
     ImageView article_banner, play_image, hztl_image1, hztl_image2, hztl_image3, hztl_image4;
@@ -91,6 +93,8 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
     Map commentsList;
     ScrollView articleScrollView;
     Context context;
+    ProgressDialog progressdialog;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -106,9 +110,11 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
         userData = session.getUserDetails();
         context =getContext();
         sendRequest(articleID,categoryID,wood_id);
+        progressdialog = new ProgressDialog(getContext());
+        progressdialog.setMessage("Please Wait....");
+        progressdialog.setCancelable(false);
+        progressdialog.show();
     }
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -123,7 +129,7 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
         // Setup any handles to view objects here
 
         nativeAdContainer = (LinearLayout) view.findViewById(R.id.native_ad_container);
-       // showNativeAd();
+        showNativeAd();
 
         articleScrollView = (ScrollView)view.findViewById(R.id.articleScrollView);
         articleScrollView.scrollTo(5,10);
@@ -147,8 +153,6 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
                                       @Override
                                       public boolean onTouch(View v, MotionEvent event) {
                                           if (event.getAction() == MotionEvent.ACTION_UP) {
-                                              // TODO perform your action here
-                                              Log.e("setOnTouchListener","RATING BAR");
                                               if(session.isLoggedIn()){
                                                   showDialog("Rating");
                                               }else{
@@ -189,6 +193,18 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
         like.setOnClickListener(this);
         share.setOnClickListener(this);
         comment.setOnClickListener(this);
+        checkConnection();
+
+    }
+
+    public void checkConnection() {
+        if (Connectivity.isConnected(getContext()))  //if connection available
+        {
+
+        } else {
+            progressdialog.dismiss();
+            Connectivity.showDialog(getContext());
+        }
 
     }
 
@@ -256,7 +272,8 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
 // above to retrieve the ad properties. For example:
 
     public void sendRequest(final String articleId, String categoryId, String wood_id) {
-        articlePageURL = getResources().getString(R.string.main_url) + getResources().getString(R.string.article_page_url) + articleId + getResources().getString(R.string.os_tag);
+
+        articlePageURL = getResources().getString(R.string.main_url) + getResources().getString(R.string.article_page_url) + articleId +getResources().getString(R.string.userId_url)+userData.get(0).getSmonksId()+getResources().getString(R.string.os_tag);
         final String relatedArticlesURL = getResources().getString(R.string.main_url) + getResources().getString(R.string.related_articles_url) + articleId + getResources().getString(R.string.categoryId_url) + categoryId + getResources().getString(R.string.wood_id_url) + wood_id;
 // Request a JsonObject response from the provided URL.
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
@@ -265,39 +282,6 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
                     public void onResponse(JSONObject response) {
                         getData(response);
                         getRelatedArticles(relatedArticlesURL);
-                        if(session.isLoggedIn()){
-                            isLiked(articleId);
-                        }
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        reportError(error);
-                    }
-                });
-// Add the request to the RequestQueue.
-        VolleyRequest.getInstance().addToRequestQueue(jsObjRequest);
-    }
-
-    public void isLiked(String articleId) {
-
-      final String  isLikedURL = getResources().getString(R.string.main_url) + getResources().getString(R.string.isLiked_url) + articleId + getResources().getString(R.string.userId_url)+userData.get(0).getSmonksId();
-
-        // Request a JsonObject response from the provided URL.
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.GET, isLikedURL, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            JSONObject likes=response.getJSONObject("likes") ;
-                            isLikedByUser = likes.getBoolean("liked");
-                            if(isLikedByUser){
-                                like.setImageResource(R.drawable.heart);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
                     }
                 }, new Response.ErrorListener() {
 
@@ -332,14 +316,15 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
 
     private void getRelatedData(JSONObject response) {
         try {
+
             JSONArray related_articles_array = response.getJSONArray("articles");
-            relatedArticlesList = new ArrayList<Article>();
+            relatedArticlesList = new ArrayList<>();
 
             for (int k = 0; k < related_articles_array.length(); k++) {
                 JSONObject relatedArticles = related_articles_array.getJSONObject(k);
                 Article a = new Article(relatedArticles.getString("id"),
                         relatedArticles.getString("title"),
-                        relatedArticles.getString("large"),
+                        relatedArticles.getString("small"),
                         relatedArticles.getString("published_at"),
                         relatedArticles.getString("likes_count"),
                         relatedArticles.getString("comments_count"));
@@ -356,6 +341,7 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
         }else{
             layout_related_articles.setVisibility(View.GONE);
         }
+        progressdialog.dismiss();
     }
 
     private void setRelatedArticles() {
@@ -370,47 +356,59 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
         movie_name3.setText(relatedArticlesList.get(2).getTitle());
         movie_name4.setText(relatedArticlesList.get(3).getTitle());
     }
+    public void onDestroy() {
+        Glide.clear(hztl_image1);
+        Glide.clear(hztl_image2);
+        Glide.clear(hztl_image3);
+        Glide.clear(hztl_image4);
+        super.onDestroy();
+    }
 
     public void getData(JSONObject json) {
         try {
 
                 JSONObject article_data = json.getJSONObject("article");
             JSONArray articleTags = article_data.getJSONArray("tags");
-            tagsList = new ArrayList<String>();
+            tagsList = new ArrayList<>();
 
             for (int k = 0; k < articleTags.length(); k++) {
                 tagsList.add(articleTags.get(k).toString());
             }
             JSONArray articleComments = article_data.getJSONArray("comments");
-            commentsList = new HashMap<String,ArrayList<String>>();
+            commentsList = new HashMap<>();
 
 
             for (int k = 0; k < articleComments.length(); k++) {
                 JSONObject userComments = articleComments.getJSONObject(k);
-                List<String> values = new ArrayList<String>();
+                List<String> values = new ArrayList<>();
                 values.add(userComments.getString("profile_picture"));
                 values.add(userComments.getString("user_name"));
                 values.add(userComments.getString("rating_value"));
                 values.add(userComments.getString("body"));
-                Log.e("VALUE OF K=="+k,"values=="+values);
 
                 commentsList.put(k,values);
-                Log.e("VALUE OF K=="+k,"commentsList=="+commentsList);
             }
                 id = article_data.getString("id");
                 title = article_data.getString("title");
                 category_name_fromJson = article_data.getString("category_name");
                 likes = article_data.getString("likes_count");
-                banner_image = article_data.getString("original");
+                banner_image = article_data.getString("medium");
                 youtube_id = article_data.getString("youtube_link");
                 brightcove_link = article_data.getString("brightcove_link");
                 description = article_data.getString("description");
                 average_rating = Float.valueOf(article_data.getString("average_rating"));
+                isLikedByUser = article_data.getBoolean("liked");
+            if(isLikedByUser){
+                like.setImageResource(R.drawable.heart);
+            }else{
+                like.setImageResource(R.drawable.mt_heart);
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
         setDataInViews();
+        progressdialog.dismiss();
     }
 
     private void setDataInViews() {
@@ -512,7 +510,7 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
                 i.setType("text/plain");
                 i.putExtra(Intent.EXTRA_SUBJECT, "SillyMonks Ride On Digital");
                 String sAux = "\nLet me share you this article\n\n";
-                sAux = sAux + "http://sillymonksapp.com/share/show_article/"+"wood_name"+"/"+"categoryName"+"/"+"articleID";
+//                sAux = sAux + "http://webapp.sillymonksapp.com/share/show_article/"++"/"+categoryName+"/"+articleID;
                 i.putExtra(Intent.EXTRA_TEXT, sAux);
                 startActivity(Intent.createChooser(i, "choose one"));
             }
@@ -564,7 +562,6 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
             moreArticles.putExtra("articleID", articleID);
             moreArticles.putExtra("categoryName", category_name_fromJson);
             moreArticles.putExtra("wood_id", wood_id);
-
             startActivity(moreArticles);
 
         }
@@ -574,7 +571,7 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
     private void showDialog(final String fromView) {
         final AlertDialog.Builder popDialog = new AlertDialog.Builder(context);
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View v = inflater.inflate(R.layout.dialog, null);
+        View v = inflater.inflate(R.layout.dialog,null);
         popDialog.setView(v);
         TextView  dialogTitle = (TextView) v.findViewById(R.id.dialog_heading);
         ratingBar = (RatingBar)v.findViewById(R.id.ratingBar);
@@ -629,7 +626,6 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        ;
         // Request a JsonObject response from the provided URL.
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, sendCommentsUrl, null, new Response.Listener<JSONObject>() {
@@ -695,7 +691,6 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
     }
 
     private void sendLike() {
-        Log.e("","");
         String sendLikeUrl;
         if(isLikedByUser){
             sendLikeUrl = getResources().getString(R.string.main_url)+getResources().getString(R.string.userLiked_url)+articleID
@@ -713,6 +708,8 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
                         try {
                             JSONObject likes_data = response.getJSONObject("likes");
                             String likesCount = likes_data.getString("likes_count");
+                            String message = likes_data.getString("message");
+                            Toast.makeText(getContext(),message,Toast.LENGTH_SHORT).show();
                             text_like.setText("Likes :"+likesCount);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -767,6 +764,8 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
             AlertDialog dialog = builder.create();
 
             dialog.show();
+            progressdialog.dismiss();
+
         }
     }
 }

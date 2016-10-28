@@ -1,7 +1,17 @@
 package com.example.maheshpujala.sillymonks.Activities;
 
+import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -13,8 +23,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,20 +46,28 @@ import com.example.maheshpujala.sillymonks.Network.VolleyRequest;
 import com.example.maheshpujala.sillymonks.Model.SessionManager;
 import com.example.maheshpujala.sillymonks.Model.UserData;
 import com.example.maheshpujala.sillymonks.R;
+import com.example.maheshpujala.sillymonks.Utils.HelperMethods;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
 
 /**
  * Created by maheshpujala on 19/10/16.
  */
 
 public class EditProfileActivity extends AppCompatActivity implements View.OnClickListener {
-    Button save_changes,change_pwd,change_picture,changePwdOnScreen,change_pwd_on_screen;
+    Button save_changes,change_pwd,change_picture,change_pwd_on_screen;
     EditText firstName_edit,lastName_edit,emailAddress_edit,gender_edit,newPwdEdit,currentPwdEdit,renewPwdEdit;
-    String fname,lname,email,gender;
+    String fname,lname,email,gender,smonksID;
     SessionManager session;
     List<UserData> user_data;
     private Animation mInAnimation, mOutAnimation;
@@ -57,6 +78,14 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
     private int CHANGE_PWD_SCREEN = 1;
     TextView toolbar_title;
     Boolean password_verify;
+    int RESULT_LOAD_IMAGE = 555;
+    ImageView profilePic;
+    Bitmap decodedProfilePicture;
+    private static final int REQUEST_WRITE_STORAGE = 112;
+    ProgressDialog progress;
+    String picturePath;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +93,10 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         setContentView(R.layout.activity_update);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         session = new SessionManager(this);
         user_data = session.getUserDetails();
+        smonksID=user_data.get(0).getSmonksId();
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -84,10 +115,18 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         mOutAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.screen_out);
         mChangePwdLayout = findViewById(R.id.layout_change_pwd);
         mScrollView = (ScrollView) findViewById(R.id.main_scroll);
-        changePwdOnScreen = (Button) findViewById(R.id.change_pwd_on_screen);
 
         CURRENT_SCREEN = UPDATE_SCREEN;
 
+        profilePic = (ImageView) findViewById(R.id.profilePic);
+        if(user_data.get(0).getId().length()>30) {
+            decodedProfilePicture = HelperMethods.decodeBase64(user_data.get(0).getId());
+            profilePic.setImageBitmap(decodedProfilePicture);
+        }
+        change_pwd_on_screen = (Button)findViewById(R.id.change_pwd_on_screen);
+        change_pwd_on_screen.setOnClickListener(this);
+        save_changes=(Button)findViewById(R.id.save_changes);
+        save_changes.setOnClickListener(this);
         currentPwdEdit = (EditText) findViewById(R.id.current_pwd);
         newPwdEdit = (EditText) findViewById(R.id.new_pwd);
         renewPwdEdit = (EditText) findViewById(R.id.re_new_pwd);
@@ -96,15 +135,31 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         emailAddress_edit =(EditText)findViewById(R.id.emailAddress_edit);
         emailAddress_edit.setKeyListener(null);
         gender_edit = (EditText)findViewById(R.id.gender_edit);
+        gender_edit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+                if (id == R.id.update || id == EditorInfo.IME_NULL) {
+                    save_changes.performClick();
+                    return true;
+                }
+                return false;
+            }
+        });
+        renewPwdEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+                if (id == R.id.update || id == EditorInfo.IME_NULL) {
+                    change_pwd_on_screen.performClick();
+                    return true;
+                }
+                return false;
+            }
+        });
 
-        save_changes=(Button)findViewById(R.id.save_changes);
-        save_changes.setOnClickListener(this);
         change_pwd = (Button)findViewById(R.id.change_pwd);
         change_pwd.setOnClickListener(this);
         change_picture = (Button)findViewById(R.id.change_picture);
         change_picture.setOnClickListener(this);
-        change_pwd_on_screen = (Button)findViewById(R.id.change_pwd_on_screen);
-        change_pwd_on_screen.setOnClickListener(this);
         firstName_edit.setText(fname);
         lastName_edit.setText(lname);
         emailAddress_edit.setText(email);
@@ -142,13 +197,26 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         return super.onOptionsItemSelected(item);
     }
 
+
     @Override
     public void onClick(View v) {
         switch(v.getId()){
             case R.id.save_changes:
+
                 sendRequestForUpdate();
                 break;
             case R.id.change_picture:
+                int permissionCheck = ContextCompat.checkSelfPermission(EditProfileActivity.this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                    makeRequest();
+                }else{
+                    Intent i = new Intent(
+                            Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+                    startActivityForResult(i, RESULT_LOAD_IMAGE);
+                }
+
                 break;
             case R.id.change_pwd:
                 CURRENT_SCREEN = CHANGE_PWD_SCREEN;
@@ -165,34 +233,130 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void sendRequestForUpdate() {
-        final String fullname = firstName_edit.getText().toString()+" "+lastName_edit.getText().toString();
-        String updateUserDetails_url =getResources().getString(R.string.main_url)+getResources().getString(R.string.update_user_url)+user_data.get(0).getSmonksId()+"&"+getResources().getString(R.string.firstname_url)
-                +firstName_edit.getText().toString()+getResources().getString(R.string.lastname_url)+lastName_edit.getText().toString();
-        Log.e("++++updateUserDetails_url URLLLLLLLL",updateUserDetails_url);
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.POST, updateUserDetails_url, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.e("onResponse",""+response);
-                        try {
-                            Toast.makeText(getApplication(),response.getString("message"),Toast.LENGTH_SHORT).show();
-                            session.createLoginSession(user_data.get(0).getSmonksId(),"Display Picture",fullname,user_data.get(0).getEmail(),"","default_login");
-                            finish();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
+        profilePic.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+        progress = new ProgressDialog(EditProfileActivity.this);
+        progress.setTitle("Uploading");
+        progress.setMessage("Please wait...");
+        progress.show();
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                File f = new File(picturePath) ;
+                String content_type  = getMimeType(f.getPath());
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
-                        reportError(error);
+                String file_path = f.getAbsolutePath();
+                OkHttpClient client = new OkHttpClient();
+                RequestBody file_body = RequestBody.create(MediaType.parse(content_type),f);
+
+                RequestBody request_body = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("id","28")
+                        .addFormDataPart("type",content_type)
+                        .addFormDataPart("profile_picture",file_path.substring(file_path.lastIndexOf("/")+1), file_body)
+                        .build();
+
+                okhttp3.Request request = new okhttp3.Request.Builder()
+                        .url("http://192.168.1.15:3000/api/v1/PostUserProfileUpdate")
+                        .post(request_body)
+                        .build();
+
+                try {
+                    okhttp3.Response response = client.newCall(request).execute();
+
+                    if(!response.isSuccessful()){
+                        throw new IOException("Error : "+response);
                     }
-                });
-// Add the request to the RequestQueue.
-        VolleyRequest.getInstance().addToRequestQueue(jsObjRequest);
+
+                    progress.dismiss();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        t.start();
     }
+    private String getMimeType(String path) {
+
+        String extension = MimeTypeMap.getFileExtensionFromUrl(path);
+
+        return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+    }
+
+    protected void makeRequest() {
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                REQUEST_WRITE_STORAGE);
+    }
+
+//    private void sendRequestForUpdate() {
+//        Bitmap bitmap = ((BitmapDrawable)profilePic.getDrawable()).getBitmap();
+//
+//        final  String profileImage = HelperMethods.encodeToBase64(bitmap, Bitmap.CompressFormat.JPEG, 100);
+//        String updateUserDetailsURL ="http://192.168.1.15:3000/api/v1/PostUserProfileUpdate";
+//
+//        StringRequest stringRequest = new StringRequest(Request.Method.POST,updateUserDetailsURL,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        Log.e("response++++++++++++",response);
+//                        Toast.makeText(EditProfileActivity.this,response,Toast.LENGTH_LONG).show();
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        Toast.makeText(EditProfileActivity.this,error.toString(),Toast.LENGTH_LONG).show();
+//                    }
+//                }){
+//            @Override
+//            protected Map<String,String> getParams(){
+//                Map<String,String> params = new HashMap<String, String>();
+//                params.put("id",smonksID);
+//                params.put("first_name",firstName_edit.getText().toString());
+//                params.put("last_name",lastName_edit.getText().toString());
+//                params.put("profile_image",profileImage);
+//                return params;
+//            }
+//
+//        };
+//
+//        VolleyRequest.getInstance().addToRequestQueue(stringRequest);
+//    }
+
+
+//    private void sendRequestForUpdate() {
+//        final String fullname = firstName_edit.getText().toString()+" "+lastName_edit.getText().toString();
+//        String updateUserDetails_url =getResources().getString(R.string.main_url)+getResources().getString(R.string.update_user_url)+smonksID+"&"+getResources().getString(R.string.firstname_url)
+//                +firstName_edit.getText().toString()+getResources().getString(R.string.lastname_url)+lastName_edit.getText().toString();
+//        Log.e("++++updateUserDetails_url URLLLLLLLL",updateUserDetails_url);
+//        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+//                (Request.Method.POST, updateUserDetails_url, null, new Response.Listener<JSONObject>() {
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//                        Log.e("onResponse",""+response);
+//                        try {
+//                            Toast.makeText(getApplication(),response.getString("message"),Toast.LENGTH_SHORT).show();
+//
+//                            Bitmap bitmap = ((BitmapDrawable)profilePic.getDrawable()).getBitmap();
+//                            String profileImage = HelperMethods.encodeToBase64(bitmap, Bitmap.CompressFormat.JPEG, 100);
+//                            session.createLoginSession(user_data.get(0).getSmonksId(),profileImage,fullname,user_data.get(0).getEmail(),"","default_login");
+//                            finish();
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }, new Response.ErrorListener() {
+//
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        reportError(error);
+//                    }
+//                });
+//// Add the request to the RequestQueue.
+//        VolleyRequest.getInstance().addToRequestQueue(jsObjRequest);
+//    }
 
 
     @Override
@@ -258,7 +422,6 @@ Log.e("changed password","Entered");
 
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            // TODO Auto-generated method stub
                             reportError(error);
                         }
                     });
@@ -309,6 +472,26 @@ Log.e("changed password","Entered");
                 CURRENT_SCREEN = UPDATE_SCREEN;
             }
         });
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+            Cursor cursor = getContentResolver().query(selectedImage,
+                    filePathColumn, null, null, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            picturePath = cursor.getString(columnIndex);
+            cursor.close();
+
+            // String picturePath contains the path of selected Image
+            profilePic.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+        }
     }
     private void reportError(VolleyError error) {
         Log.e("response Errorhome", error + "");

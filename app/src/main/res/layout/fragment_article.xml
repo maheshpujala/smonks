@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.maheshpujala.sillymonks.Activities.ArticleActivity">
-    <ScrollView
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/articleScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/view"
         android:layout_centerHorizontal="true"
-        android:scrollbars="none">
+        android:scrollbars="none"
+        tools:context="com.example.maheshpujala.sillymonks.Activities.ArticleActivity">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -30,7 +27,8 @@
                     android:id="@+id/article_banner"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:scaleType="fitXY" />
+                    android:scaleType="fitXY"
+                    tools:ignore="ContentDescription" />
 
                     <ImageButton
                         android:layout_width="wrap_content"
@@ -38,7 +36,8 @@
                         android:src="@android:drawable/ic_media_play"
                         android:id="@+id/play_image"
                         android:visibility="gone"
-                        android:layout_gravity="center"/>
+                        android:layout_gravity="center"
+                        tools:ignore="ContentDescription" />
                 </FrameLayout>
                 <TextView
                     android:id="@+id/article_title"
@@ -67,7 +66,6 @@
                  </com.google.android.flexbox.FlexboxLayout>
 
                 <RelativeLayout
-                    android:id="@+id/rlRevRatings"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginBottom="10dp"
@@ -188,7 +186,6 @@
         android:textSize="20sp"
         android:textStyle="bold"/>
             <HorizontalScrollView
-                android:id="@+id/featuredHorzScrollView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scrollbars="none"
@@ -196,7 +193,7 @@
 
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="250dp"
                     android:orientation="horizontal">
 
@@ -212,7 +209,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="200dp"
                             android:background="@drawable/drawer_image"
-                            android:scaleType="fitXY" />
+                            android:scaleType="fitXY"
+                            tools:ignore="ContentDescription" />
 
                         <TextView
                             android:id="@+id/movie_name1"
@@ -237,7 +235,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="200dp"
                         android:background="@drawable/drawer_image"
-                        android:scaleType="fitXY" />
+                        android:scaleType="fitXY"
+                        tools:ignore="ContentDescription" />
 
                         <TextView
                             android:id="@+id/movie_name2"
@@ -264,7 +263,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="200dp"
                             android:background="@drawable/drawer_image"
-                            android:scaleType="fitXY" />
+                            android:scaleType="fitXY"
+                        tools:ignore="ContentDescription" />
 
                         <TextView
                             android:id="@+id/movie_name3"
@@ -289,7 +289,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="200dp"
                             android:background="@drawable/drawer_image"
-                            android:scaleType="fitXY" />
+                            android:scaleType="fitXY"
+                        tools:ignore="ContentDescription" />
 
                         <TextView
                             android:id="@+id/movie_name4"
@@ -338,7 +339,10 @@
                 android:layout_height="match_parent"
                 android:scrollbars="none"
                 android:layout_gravity="center"
-                android:layout_margin="5dp" />
+                android:layout_margin="3dp"
+                android:divider="@null"
+                android:headerDividersEnabled="false"
+                android:footerDividersEnabled="false"/>
             <TextView
                 android:id="@+id/textForNoComments"
                 android:layout_width="match_parent"
@@ -350,4 +354,3 @@
         </LinearLayout>
 
     </ScrollView>
-</RelativeLayout>

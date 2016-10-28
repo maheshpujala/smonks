@@ -1,14 +1,14 @@
 package com.example.maheshpujala.sillymonks.Activities;
 
 import android.app.Activity;
-import android.content.DialogInterface;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,7 +16,6 @@ import android.view.View;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -45,6 +44,7 @@ import com.example.maheshpujala.sillymonks.Model.UserData;
 import com.example.maheshpujala.sillymonks.R;
 import com.example.maheshpujala.sillymonks.Utils.BounceListView;
 import com.example.maheshpujala.sillymonks.Utils.CircleImageView;
+import com.example.maheshpujala.sillymonks.Utils.HelperMethods;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
@@ -74,6 +74,10 @@ public class MainActivity extends AppCompatActivity
     LinkedHashMap woodNames_Map;
     String id,name,bimages,original;
     SessionManager session;
+    ProgressDialog progressdialog;
+    Bitmap decodedProfilePicture;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,6 +112,8 @@ public class MainActivity extends AppCompatActivity
         advt.setOnClickListener(this);
         TextView share = (TextView) findViewById(R.id.sharetheapp);
         share.setOnClickListener(this);
+        TextView contests = (TextView) findViewById(R.id.contests);
+        contests.setOnClickListener(this);
 
         fb_button = (ImageView) findViewById(R.id.fb_button);
         fb_button.setOnClickListener(this);
@@ -115,6 +121,9 @@ public class MainActivity extends AppCompatActivity
         twitter_button.setOnClickListener(this);
         gplus_button = (ImageView) findViewById(R.id.gplus_button);
         gplus_button.setOnClickListener(this);
+        progressdialog = new ProgressDialog(MainActivity.this);
+        progressdialog.setMessage("Please Wait....");
+        progressdialog.setCancelable(false);
 
         checkConnection();
         checkLogin();
@@ -198,8 +207,16 @@ public class MainActivity extends AppCompatActivity
             login.setText("My Profile");
             if(userData.get(0).getLoginType().contains("google")){
                 Glide.with(profile_pic.getContext()).load(userData.get(0).getId()).into(profile_pic);
-            }else{
+            }else if(userData.get(0).getLoginType().contains("facebook")){
                 Glide.with(profile_pic.getContext()).load("https://graph.facebook.com/" +userData.get(0).getId()+ "/picture?type=large").into(profile_pic);
+            }else{
+                if(userData.get(0).getId().length()>20) {
+                    Log.e("ENCODED IMAGE+++++++",""+userData.get(0).getId());
+                    decodedProfilePicture = HelperMethods.decodeBase64(userData.get(0).getId());
+                    profile_pic.setImageBitmap(decodedProfilePicture);
+                    Log.e("++++++++++++DECODED IMAGE+++++++",""+decodedProfilePicture);
+
+                }
             }
         }
         else{
@@ -211,6 +228,7 @@ public class MainActivity extends AppCompatActivity
     public void checkConnection() {
         if (Connectivity.isConnected(MainActivity.this))  //if connection available
         {
+            progressdialog.show();
         sendRequest();
         } else {
             if (Connectivity.showDialog(MainActivity.this)){
@@ -233,7 +251,6 @@ public class MainActivity extends AppCompatActivity
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
                         Log.e("response Errorhome", error + "");
                         if (error instanceof NoConnectionError) {
                             Log.d("NoConnectionError>>>>>>>>>", "NoConnectionError.......");
@@ -247,16 +264,19 @@ public class MainActivity extends AppCompatActivity
                             Log.d("ParseError>>>>>>>>>", "ParseError.......");
                         }else if (error instanceof TimeoutError) {
                             Log.d("TimeoutError>>>>>>>>>", "TimeoutError.......");
-                            AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(MainActivity.this, R.style.myDialog));
+//                            AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(MainActivity.this, R.style.myDialog));
+//
+//                       // 2. Chain together various setter methods to set the dialog characteristics
+//                       builder.setMessage("Unable to connect with the server.Try again after some time.")
+//                               .setTitle("Server Error");
+//
+//                       // 3. Get the AlertDialog from create()
+//                       AlertDialog dialog = builder.create();
+//
+//                            dialog.show();
+                            Connectivity.showDialog(MainActivity.this);
+                            progressdialog.dismiss();
 
-                       // 2. Chain together various setter methods to set the dialog characteristics
-                       builder.setMessage("Unable to connect with the server.Try again after some time.")
-                               .setTitle("Server Error");
-
-                       // 3. Get the AlertDialog from create()
-                       AlertDialog dialog = builder.create();
-
-                            dialog.show();
                         }
 
                     }
@@ -283,8 +303,23 @@ public class MainActivity extends AppCompatActivity
 
                  id = jsonobject.getString("id");
                  name = jsonobject.getString("name");
-                 bimages = jsonobject.getString("medium");
 
+                String connectType=Connectivity.connectionType(MainActivity.this);
+                if(Connectivity.isConnectedWifi(MainActivity.this)){
+                    bimages = jsonobject.getString("original");
+                }else if(connectType.equalsIgnoreCase("CDMA")||connectType.equalsIgnoreCase("EDGE")||connectType.equalsIgnoreCase("GPRS")||connectType.equalsIgnoreCase("1xRTT")){
+                    bimages = jsonobject.getString("small");
+                }
+                else if (connectType.equalsIgnoreCase("HSDPA")||connectType.equalsIgnoreCase("HSPA")||connectType.equalsIgnoreCase("HSUPA")||connectType.equalsIgnoreCase("UMTS")||connectType.equalsIgnoreCase("HSPA+")){
+
+                    bimages = jsonobject.getString("medium");
+                }
+                else if (connectType.equalsIgnoreCase("LTE")){
+
+                    bimages = jsonobject.getString("large");
+                }else{
+                    bimages = jsonobject.getString("small");
+                }
                 woodIds.add(id);
                 woodNames.add(name);
                 woodImages.add(bimages);
@@ -295,6 +330,7 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
         home_list.setAdapter(new ListAdapter(this, woodNames, woodImages,woodIds,2));
+        progressdialog.dismiss();
 
     }
 
@@ -311,7 +347,7 @@ public class MainActivity extends AppCompatActivity
     public void onResume(){
         super.onResume();
         checkLogin();
-        checkConnection();
+      //  checkConnection();
     }
 
     @Override
@@ -329,18 +365,17 @@ public class MainActivity extends AppCompatActivity
             }
         }
         if (id == R.id.profile_image) {
-            Toast.makeText(this, "clicked profile Image", Toast.LENGTH_SHORT).show();
             if(login.getText().toString().contains("My Profile")){
                 Intent profile = new Intent(this,MyProfileActivity.class);
                 startActivity(profile);
+            }else{
+                Intent signin = new Intent(this,LoginActivity.class);
+                int requestCode = 6;
+                startActivityForResult(signin,requestCode);
             }
-            Intent signin = new Intent(this,LoginActivity.class);
-            int requestCode = 6;
-            startActivityForResult(signin,requestCode);
         }
 
         if (id == R.id.about) {
-            Toast.makeText(this, "clicked ABOUT", Toast.LENGTH_SHORT).show();
             Intent about = new Intent(this,AboutAndTerms.class);
             int requestCode = 1;
             about.putExtra("requestCode", requestCode);
@@ -348,7 +383,6 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (id == R.id.tandc) {
-            Toast.makeText(this, "clicked TERMS AND CONDITIONS", Toast.LENGTH_SHORT).show();
             Intent tandc = new Intent(this,AboutAndTerms.class);
             int requestCode = 2;
             tandc.putExtra("requestCode", requestCode);
@@ -356,7 +390,6 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (id == R.id.contact) {
-            Toast.makeText(this, "clicked CONTACT US", Toast.LENGTH_SHORT).show();
             Intent contact = new Intent(this,ContactAndAdvertise.class);
             int requestCode = 3;
             contact.putExtra("requestCode", requestCode);
@@ -364,11 +397,22 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (id == R.id.advertise) {
-            Toast.makeText(this, "clicked ADVERTISE WITH US ", Toast.LENGTH_SHORT).show();
             Intent advertise = new Intent(this,ContactAndAdvertise.class);
             int requestCode = 4;
             advertise.putExtra("requestCode", requestCode);
             startActivityForResult(advertise,requestCode);
+        }
+        if (id == R.id.contests) {
+            if(session.isLoggedIn()){
+                Intent contest = new Intent(this,ContestActivity.class);
+                int requestCode = 5;
+                contest.putExtra("requestCode", requestCode);
+                startActivityForResult(contest,requestCode);
+            }else{
+                session.checkLogin();
+                Toast.makeText(this,"You must login for take part in this contest",Toast.LENGTH_SHORT).show();
+            }
+
         }
         if (id == R.id.fb_button){
             String facebookUrl = "https://www.facebook.com/sillymonks/";
@@ -387,7 +431,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
         if (id == R.id.gplus_button){
-            Intent intent = null;
+            Intent intent;
             try {
                 // get the Google Plus app if possible
                 getPackageManager().getPackageInfo("com.google.android.apps.plus", 0);
@@ -400,7 +444,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
         }
         if (id == R.id.twitter_button){
-            Intent intent = null;
+            Intent intent;
             try {
                 // get the Twitter app if possible
                 getPackageManager().getPackageInfo("com.twitter.android", 0);
@@ -418,7 +462,7 @@ public class MainActivity extends AppCompatActivity
                 Intent i = new Intent(Intent.ACTION_SEND);
                 i.setType("text/plain");
                 i.putExtra(Intent.EXTRA_SUBJECT, "SillyMonks Android Application");
-                String sAux = "\nLet me recommend you this application\n\n";
+                String sAux = "\nMy gateway to the world of entertainment.\n";
                 sAux = sAux + "https://play.google.com/store/apps/details?id=com.ongo.silly_monks \n\n";
                 i.putExtra(Intent.EXTRA_TEXT, sAux);
                 startActivity(Intent.createChooser(i, "choose one"));

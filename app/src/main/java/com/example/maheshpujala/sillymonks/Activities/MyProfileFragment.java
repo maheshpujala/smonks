@@ -2,6 +2,7 @@ package com.example.maheshpujala.sillymonks.Activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -29,6 +30,7 @@ import com.example.maheshpujala.sillymonks.Model.SessionManager;
 import com.example.maheshpujala.sillymonks.Model.UserData;
 import com.example.maheshpujala.sillymonks.R;
 import com.example.maheshpujala.sillymonks.Utils.CircleImageView;
+import com.example.maheshpujala.sillymonks.Utils.HelperMethods;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
@@ -52,8 +54,8 @@ public class MyProfileFragment extends Fragment {
     CircleImageView pic;
     List<UserData> user_data;
     SessionManager session;
-    private CallbackManager mFacebookCallbackManager;
     private GoogleApiClient mGoogleApiClient;
+    Bitmap decodedProfilePicture;
 
 
     public MyProfileFragment() {
@@ -81,8 +83,7 @@ public class MyProfileFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_my_profile, container, false);
-        return rootView;
+        return inflater.inflate(R.layout.fragment_my_profile, container, false);
     }
 
     @Override
@@ -152,10 +153,19 @@ public class MyProfileFragment extends Fragment {
             gender.setText(user_data.get(0).getGender());
         }
 
-        if(user_data.get(0).getId().contains("jpg")){
+        if(user_data.get(0).getLoginType().contains("google")){
             Glide.with(pic.getContext()).load(user_data.get(0).getId()).into(pic);
-        }else{
+            Log.e("google","profile image"+user_data.get(0).getId());
+
+        }else if (user_data.get(0).getLoginType().contains("facebook")){
             Glide.with(pic.getContext()).load("https://graph.facebook.com/" +user_data.get(0).getId()+ "/picture?type=large").into(pic);
+            Log.e("facebokk","profile image"+user_data.get(0).getId());
+        }else{
+            if(user_data.get(0).getId().length()>20) {
+                Log.e("default login","profile image"+user_data.get(0).getId());
+                decodedProfilePicture = HelperMethods.decodeBase64(user_data.get(0).getId());
+                pic.setImageBitmap(decodedProfilePicture);
+            }
         }
     }
 
@@ -188,7 +198,7 @@ public class MyProfileFragment extends Fragment {
 
     protected void facebookSDKInitialize() {
         FacebookSdk.sdkInitialize(getApplicationContext());
-        mFacebookCallbackManager = CallbackManager.Factory.create();
+        CallbackManager mFacebookCallbackManager = CallbackManager.Factory.create();
         AppEventsLogger.activateApp(getActivity().getApplication());
 
     }
@@ -207,6 +217,10 @@ public class MyProfileFragment extends Fragment {
         name.setText(user_data.get(0).getName());
         email.setText(user_data.get(0).getEmail());
         gender.setText(user_data.get(0).getGender());
+        if(user_data.get(0).getId().length()>20) {
+            decodedProfilePicture = HelperMethods.decodeBase64(user_data.get(0).getId());
+            pic.setImageBitmap(decodedProfilePicture);
+        }
     }
 
     private void reportError(VolleyError error) {

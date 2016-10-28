@@ -19,39 +19,23 @@
     <string name="prompt_desc">Description</string>
     <string name="prompt_sbmt">SUBMIT</string>
     <string name="no_favourites">You have no favourites</string>
-    <string name="no_comments">There are no comments yet.\nBe the first to comment.</string>
+    <string name="no_comments">There are no comments yet.\nBe the first one to write a comment.</string>
 
 
     <string name="elv_undo">Undo</string>
     <string name="elv_undo_all">Undo All</string>
     <string name="elv_item_deleted">Item deleted</string>
     <string name="elv_n_items_deleted">%1$s items deleted</string>
-    <string name="insights_tab_text">Insights</string>
 
-    <string name="advertise">Advertise With Us</string>
-    <string name="contact">Contact Us</string>
-    <string name="error_invalid_name">This name is too short</string>
     <string name="error_invalid_number">Enter Valid Mobile Number</string>
     <string name="error_desc_required">Enter some description</string>
 
     <string name="login_error">Error While Login</string>
-    <string name="title_activity_login">Sign in</string>
-    <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
     <string name="related_articles">Related Articles</string>
     <string name="search_result">Search Results</string>
-
-
-    <dimen name="tab_max_width">264dp</dimen>
-    <dimen name="tab_padding_bottom">16dp</dimen>
-    <dimen name="tab_label">14sp</dimen>
-    <dimen name="custom_tab_layout_height">72dp</dimen>
-
 
 
     <string name="silly_about_us">From Jennifer Lawrence to Shahrukh Khan, from Rajinikanth to Kamal Hassan, from Pawan Kalyan to Mohan Lal. Catch up with all your favourite stars, films, and celeb news right here. We’ve got trailers and reviews from Tollywood, Kollywood, Mollywood, Bollywood and Hollywood, so buckle up and settle down for some glitzy fun! Hang on. Movies ain’t your cup of tea? No problem- Silly Monks’ cup is brimming with short films, music and YouTube news too! Album reviews, band news, short film discussions… we’re not even sure you can handle all this. So what are you waiting for? Take a nice big sip!</string>
@@ -119,27 +103,22 @@ Please contact us at info@sillymonks.com if you have any questions about our ter
 
 
     <!--<string name="banner_ad_unit_id">/6499/example/banner</string>-->
-    <string name="title_activity_testing">TESTING</string>
-    <string name="title_activity_my_profile">MyProfileActivity</string>
-    <string name="section_format">Hello World from section: %1$d</string>
 
 
     <string name="os_tag">&amp;os=andy</string>
-    <!--<string name="main_url">http://192.168.1.14:3000</string>-->
+    <!--<string name="main_url">http://192.168.3.16:3000</string>-->
     <!--<string name="ngrok_main_url">http://f66228b4.ngrok.io</string>-->
     <string name="main_url">http://cms.sillymonksapp.com</string>
 
+    <string name="contest_url">/api/v1/postContestPhoto</string>
 
-    <string name="ad_count">/api/v1/getNativeAdAndArticleCount/15</string>
+
     <string name="search_url">/api/v1/getGenericSearchArticles?key=</string>
-    <string name="tag_search_url">/api/v1/getTagSearchArticles?key=</string>
-
 
 
     <string name="landing_url">/api/v1/getAllWoods</string>
     <string name="category_list_url">/api/v1/getWoodCategories?id=</string>
 
-    <string name="celebrity_url">/api/v1/getCelebrityData?id=</string>
     <string name="gallery_url">/api/v1/getAlbumPhotos?id=</string>
     <string name="wood_id_url">&amp;woodID=</string>
 
@@ -151,7 +130,6 @@ Please contact us at info@sillymonks.com if you have any questions about our ter
     <string name="related_articles_url">/api/v1/getRelatedArticles?articleID=</string>
     <string name="categoryId_url"> &amp;categoryID=</string>
 
-    <string name="isLiked_url">/api/v1/getIsFavorite?articleID=</string>
     <string name="userLiked_url">/api/v1/getLikeArticle?articleID=</string>
     <string name="userDisliked_url">/api/v1/getDislikeArticle?articleID=</string>
     <string name="userId_url">&amp;userID=</string>
@@ -179,7 +157,6 @@ Please contact us at info@sillymonks.com if you have any questions about our ter
     <string name="user_login_url">/api/v1/PostUserLogin?email=</string>
     <string name="user_logout_url">/api/v1/PostUserLogout</string>
 
-    <string name="update_user_url">/api/v1/PostUserProfileUpdate?id=</string>
     <string name="change_password_url"> /api/v1/PostUserChangePassword?current_password=</string>
     <string name="user_id_url">&amp;id=</string>
     <string name="new_password_url">&amp;password=</string>

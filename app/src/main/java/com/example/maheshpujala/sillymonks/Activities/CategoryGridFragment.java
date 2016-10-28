@@ -18,7 +18,6 @@ import com.example.maheshpujala.sillymonks.R;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -53,9 +52,8 @@ public class CategoryGridFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_category, container, false);
 
-        return rootView;
+        return inflater.inflate(R.layout.fragment_category, container, false);
     }
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -119,87 +117,7 @@ public class CategoryGridFragment extends Fragment {
 
         });
 
-//        mAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
-//            @Override
-//            public void onLoadMore() {
-//
-//                if (((CategoryActivity) getActivity()).currentTabTitle.trim().equalsIgnoreCase(category_name) && Integer.parseInt((String) articles_total_count.get(category_name)) > articles.size()) {
-//                    // Call you API, then update the result into dataModels, then call adapter.notifyDataSetChanged().
-//                    //Update the new data into list object
-//
-//                    getExtraData();
-//                }
-//            }
-//        });
     }
-//    private void getExtraData() {
-//        moreArticles = new ArrayList<Article>();
-//        String lastId =articles.get(articles.size()-1).getId() ;
-//        final int previous_articles_count = articles.size();
-//
-//        String url_extra_data =getResources().getString(R.string.main_url)+getResources().getString(R.string.articles_load_extra)+category_id+getResources().getString(R.string.lastId)+lastId+getResources().getString(R.string.os_tag);
-//
-//// Request a JsonObject response from the provided URL.
-//        JsonObjectRequest jsObjRequest = new JsonObjectRequest
-//                (Request.Method.GET, url_extra_data, null, new Response.Listener<JSONObject>() {
-//                    @Override
-//                    public void onResponse(JSONObject response) {
-//                        try {
-//                            JSONArray extra_articles_list = response.getJSONArray("articles");
-//
-//                            for (int k = 0; k < extra_articles_list.length(); k++) {
-//                                JSONObject articles_json = extra_articles_list.getJSONObject(k);
-//
-//                                moreArticles.add(new Article(articles_json.getString("id"),
-//                                        articles_json.getString("title"),
-//                                        articles_json.getString("large")));
-//
-//                            }
-//                        }catch (Exception e ){
-//                            e.printStackTrace();
-//                        }
-//
-//                        articles.addAll(moreArticles);
-//
-//                        mAdapter.notifyItemRangeInserted(previous_articles_count, moreArticles.size());
-//                        mAdapter.setLoaded();
-//
-//                    }
-//                }, new Response.ErrorListener() {
-//
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        // TODO Auto-generated method stub
-//                        reportError(error);
-//                    }
-//                });
-//// Add the request to the RequestQueue.
-//        VolleyRequest.getInstance().addToRequestQueue(jsObjRequest);
-//    }
-//    private void reportError(VolleyError error) {
-//        Log.e("response Errorhome", error + "");
-//        if (error instanceof NoConnectionError) {
-//            Log.d("NoConnectionError>>>>>>>>>", "NoConnectionError.......");
-//        } else if (error instanceof AuthFailureError) {
-//            Log.d("AuthFailureError>>>>>>>>>", "AuthFailureError.......");
-//        } else if (error instanceof ServerError) {
-//            Log.d("ServerError>>>>>>>>>", "ServerError.......");
-//        } else if (error instanceof NetworkError) {
-//            Log.d("NetworkError>>>>>>>>>", "NetworkError.......");
-//        } else if (error instanceof ParseError) {
-//            Log.d("ParseError>>>>>>>>>", "ParseError.......");
-//        }else if (error instanceof TimeoutError) {
-//            Log.d("TimeoutError>>>>>>>>>", "TimeoutError.......");
-//            AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(getActivity(), R.style.myDialog));
-//
-//            // 2. Chain together various setter methods to set the dialog characteristics
-//            builder.setMessage("Unable to connect with the server.Try again after some time.")
-//                    .setTitle("Server Error");
-//
-//            // 3. Get the AlertDialog from create()
-//            AlertDialog dialog = builder.create();
-//
-//            dialog.show();
-//        }
-//    }
+
+
 }

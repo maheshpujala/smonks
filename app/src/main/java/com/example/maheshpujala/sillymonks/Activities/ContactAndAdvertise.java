@@ -3,10 +3,13 @@ package com.example.maheshpujala.sillymonks.Activities;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -28,18 +31,32 @@ public class ContactAndAdvertise extends AppCompatActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_advertise);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        TextView  toolbar_title = (TextView)findViewById(R.id.toolbar_title);
+        toolbar_title.setText("Silly Monks");
 
+        submit = (Button) findViewById(R.id.submit);
+        submit.setOnClickListener(this);
         header = (TextView) findViewById(R.id.heading);
         pname = (EditText) findViewById(R.id.name);
         pmobile = (EditText) findViewById(R.id.mobile);
         desc = (EditText) findViewById(R.id.description);
-        submit = (Button) findViewById(R.id.submit);
-        submit.setOnClickListener(this);
+        desc.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+                if (id == R.id.submit || id == EditorInfo.IME_NULL) {
+                    submit.performClick();
+                    return true;
+                }
+                return false;
+            }
+        });
         setHeader();
     }
 

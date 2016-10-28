@@ -21,7 +21,6 @@
             android:src="@drawable/splash_image" />
 
         <LinearLayout
-            android:id="@+id/favou_des_linear"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/favourite_image"
@@ -49,15 +48,6 @@
                 android:textColor="@color/addcart_prod_button_color"
                 android:textSize="@dimen/fav_desc_size" />
         </LinearLayout>
-
-        <View
-            android:id="@+id/view1"
-            android:layout_width="1dp"
-            android:layout_height="fill_parent"
-            android:layout_toLeftOf="@+id/delete_icon"
-            android:background="@color/cart_background_stroke"
-            android:minHeight="72dp"
-            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/delete_icon"

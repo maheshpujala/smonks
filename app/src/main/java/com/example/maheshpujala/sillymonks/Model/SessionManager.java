@@ -1,7 +1,6 @@
 package com.example.maheshpujala.sillymonks.Model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import android.content.Context;
@@ -112,7 +111,7 @@ public class SessionManager {
      * Get stored session data
      * */
     public  List<UserData> getUserDetails(){
-        List<UserData> user = new ArrayList<UserData>();
+        List<UserData> user = new ArrayList<>();
         // user name
         user.add(new UserData(pref.getString(KEY_SMONKSID, null),pref.getString(KEY_ID, null),pref.getString(KEY_NAME, null),pref.getString(KEY_EMAIL, null),pref.getString(KEY_GENDER, null),pref.getString(KEY_LOGIN_TYPE,null)));
 

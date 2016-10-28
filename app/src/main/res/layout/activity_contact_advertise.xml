@@ -1,9 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:background="#FFF"
-    android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true">
+    <android.support.design.widget.AppBarLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        android:id="@+id/view">
 
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            app:popupTheme="@style/AppTheme.PopupOverlay" >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/toolbar_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginLeft="-72dp"
+                    android:layout_marginStart="-72dp"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"/>
+            </LinearLayout>
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -13,11 +44,7 @@
         android:textStyle="bold"
         android:layout_gravity="center_horizontal" />
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_card">
+
 
         <LinearLayout
             android:orientation="vertical"
@@ -32,6 +59,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/name"
+                android:imeOptions="actionNext"
                 android:layout_margin="@dimen/fab_margin"
                 android:inputType="textPersonName"
                 android:hint="@string/prompt_name"/>
@@ -43,6 +71,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="phone"
+                android:imeOptions="actionNext"
                 android:ems="10"
                 android:id="@+id/mobile"
                 android:layout_margin="@dimen/fab_margin"
@@ -56,6 +85,9 @@
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine"
                 android:ems="10"
+                android:imeActionId="@+id/submit"
+                android:imeActionLabel="Submit"
+                android:imeOptions="actionDone"
                 android:id="@+id/description"
                 android:layout_margin="@dimen/fab_margin"
                 android:hint="@string/prompt_desc"/>
@@ -71,7 +103,5 @@
                 android:layout_margin="@dimen/fab_margin"
                 android:id="@+id/submit" />
         </LinearLayout>
-    </LinearLayout>
-
 
 </LinearLayout>

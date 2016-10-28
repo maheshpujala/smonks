@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -48,10 +47,8 @@ import java.util.List;
 public class FavouritesFragment extends Fragment  {
     SessionManager session;
     List<UserData> userData;
-    List<String> favouritesListID;
     LinkedHashMap favouritesMap;
     private Context mContext;
-    private LinearLayout inflated_layout;
     private EnhancedListView favouritesListView;
     private TextView notAvailable;
     Favourite_ListAdapter favAdapter;
@@ -94,12 +91,10 @@ public class FavouritesFragment extends Fragment  {
         try {
             JSONArray favourites = response.getJSONArray("favourites");
             Log.e("JSON ARRAY favourites",""+favourites);
-            favouritesListID = new ArrayList<String>();
             favouritesMap = new LinkedHashMap<String, Article>();
             for (int k = 0; k < favourites.length(); k++) {
                 JSONObject favArticles = favourites.getJSONObject(k);
-                favouritesListID.add(favArticles.getString("id"));
-                favouritesMap.put(k,new Article(favArticles.getString("id"),
+                favouritesMap.put(favArticles.getString("id"),new Article(favArticles.getString("id"),
                         favArticles.getString("first_cageory_id"),
                         favArticles.getString("first_cageory_name"),
                         favArticles.getString("first_wood_id"),
@@ -128,7 +123,7 @@ public class FavouritesFragment extends Fragment  {
             return null;
         }
         // Inflate the layout for this fragment
-        inflated_layout = (LinearLayout) inflater.inflate(R.layout.fragment_favourities, null);
+        LinearLayout inflated_layout = (LinearLayout) inflater.inflate(R.layout.fragment_favourities, container);
         favouritesListView = (EnhancedListView) inflated_layout.findViewById(R.id.favourites_listview);
         notAvailable = (TextView) inflated_layout.findViewById(R.id.not_available);
 
@@ -142,25 +137,29 @@ public class FavouritesFragment extends Fragment  {
             @Override
             public EnhancedListView.Undoable onDismiss(EnhancedListView listView, final int position) {
                final Article item = (Article) favAdapter.getItem(position);
-              final  String articleID=favouritesListID.get(position);
-                favAdapter.remove(position);
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(favCount == favouritesMap.size()){
-                        }else{
-                            sendRemoveFavourite(articleID);
-                        }
-                    }
-                }, 2200);
 
-                return new EnhancedListView.Undoable() {
-                    @Override
-                    public void undo() {
-                       favAdapter.insert(position, item);
-                    }
-                };
+                favAdapter.remove(Integer.parseInt(item.getId()));
+                favAdapter.notifyDataSetChanged();
+                sendRemoveFavourite(item.getId());
+
+
+//                final Handler handler = new Handler();
+//                handler.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        if(favCount == favouritesMap.size()){
+//                        }else{
+//                        }
+//                    }
+//                }, 2200);
+
+//                return new EnhancedListView.Undoable() {
+//                    @Override
+//                    public void undo() {
+//                        favAdapter.insert(position, item);
+//                    }
+//                };
+               return  null;
             }
         });
 
@@ -177,11 +176,11 @@ public class FavouritesFragment extends Fragment  {
                      Article a= (Article) favouritesMap.get(position);
                     Intent it = new Intent(getContext(), ArticleActivity.class);
                      it.putExtra("identifyActivity","FavoriteArticles" );
-                    it.putExtra("articleID",favouritesListID.get(position));
+                    it.putExtra("articleID",a.getId());
                     it.putExtra("categoryID",a.getFirstCatId());
                     it.putExtra("categoryName","Favorites");
                     it.putExtra("wood_id",a.getFirstWoodId());
-                    it.putExtra("articles", new ArrayList<Article>(favouritesMap.values()));
+                    it.putExtra("articles", new ArrayList<>(favouritesMap.values()));
                     it.putExtra("selected_position",""+position);
                     startActivity(it);
             }
@@ -233,6 +232,8 @@ public class FavouritesFragment extends Fragment  {
                         }
                     })
                     .show();
+
         }
     }
+
 }

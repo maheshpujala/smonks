@@ -1,5 +1,6 @@
 package com.example.maheshpujala.sillymonks.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -10,7 +11,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -39,6 +39,7 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.maheshpujala.sillymonks.Adapters.ListAdapter;
+import com.example.maheshpujala.sillymonks.Network.Connectivity;
 import com.example.maheshpujala.sillymonks.Network.VolleyRequest;
 import com.example.maheshpujala.sillymonks.Model.Article;
 import com.example.maheshpujala.sillymonks.R;
@@ -73,8 +74,8 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
     TextView home,toolbar_title;
     ImageView  home_img;
     PublisherAdView mPublisherAdView;
-    NestedScrollView scrollView;
-    String id,name,wood_id,current_wood,newWood,selected_woodId;
+    /*NestedScrollView scrollView;*/
+    String id,name,wood_id,current_wood,newWood,selected_woodId,imageSize;
     LinkedHashMap categories,cat_articles,articles_total_count;
     List<Article> articles;
     public String currentTabTitle;
@@ -84,6 +85,7 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
     ListAdapter adapter;
     ListView   listForWoods;
     List<String> navBarWoodNames,allWoodNames;
+    ProgressDialog progressdialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,16 +102,15 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
 
         Bundle bundle = it.getExtras();
         woodNames_Map = (HashMap) bundle.getSerializable("woodNames_Map");
-        sorted_woodNames_Map = new TreeMap<String, String>(woodNames_Map);
+        sorted_woodNames_Map = new TreeMap<>(woodNames_Map);
 
-        allWoodNames  = new ArrayList<String>(sorted_woodNames_Map.values()) ;
+        allWoodNames  = new ArrayList<>(sorted_woodNames_Map.values()) ;
 
         current_wood = (String) woodNames_Map.get(wood_id);
         toolbar_title.setText(""+current_wood);
-        navBarWoodNames = new ArrayList<String>(allWoodNames);
+        navBarWoodNames = new ArrayList<>(allWoodNames);
         navBarWoodNames.remove(current_wood);
 
-        sendRequest(wood_id);
 
 
         mPublisherAdView = (PublisherAdView) findViewById(R.id.publisherAdView);
@@ -126,9 +127,9 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
                 .build();
         mPublisherAdView.loadAd(adRequest);
 
-        scrollView = (NestedScrollView) findViewById (R.id.scroll_nested);
+        /*scrollView = (NestedScrollView) findViewById (R.id.scroll_nested);
         scrollView.setFillViewport (true);
-        scrollView.setNestedScrollingEnabled(true);
+        scrollView.setNestedScrollingEnabled(true);*/
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -145,18 +146,15 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selected_woodId = (String) HelperMethods.getKeyFromValue(sorted_woodNames_Map,navBarWoodNames.get(position));
-                sendRequest(selected_woodId);
 
                 newWood = navBarWoodNames.get(position);
-                toolbar.setTitle(""+newWood);
+                toolbar.setTitle(newWood);
                 navBarWoodNames.clear();
                 navBarWoodNames.addAll(allWoodNames);
                 navBarWoodNames.remove(newWood);
 
                 this.changeWood(selected_woodId);
                 listForWoods.setAdapter(adapter);
-
-
 
                 drawer.closeDrawer(GravityCompat.START);
             }
@@ -176,66 +174,21 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
         pagerTabStrip =(PagerTabStrip) findViewById(R.id.pagerTabStrip);
         pagerTabStrip.setTabIndicatorColor(Color.parseColor("#e54425"));
 
-//
-//        viewPager.setOnTouchListener(new View.OnTouchListener() {
-//
-//            int dragthreshold = 30;
-//            int downX;
-//            int downY;
-//
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//
-//                switch (event.getAction()) {
-//                    case MotionEvent.ACTION_DOWN:
-//                        downX = (int) event.getRawX();
-//                        downY = (int) event.getRawY();
-//                        Log.e("_DOWN_downX=="+downX,"_DOWN_downY=="+downY);
-//                        break;
-//                    case MotionEvent.ACTION_MOVE:
-//                        int distanceX = Math.abs((int) event.getRawX() - downX);
-//                        int distanceY = Math.abs((int) event.getRawY() - downY);
-//                        Log.e("distanceX="+distanceX,"distanceY="+distanceY);
-////
-////                        if (distanceY > distanceX && distanceY > dragthreshold) {
-////                            viewPager.getParent().requestDisallowInterceptTouchEvent(false);
-////                            scrollView.getParent().requestDisallowInterceptTouchEvent(true);
-////                        } else if (distanceX > distanceY && distanceX > dragthreshold) {
-////                            viewPager.getParent().requestDisallowInterceptTouchEvent(true);
-////                            scrollView.getParent().requestDisallowInterceptTouchEvent(false);
-////                        }
-//                        break;
-//                    case MotionEvent.ACTION_UP:
-//                        downX = (int) event.getRawX();
-//                        downY = (int) event.getRawY();
-//                        Log.e("UP downX=="+downX,"UP downY=="+downY);
-//
-////                        scrollView.getParent().requestDisallowInterceptTouchEvent(false);
-////                        viewPager.getParent().requestDisallowInterceptTouchEvent(false);
-//                        break;
-//                }
-//                return false;
-//            }
-//        });
+        progressdialog = new ProgressDialog(CategoryActivity.this);
+        progressdialog.setMessage("Please Wait....");
+        progressdialog.setCancelable(false);
+        checkConnection();
+    }
+    public void checkConnection() {
+        if (Connectivity.isConnected(CategoryActivity.this))  //if connection available
+        {
+            progressdialog.show();
+            sendRequest(wood_id);
 
-//        int selectedPagePos = pagerTabStrip.indexOfChild(pagerTabStrip.getFocusedChild());
-
-        //  tabLayout = (TabLayout) findViewById(R.id.tabs);
-      //  tabLayout.setupWithViewPager(viewPager);
-
-//
-//        tabLayout.addOnTabSelectedListener(
-//                new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
-//                    @Override
-//                    public void onTabSelected(TabLayout.Tab tab) {
-//                        super.onTabSelected(tab);
-//                        List <Article> articles = (List<Article>) cat_articles.get(tab.getText());
-//                        currentTabTitle = (String) tab.getText();
-//
-//                    }
-//                });
-
-
+        } else {
+            progressdialog.dismiss();
+            Connectivity.showDialog(CategoryActivity.this);
+        }
     }
 
 
@@ -263,6 +216,30 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
 
     public void getData(JSONObject json) {
         try {
+            String connectType=Connectivity.connectionType(CategoryActivity.this);
+            if(Connectivity.isConnectedWifi(CategoryActivity.this)){
+                    Log.e("isConnectedWifi CHECK",""+"ORIGINAL IMAGE!!!!!!!!!!!!!!");
+                    imageSize = "original";
+                }else if(connectType.equalsIgnoreCase("CDMA")||connectType.equalsIgnoreCase("EDGE")||connectType.equalsIgnoreCase("GPRS")||connectType.equalsIgnoreCase("1xRTT")){
+                    Log.e("connectType CHECK",""+"SMALL IMAGE!!!!!!!!!!!!!!");
+                imageSize = "small";
+
+            }
+                else if (connectType.equalsIgnoreCase("HSDPA")||connectType.equalsIgnoreCase("HSPA")||connectType.equalsIgnoreCase("HSUPA")||connectType.equalsIgnoreCase("UMTS")||connectType.equalsIgnoreCase("HSPA+")){
+                    Log.e("connectType CHECK",""+"Medium IMAGE!!!!!!!!!!!!!!");
+
+                imageSize = "medium";
+
+            }
+                else if (connectType.equalsIgnoreCase("LTE")){
+                    Log.e("connectType CHECK",""+"Large IMAGE!!!!!!!!!!!!!!");
+
+                imageSize = "large";
+
+            }else{
+                imageSize = "small";
+
+            }
 
             JSONArray wood_cat_list = json.getJSONArray("categories");
 
@@ -279,14 +256,14 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
                 categories.put(name,id);
 
                 JSONArray cat_articles_list = jsonobject.getJSONArray("articles");
-                articles = new ArrayList<Article>();
+                articles = new ArrayList<>();
 
                 for (int k = 0; k < cat_articles_list.length(); k++) {
                     JSONObject articles_json = cat_articles_list.getJSONObject(k);
 
                     articles.add(new Article(articles_json.getString("id"),
                             articles_json.getString("title"),
-                            articles_json.getString("original"),
+                            articles_json.getString(imageSize),
                             articles_json.getString("published_at"),
                             articles_json.getString("likes_count"),
                             articles_json.getString("comments_count")));
@@ -294,12 +271,15 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
                 cat_articles.put(name,articles);
 
             }
+            Log.e("MORE ARTICLES",""+articles);
+
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         setupViewPager(viewPager);
+        progressdialog.dismiss();
     }
 
     private void setupViewPager(final ViewPager viewPager) {
@@ -432,6 +412,11 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
             super.onBackPressed();
         }
     }
+//    public void onDestroy() {
+//        Log.e("++++++++++++++++++++++++++++++++++++++++++++++","ON DESTROY");
+//       finish();
+//        super.onDestroy();
+//    }
     private void reportError(VolleyError error) {
         Log.e("response Errorhome", error + "");
         if (error instanceof NoConnectionError) {
@@ -456,6 +441,8 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
             AlertDialog dialog = builder.create();
 
             dialog.show();
+            progressdialog.dismiss();
+
         }
     }
 

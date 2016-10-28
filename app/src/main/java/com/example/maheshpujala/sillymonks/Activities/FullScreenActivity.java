@@ -1,14 +1,9 @@
 package com.example.maheshpujala.sillymonks.Activities;
 
-import android.app.Application;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -24,8 +19,6 @@ import java.util.ArrayList;
  */
 
 public class FullScreenActivity extends AppCompatActivity implements MoPubInterstitial.InterstitialAdListener {
-    private FullScreenImageAdapter adapter;
-    private ViewPager viewPager;
     private MoPubInterstitial mInterstitial;
     int swipeCount = 2;
 
@@ -44,9 +37,9 @@ public class FullScreenActivity extends AppCompatActivity implements MoPubInters
         int clicked_image = getIntent().getExtras().getInt("clicked_image");
 
 
-        viewPager = (ViewPager) findViewById(R.id.viewpager_fullscreen_image);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager_fullscreen_image);
 
-        adapter = new FullScreenImageAdapter(FullScreenActivity.this,imageURL);
+        FullScreenImageAdapter adapter = new FullScreenImageAdapter(FullScreenActivity.this, imageURL);
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(clicked_image);
 

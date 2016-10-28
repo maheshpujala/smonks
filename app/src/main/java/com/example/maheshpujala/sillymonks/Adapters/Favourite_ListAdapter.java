@@ -3,7 +3,6 @@ package com.example.maheshpujala.sillymonks.Adapters;
 
 import android.content.Context;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,14 +18,13 @@ import com.example.maheshpujala.sillymonks.Utils.EnhancedListView;
 import com.example.maheshpujala.sillymonks.Utils.SquareImageView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 public class Favourite_ListAdapter extends BaseAdapter{
 	private Context mContext;
 	EnhancedListView favouritesListView;
-	LinkedHashMap favouritesMap;
+	LinkedHashMap favouritesMap,changedFavouritesMap;
 	FavouritesFragment favouritesFragment;
 
 	public Favourite_ListAdapter(Context mContext, LinkedHashMap favouritesMap, FavouritesFragment favouritesFragment, EnhancedListView favouritesListView) {
@@ -43,17 +41,20 @@ public class Favourite_ListAdapter extends BaseAdapter{
 
 	@Override
 	public Object getItem(int position) {
-		return favouritesMap.get(position);
+//		return favouritesMap.get(position);
+		return favouritesMap.values().toArray()[position];
 	}
+
 
 	@Override
 	public long getItemId(int position) {
 		return position;
 	}
-	public void remove(int position) {
+	public void remove(int articleId) {
 		try {
-			favouritesMap.remove(position);
+			favouritesMap.remove(""+articleId);
 			notifyDataSetChanged();
+
 		} catch (Exception e) {}
 	}
 
@@ -77,7 +78,7 @@ public class Favourite_ListAdapter extends BaseAdapter{
 		LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		ViewHolder holder = new ViewHolder();
 		if (convertView == null) {
-			convertView = inflater.inflate(R.layout.favourite_item, null);
+			convertView = inflater.inflate(R.layout.favourite_item, parent);
 			holder.favouriteImage = (SquareImageView) convertView.findViewById(R.id.favourite_image);
 			holder.favouriteText = (TextView) convertView.findViewById(R.id.favourite_text);
 			holder.favDescText = (TextView) convertView.findViewById(R.id.fav_description);
@@ -92,7 +93,7 @@ public class Favourite_ListAdapter extends BaseAdapter{
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
-		List<Article> articles= new ArrayList<Article>(favouritesMap.values()) ;
+		List<Article> articles= new ArrayList<>(favouritesMap.values()) ;
 
 		Glide.with(holder.favouriteImage.getContext()).load(articles.get(position).getThumbImage()).into(holder.favouriteImage);
 		holder.favouriteText.setText(articles.get(position).getTitle());

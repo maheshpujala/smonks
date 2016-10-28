@@ -7,8 +7,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -35,9 +37,8 @@ import org.json.JSONObject;
  */
 
 public class SignUpActivity extends AppCompatActivity implements View.OnClickListener {
-    private Toolbar toolbar;
     TextView home,toolbar_title;
-    EditText Fname_holder,Lname_holder,Email_holder,Pswd_holder;
+    EditText Fname_holder,Lname_holder,Email_holder,Pswd_holder,mobileNo_holder;
     Button signUp_button,signIn_button;
 
     @Override
@@ -46,8 +47,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_signup);
 
 
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
@@ -57,16 +57,28 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         toolbar_title = (TextView) findViewById(R.id.toolbar_title);
         toolbar_title.setText("Sign Up");
 
-        Fname_holder = (EditText) findViewById(R.id.fname_holder);
-        Lname_holder = (EditText) findViewById(R.id.lname_holder);
-        Email_holder = (EditText) findViewById(R.id.email_holder);
-        Pswd_holder = (EditText) findViewById(R.id.password_holder);
-
         signIn_button = (Button) findViewById(R.id.signIn_button);
         signUp_button = (Button) findViewById(R.id.signUp_button);
 
         signIn_button.setOnClickListener(this);
         signUp_button.setOnClickListener(this);
+
+        Fname_holder = (EditText) findViewById(R.id.fname_holder);
+        Lname_holder = (EditText) findViewById(R.id.lname_holder);
+        mobileNo_holder = (EditText) findViewById(R.id.mobileNo_holder);
+        Email_holder = (EditText) findViewById(R.id.email_holder);
+        Pswd_holder = (EditText) findViewById(R.id.password_holder);
+        Pswd_holder.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+                if (id == R.id.signUp || id == EditorInfo.IME_NULL) {
+                    signUp_button.performClick();
+                    return true;
+                }
+                return false;
+            }
+        });
+
 
 
     }
@@ -78,7 +90,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 break;
             case R.id.signUp_button:
                 if(checkValidation()){
-                    Toast.makeText(this,"ALL VALIDATIONS SUCCESS",Toast.LENGTH_SHORT).show();
                     sendUserRegistration();
                 }
                 break;
@@ -87,7 +98,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
     private void sendUserRegistration() {
         String registration_url =getResources().getString(R.string.main_url)+getResources().getString(R.string.user_registration_url)+getResources().getString(R.string.firstname_url)+Fname_holder.getText().toString()+getResources().getString(R.string.lastname_url)+Lname_holder.getText().toString()+getResources().getString(R.string.email_url)+Email_holder.getText().toString()+getResources().getString(R.string.password_url)+Pswd_holder.getText().toString();
-        Log.e("REGISTRAION URLLLLLLLL",registration_url);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.POST, registration_url, null, new Response.Listener<JSONObject>() {
                     @Override
@@ -124,7 +134,11 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         }else if(Lname_holder.getText().toString().length()<=2){
             Toast.makeText(this,"Your Last name should be at least 3 characters.",Toast.LENGTH_SHORT).show();
             return false;
-        }else if(!isEmailValid(Email_holder.getText().toString())){
+        }else if(mobileNo_holder.getText().toString().length() != 10){
+            Toast.makeText(this,"Your Mobile Number is invalid",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else if(!isEmailValid(Email_holder.getText().toString())){
             Toast.makeText(this,"Your Email format is invalid",Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -140,11 +154,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         }
 
     private boolean isEmailValid(String s) {
-        if (s == null) {
-            return false;
-        } else {
-            return android.util.Patterns.EMAIL_ADDRESS.matcher(s).matches();
-        }
+        return s != null && android.util.Patterns.EMAIL_ADDRESS.matcher(s).matches();
     }
 
     @Override

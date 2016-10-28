@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="5dp">
-    <RelativeLayout
-        android:id="@+id/native_outer_view"
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+    android:layout_margin="5dp"
         android:background="@android:color/white">
         <ImageView android:id="@+id/native_icon_image"
             android:layout_width="64dp"
@@ -16,7 +14,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"
-            />
+            tools:ignore="ContentDescription" />
 
         <TextView android:id="@+id/native_title"
             android:layout_width="match_parent"
@@ -76,4 +74,3 @@
             android:contentDescription="native_privacy_information_icon_image"/>
 
     </RelativeLayout>
-</LinearLayout>

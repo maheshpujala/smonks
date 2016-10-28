@@ -1,7 +1,7 @@
 package com.example.maheshpujala.sillymonks.Adapters;
 
 import android.app.Activity;
-import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,7 +13,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.maheshpujala.sillymonks.Activities.CategoryActivity;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.example.maheshpujala.sillymonks.Model.Article;
 import com.example.maheshpujala.sillymonks.R;
 
@@ -26,22 +28,14 @@ import java.util.List;
  * Created by maheshpujala on 27/9/16.
  */
 public class RecyclerAdapter extends RecyclerView.Adapter {
-    private  List<String> title;
-    private final Activity context;
-    private  List<String> image;
-    private String[] imageArray;
     List<Article> articles;
-    String category_name,total_articles_count,comment_text,like_text,Days,Hours,Time,Minutes,timeValue;
+    String category_name,total_articles_count,comment_text,like_text,Days,Hours,Time,Minutes;
 
 
     TextView article_title,grid_text,time_ago,comments_count,likes_count;
     ImageView cover_image,grid_image;
-    private final int AD_TYPE = 1;
-    private final int CONTENT_TYPE = 0;
 
 
-    // The minimum amount of items to have below your current scroll position
-    // before loading more.
     private int visibleThreshold = 5;
     private int lastVisibleItem, totalItemCount;
     private boolean loading;
@@ -49,12 +43,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
 
 
     public RecyclerAdapter(final Activity context, final List<Article> articles, RecyclerView recyclerView, final String category_name,final String total_articles_count) {
-        this.context = context;
+        Activity context1 = context;
         this.articles = articles;
         this.category_name=category_name;
         this.total_articles_count=total_articles_count;
-
-//        if (recyclerView.getLayoutManager() instanceof LinearLayoutManager) {
 
             final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView
                     .getLayoutManager();
@@ -65,13 +57,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
                         public void onScrolled(RecyclerView recyclerView,
                                                int dx, int dy) {
                             super.onScrolled(recyclerView, dx, dy);
-                          //  String current_tabTitle = ((CategoryActivity)context).currentTabTitle.trim();
-//Log.e("dx=="+dx,"dy=="+dy);
-//                            Log.e("recyclerview","Vertical Scroll Ofset"+recyclerView.computeVerticalScrollOffset());
-                            recyclerView.offsetChildrenVertical(0);
-
-//                            Log.e("recyclerView.getY()==",""+recyclerView.getY());
-                        //    if (current_tabTitle.equalsIgnoreCase(category_name) && Integer.parseInt(total_articles_count ) > articles.size() ) {
 
                             if (Integer.parseInt(total_articles_count ) > articles.size() ) {
                                 totalItemCount = linearLayoutManager.getItemCount();
@@ -81,8 +66,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
                                 if (!loading
                                         && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
 
-                                    // End has been reached
-                                    // Do something
                                     if (onLoadMoreListener != null) {
 
                                         onLoadMoreListener.onLoadMore();
@@ -144,7 +127,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
                 try {
 
                     //Dates to compare
-                    String CurrentDate = currentTime;
+//                    String CurrentDate = currentTime;
                     String PublishedDate = a.getpublishedAt();
 
                     Date date1;
@@ -152,7 +135,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
 
 
                     //Setting dates
-                    date1 = dates.parse(CurrentDate);
+                    date1 = dates.parse(currentTime);
                     date2 = dates.parse(PublishedDate);
 
                     //Comparing dates
@@ -188,7 +171,21 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
                 }
 
                 article_title.setText(a.getTitle());
-                Glide.with(cover_image.getContext()).load(a.getBannerMedia()).into(cover_image);
+                Log.e("a.getBannerMedia()","a.getBannerMedia()"+a.getBannerMedia());
+                Glide.with(cover_image.getContext()).load(a.getBannerMedia()).into(new GlideDrawableImageViewTarget(cover_image) {
+                    @Override
+                    public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> animation) {
+                        super.onResourceReady(resource, animation);
+                        Log.e("onResourceReady",""+resource);
+                    }
+
+                    @Override
+                    public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                        super.onLoadFailed(e, errorDrawable);
+                        Log.e("onLoadFailed",""+e);
+
+                    }
+                });
                 time_ago.setText(Time);
                 comments_count.setText(comment_text);
                 likes_count.setText(like_text);
@@ -210,7 +207,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
     public int getItemViewType(int position)
     {
         if (position % 5 == 0){
+            int AD_TYPE = 1;
             return AD_TYPE;}else {
+            int CONTENT_TYPE = 0;
             return CONTENT_TYPE;
         }
     }
@@ -232,17 +231,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter {
 
         }
 
-    }
-
-    public static class ProgressViewHolder extends RecyclerView.ViewHolder {
-        public ProgressBar progressBar;
-
-        public ProgressViewHolder(View v) {
-            super(v);
-            progressBar = (ProgressBar) v.findViewById(R.id.progressBar1);
-            this.setIsRecyclable(false);
-
-        }
     }
 
 }

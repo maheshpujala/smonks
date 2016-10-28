@@ -1,6 +1,7 @@
 package com.example.maheshpujala.sillymonks.Activities;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v7.app.ActionBar;
@@ -11,7 +12,7 @@ import android.net.Uri;
 
 import android.os.Bundle;
 import android.support.v7.view.ContextThemeWrapper;
-import android.text.TextUtils;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -19,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -38,6 +38,7 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.maheshpujala.sillymonks.Network.Connectivity;
 import com.example.maheshpujala.sillymonks.Network.VolleyRequest;
 import com.example.maheshpujala.sillymonks.Model.SessionManager;
 import com.example.maheshpujala.sillymonks.R;
@@ -68,11 +69,8 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
 
 
     // UI references.
-    private AutoCompleteTextView mEmailView;
-    private EditText mPasswordView;
+    private EditText mPasswordView,mEmailView;
     private CallbackManager mFacebookCallbackManager;
-    private SignInButton mGoogleSignInButton;
-    private LoginButton mFacebookSignInButton;
     private GoogleApiClient mGoogleApiClient;
     private static final int RC_SIGN_IN = 9001;
     Bundle savedInstanceState;
@@ -83,6 +81,8 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
     TextView sign_up,forgot_password;
     String personName,personEmail,personPhoto,userId,mFbid,mFullname,mEmail,mGender,email,password,fullname,smonksId,first_name,last_name;
     Boolean identity;
+    ProgressDialog progressdialog;
+    ActionBar actionBar;
 
 
 
@@ -91,10 +91,15 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
         super.onCreate(savedInstanceState);
         facebookSDKInitialize();
         setContentView(R.layout.activity_login);
-        ActionBar actionBar = getSupportActionBar();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        TextView  toolbar_title = (TextView)findViewById(R.id.toolbar_title);
+        toolbar_title.setText("Sign in or Sign up");
         // Session Manager
         session = new SessionManager(getApplicationContext());
         sign_up = (TextView) findViewById(R.id.sign_up);
@@ -102,18 +107,22 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
         forgot_password.setOnClickListener(this);
         sign_up.setOnClickListener(this);
         showSkip();
+        checkConnection();
+        progressdialog = new ProgressDialog(LoginActivity.this);
+        progressdialog.setMessage("Please Wait....");
+        progressdialog.setCancelable(false);
 
         // Set Up Fb Plugin
-        mFacebookSignInButton = (LoginButton) findViewById(R.id.fb_login_button);
+        LoginButton mFacebookSignInButton = (LoginButton) findViewById(R.id.fb_login_button);
         getLoginDetails(mFacebookSignInButton);
 
 //G+ Plugin
-        mGoogleSignInButton = (SignInButton) findViewById(R.id.gplus_signin_button);
+        SignInButton mGoogleSignInButton = (SignInButton) findViewById(R.id.gplus_signin_button);
         setGooglePlusButtonText(mGoogleSignInButton, "Google");
         mGoogleSignInButton.setOnClickListener(this);
 
         // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email_view);
+        mEmailView = (EditText) findViewById(R.id.email_view);
 
         mPasswordView = (EditText) findViewById(R.id.password_view);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -130,6 +139,16 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
         Button mEmailSignInButton = (Button) findViewById(R.id.sign_in_button);
         mEmailSignInButton.setOnClickListener(this);
     }
+    public void checkConnection() {
+        if (Connectivity.isConnected(LoginActivity.this))  //if connection available
+        {
+
+        } else {
+            Connectivity.showDialog(LoginActivity.this);
+            progressdialog.dismiss();
+        }
+
+    }
 
     private void showSkip() {
         String newString;
@@ -142,6 +161,7 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
                 if (newString.contains("show_skip")) {
                     skip = (Button) findViewById(R.id.skip_button);
                     skip.setVisibility(View.VISIBLE);
+                    actionBar.setDisplayHomeAsUpEnabled(false);
                     skipVisible = true;
                     skip.setOnClickListener(this);
                 }
@@ -232,15 +252,15 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
                 final GoogleApiClient client = mGoogleApiClient;
 
                 GoogleSignInAccount acct = result.getSignInAccount();
-                 personName = acct.getDisplayName();
-                 personEmail = acct.getEmail();
+
+                    personName = acct.getDisplayName();
+                personEmail = acct.getEmail();
                  Uri pPhoto = acct.getPhotoUrl();
                  personPhoto = pPhoto.toString();
-                String[] separated = personName.split(" ");
-                String firstName= separated[0];
-                String lastName= separated[1];
-                sendUserDetails(firstName,lastName,personEmail,"google");
-
+                    String[] separated = personName.split(" ");
+                    String firstName= separated[0];
+                    String lastName= separated[1];
+                    sendUserDetails(firstName,lastName,personEmail,"google");
 
 
             } else {
@@ -386,41 +406,18 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
     }
 
     private void attemptLogin() {
-        // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
          email = mEmailView.getText().toString();
          password = mPasswordView.getText().toString();
-
-        boolean cancel = false;
-        View focusView = null;
-
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
+        if(!isEmailValid(email)){
+            Toast.makeText(this,"Your Email format is invalid",Toast.LENGTH_SHORT).show();
         }
-
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
-        }
-
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            focusView.requestFocus();
-        } else {
-           sendUserLoginDetails();
+        else if(password.length()<=5){
+            Toast.makeText(this,getString(R.string.error_invalid_password),Toast.LENGTH_SHORT).show();
+        }else {
+            progressdialog.show();
+            sendUserLoginDetails();
 
         }
     }
@@ -450,6 +447,7 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
     private void getLoginResponseData(JSONObject response) {
         try {
             JSONObject returnResponse = response.getJSONObject("users");
+            progressdialog.dismiss();
 
             identity = returnResponse.getBoolean("logged_in");
             Toast.makeText(this,returnResponse.getString("message"),Toast.LENGTH_SHORT).show();
@@ -466,14 +464,8 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
     }
 
 
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
-    }
-
-    private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
+    private boolean isEmailValid(String s) {
+        return s != null && android.util.Patterns.EMAIL_ADDRESS.matcher(s).matches();
     }
 
 
@@ -503,7 +495,8 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
                 break;
 
             case R.id.sign_in_button:
-            attemptLogin();
+
+                attemptLogin();
                 break;
 
             case R.id.sign_up:
@@ -540,6 +533,8 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
             AlertDialog dialog = builder.create();
 
             dialog.show();
+            progressdialog.dismiss();
+
         }
     }
 }

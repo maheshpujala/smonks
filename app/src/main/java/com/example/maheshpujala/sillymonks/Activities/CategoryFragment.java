@@ -1,5 +1,6 @@
 package com.example.maheshpujala.sillymonks.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -26,6 +27,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.maheshpujala.sillymonks.Adapters.OnLoadMoreListener;
 import com.example.maheshpujala.sillymonks.Adapters.RecyclerAdapter;
+import com.example.maheshpujala.sillymonks.Network.Connectivity;
 import com.example.maheshpujala.sillymonks.Network.VolleyRequest;
 import com.example.maheshpujala.sillymonks.Model.Article;
 import com.example.maheshpujala.sillymonks.R;
@@ -41,7 +43,6 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -56,12 +57,13 @@ public class CategoryFragment extends Fragment {
     List<Article> articles;
     RecyclerView.LayoutManager layoutManager;
     RecyclerAdapter mAdapter;
-    String category_name,category_id,wood_id;
+    String category_name,category_id,wood_id,imageSize;
     HashMap articles_total_count;
     List<Article> moreArticles;
     private MoPubRecyclerAdapter moPubAdapter;
     private MoPubAdAdapter mAdAdapter;
     HashMap categories;
+    ProgressDialog progressdialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,68 +74,32 @@ public class CategoryFragment extends Fragment {
         category_name = this.getArguments().getString("category_name");
         category_id = (String) categories.get(category_name);
         wood_id = this.getArguments().getString("wood_id");
+        progressdialog = new ProgressDialog(getContext());
+        progressdialog.setMessage("Please Wait....");
+        progressdialog.setCancelable(false);
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+        String connectType= Connectivity.connectionType(getContext());
+        if(Connectivity.isConnectedWifi(getContext())){
+            imageSize = "original";
+        }else if(connectType.equalsIgnoreCase("CDMA")||connectType.equalsIgnoreCase("EDGE")||connectType.equalsIgnoreCase("GPRS")||connectType.equalsIgnoreCase("1xRTT")){
+            imageSize = "small";
+        }
+        else if (connectType.equalsIgnoreCase("HSDPA")||connectType.equalsIgnoreCase("HSPA")||connectType.equalsIgnoreCase("HSUPA")||connectType.equalsIgnoreCase("UMTS")||connectType.equalsIgnoreCase("HSPA+")){
+            imageSize = "medium";
+        }
+        else if (connectType.equalsIgnoreCase("LTE")){
+            imageSize = "large";
+        }else{
+            imageSize = "small";
+        }
         View rootView = inflater.inflate(R.layout.fragment_category, container, false);
         myRecyclerView = (RecyclerView) rootView.findViewById(R.id.category_list);
         myRecyclerView.setHasFixedSize(true);
-//        myRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-//                myRecyclerView.stopNestedScroll();
-//
-//            }
-//        });
-//        myRecyclerView.setOnTouchListener(new View.OnTouchListener() {
-//
-//            int dragthreshold = 30;
-//            int downX;
-//            int downY;
-//
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//
-//                switch (event.getAction()) {
-//                    case MotionEvent.ACTION_DOWN:
-//                        downX = (int) event.getRawX();
-//                        downY = (int) event.getRawY();
-//                        Log.e("VIEW Y____DOWN",""+v);
-//                        Log.e("_DOWN_downX=="+downX,"_DOWN_downY=="+downY);
-//                        break;
-//                    case MotionEvent.ACTION_MOVE:
-//                        int distanceX = Math.abs((int) event.getRawX() - downX);
-//                        int distanceY = Math.abs((int) event.getRawY() - downY);
-//                        Log.e("VIEW Y____MOVE",""+v.getY());
-//
-//                        Log.e("distanceX="+distanceX,"distanceY="+distanceY);
-////
-////                        if (distanceY > distanceX && distanceY > dragthreshold) {
-////                            viewPager.getParent().requestDisallowInterceptTouchEvent(false);
-////                            scrollView.getParent().requestDisallowInterceptTouchEvent(true);
-////                        } else if (distanceX > distanceY && distanceX > dragthreshold) {
-////                            viewPager.getParent().requestDisallowInterceptTouchEvent(true);
-////                            scrollView.getParent().requestDisallowInterceptTouchEvent(false);
-////                        }
-//                        break;
-//                    case MotionEvent.ACTION_UP:
-//                        downX = (int) event.getRawX();
-//                        downY = (int) event.getRawY();
-//                        Log.e("VIEW Y____UP",""+v.getY());
-//
-//                        Log.e("UP downX=="+downX,"UP downY=="+downY);
-//
-////                        scrollView.getParent().requestDisallowInterceptTouchEvent(false);
-////                        viewPager.getParent().requestDisallowInterceptTouchEvent(false);
-//                        break;
-//                }
-//                return false;
-//            }
-//        });
+
         mAdapter = new RecyclerAdapter(getActivity(), articles,myRecyclerView,category_name, (String) articles_total_count.get(category_name));
         moPubAdapter = new MoPubRecyclerAdapter(getActivity(), mAdapter,
                 MoPubNativeAdPositioning.serverPositioning());
@@ -147,7 +113,6 @@ public class CategoryFragment extends Fragment {
                         .privacyInformationIconImageId(R.id.native_privacy_information_icon_image)
                         .build()
         );
-        moPubAdapter.loadAds("e6784f6a4d7a4b84a9134580a6dbc400");
         moPubAdapter.registerAdRenderer(moPubStaticNativeAdRenderer);
         myRecyclerView.setAdapter(moPubAdapter);
         return rootView;
@@ -173,13 +138,11 @@ public class CategoryFragment extends Fragment {
             public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
                 View child = rv.findChildViewUnder(e.getX(), e.getY());
                 if (child != null && gestureDetector.onTouchEvent(e)) {
+                    progressdialog.show();
                     int positio = rv.getChildAdapterPosition(child);
-                    Log.e("CHILD POSITON",""+positio);
-                    Log.e("moPubAdapter.isAd(positio)=",""+moPubAdapter.isAd(positio));
                     if(!moPubAdapter.isAd(positio)){
                         int  position=  moPubAdapter.getOriginalPosition(positio);
                         Log.e("ORGINAL POSITON"+position,"articles List"+articles);
-
                         Article selectedArticle = articles.get(position);
                         String article_id = selectedArticle.getId();
                         Intent cat2art = new Intent(getActivity(), ArticleActivity.class);
@@ -192,6 +155,7 @@ public class CategoryFragment extends Fragment {
                         cat2art.putExtra("selected_position",""+position);
 
                         startActivity(cat2art);
+
                     }
 
                 }
@@ -220,6 +184,7 @@ public class CategoryFragment extends Fragment {
                     //Update the new data into list object
 
                     getExtraData();
+
                 }
             }
         });
@@ -229,10 +194,18 @@ public class CategoryFragment extends Fragment {
     public void onResume() {
         // MoPub recommends loading knew ads when the user returns to your activity.
         moPubAdapter.loadAds("e6784f6a4d7a4b84a9134580a6dbc400");
+        progressdialog.dismiss();
         super.onResume();
         }
+    @Override
+    public void onDestroy() {
+        moPubAdapter.destroy();
+        super.onDestroy();
+    }
     private void getExtraData() {
-        moreArticles = new ArrayList<Article>();
+        progressdialog.show();
+
+        moreArticles = new ArrayList<>();
         String lastId =articles.get(articles.size()-1).getId() ;
         final int previous_articles_count = articles.size();
 
@@ -251,12 +224,13 @@ public class CategoryFragment extends Fragment {
 
                                 moreArticles.add(new Article(articles_json.getString("id"),
                                         articles_json.getString("title"),
-                                        articles_json.getString("large"),
+                                        articles_json.getString(imageSize),
                                         articles_json.getString("published_at"),
                                         articles_json.getString("likes_count"),
                                         articles_json.getString("comments_count")));
 
                             }
+                            Log.e("MORE ARTICLES",""+moreArticles);
                         }catch (Exception e ){
                             e.printStackTrace();
                         }
@@ -265,13 +239,13 @@ public class CategoryFragment extends Fragment {
 
                         mAdapter.notifyItemRangeInserted(previous_articles_count, moreArticles.size());
                         mAdapter.setLoaded();
+                        progressdialog.dismiss();
 
                     }
                 }, new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
                         reportError(error);
                     }
                 });
@@ -302,6 +276,8 @@ public class CategoryFragment extends Fragment {
             AlertDialog dialog = builder.create();
 
             dialog.show();
+            progressdialog.dismiss();
+
         }
     }
 }

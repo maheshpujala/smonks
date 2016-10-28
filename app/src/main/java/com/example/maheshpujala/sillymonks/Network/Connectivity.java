@@ -11,28 +11,16 @@ import android.net.NetworkInfo;
 import android.support.v7.app.AlertDialog;
 import android.telephony.TelephonyManager;
 
-/**
- * Check device's network connectivity and speed
- * @author emil http://stackoverflow.com/users/220710/emil
- *
- */
+
 public class Connectivity {
 
-    /**
-     * Get the network info
-     * @param context
-     * @return
-     */
+
     public static NetworkInfo getNetworkInfo(Context context){
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo();
     }
 
-    /**
-     * Check if there is any connectivity
-     * @param context
-     * @return
-     */
+
     public static boolean isConnected(Context context){
         NetworkInfo info = Connectivity.getNetworkInfo(context);
         return (info != null && info.isConnected());
@@ -42,56 +30,45 @@ public class Connectivity {
         new AlertDialog.Builder(context)
                 .setTitle("Connection error")
                 .setMessage("Unable to connect with the server.Check your internet connection and try again.")
-                .setPositiveButton("TRY AGAIN", new DialogInterface.OnClickListener() {
+                .setPositiveButton("QUIT", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                       if(!isConnected(context)) {
-                           showDialog(context);
-                       }
+//                        System.exit(0);
+                        android.os.Process.killProcess(android.os.Process.myPid());
                     }
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
+                .setCancelable(false)
                 .show();
         return true;
     }
 
-    /**
-     * Check if there is any connectivity to a Wifi network
-     * @param context
-//     * @param type
-     * @return
-     */
     public static boolean isConnectedWifi(Context context){
         NetworkInfo info = Connectivity.getNetworkInfo(context);
         return (info != null && info.isConnected() && info.getType() == ConnectivityManager.TYPE_WIFI);
     }
 
-    /**
-     * Check if there is any connectivity to a mobile network
-     * @param context
-//     * @param type
-     * @return
-     */
     public static boolean isConnectedMobile(Context context){
         NetworkInfo info = Connectivity.getNetworkInfo(context);
         return (info != null && info.isConnected() && info.getType() == ConnectivityManager.TYPE_MOBILE);
     }
 
-    /**
-     * Check if there is fast connectivity
-     * @param context
-     * @return
-     */
+    public static String connectionType(Context context){
+        String conType = "";
+        NetworkInfo info = Connectivity.getNetworkInfo(context);
+        if(info != null && info.isConnected()){
+            conType= info.getSubtypeName();
+
+        }
+        return conType;
+    }
+
+
     public static boolean isConnectedFast(Context context){
         NetworkInfo info = Connectivity.getNetworkInfo(context);
         return (info != null && info.isConnected() && Connectivity.isConnectionFast(info.getType(),info.getSubtype()));
     }
 
-    /**
-     * Check if the connection is fast
-     * @param type
-     * @param subType
-     * @return
-     */
+
     public static boolean isConnectionFast(int type, int subType){
         if(type==ConnectivityManager.TYPE_WIFI){
             return true;
@@ -140,5 +117,7 @@ public class Connectivity {
             return false;
         }
     }
+
+
 
 }

@@ -35,7 +35,6 @@ public class ArticleActivity extends AppCompatActivity implements MoPubInterstit
     String articles_total_count,categoryName,categoryID,wood_id,articleID,id,selected_position;
     Bundle b;
     List <Article> articles;
-    private CallbackManager mFacebookCallbackManager;
     private MoPubInterstitial mInterstitial;
     int swipeCount = 2;
     Intent getIds;
@@ -63,6 +62,7 @@ public class ArticleActivity extends AppCompatActivity implements MoPubInterstit
             Log.e("mopub inter", "" + e.getLocalizedMessage());
         }
 
+
         getIds = getIntent();
 
         articleID = getIds.getExtras().getString("articleID");
@@ -70,17 +70,13 @@ public class ArticleActivity extends AppCompatActivity implements MoPubInterstit
         wood_id = getIds.getExtras().getString("wood_id");
         articles = (List<Article>) getIds.getExtras().getSerializable("articles");
         selected_position = getIds.getExtras().getString("selected_position");
-        Log.e("selected_position",""+selected_position);
         if(getIds.getExtras().getString("identifyActivity").equalsIgnoreCase("RelatedArticles")){
-            Log.e("identifyActivity ENTERED",""+getIds.getExtras().getString("identifyActivity"));
             toolbar_title.setText(articles.get(Integer.parseInt(selected_position)).getFirstCatName());
-            Log.e("TOOLBAR TITLE SET",""+articles.get(Integer.parseInt(selected_position)).getFirstCatName());
 
         }else if (getIds.getExtras().getString("identifyActivity").equalsIgnoreCase("FavoriteArticles")) {
             toolbar_title.setText(getIds.getExtras().getString("categoryName"));
         }else
             toolbar_title.setText(getIds.getExtras().getString("categoryName"));
-            Log.e("TOOLBAR TITLE SET IGNORING CASE",""+getIds.getExtras().getString("categoryName"));
 
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -93,8 +89,6 @@ public class ArticleActivity extends AppCompatActivity implements MoPubInterstit
 
             @Override
             public void onPageSelected(int arg0) {
-
-                // TODO Auto-generated method stub
                 if (swipeCount % 5 == 1) {
                     if (swipeCount >= 10) {
                         loadAd();
@@ -136,7 +130,7 @@ public class ArticleActivity extends AppCompatActivity implements MoPubInterstit
     }
     protected void facebookSDKInitialize() {
         FacebookSdk.sdkInitialize(getApplicationContext());
-        mFacebookCallbackManager = CallbackManager.Factory.create();
+        CallbackManager mFacebookCallbackManager = CallbackManager.Factory.create();
         AppEventsLogger.activateApp(getApplication());
     }
 
@@ -169,6 +163,7 @@ public class ArticleActivity extends AppCompatActivity implements MoPubInterstit
 
     }
 
+
     public class ArticleAdapter extends FragmentPagerAdapter {
         public ArticleAdapter(FragmentManager fragmentManager) {
             super(fragmentManager);
@@ -197,7 +192,6 @@ public class ArticleActivity extends AppCompatActivity implements MoPubInterstit
     }
     @Override
     public void onBackPressed() {
-        Log.e("onBackPressed","___________Entered__________");
         this.finish();
     }
 
@@ -207,7 +201,6 @@ public class ArticleActivity extends AppCompatActivity implements MoPubInterstit
 
         if (id == android.R.id.home) {
             this.finish();
-            Log.e("onBackPressed","___________Entered__________");
         }
 
         return super.onOptionsItemSelected(item);

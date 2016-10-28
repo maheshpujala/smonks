@@ -1,5 +1,6 @@
 package com.example.maheshpujala.sillymonks.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -13,7 +14,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
@@ -26,6 +26,7 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.maheshpujala.sillymonks.Adapters.ImageAdapter;
+import com.example.maheshpujala.sillymonks.Network.Connectivity;
 import com.example.maheshpujala.sillymonks.Network.VolleyRequest;
 import com.example.maheshpujala.sillymonks.R;
 import com.mopub.mobileads.MoPubErrorCode;
@@ -40,10 +41,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public class GalleryActivity extends AppCompatActivity implements MoPubView.BannerAdListener {
-  String celebrityID,wood_id,categoryName,id,image_url;
+  String celebrityID,wood_id,categoryName,id,image_url,imageSize;
     LinkedHashMap imagesMap;
     GridView gridview;
     private MoPubView moPubView;
+    ProgressDialog progressdialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,9 +78,8 @@ public class GalleryActivity extends AppCompatActivity implements MoPubView.Bann
             @Override
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                   List<String> imagesList = new ArrayList<String>(imagesMap.values());
+                   List<String> imagesList = new ArrayList<>(imagesMap.values());
 
-                    Toast.makeText(getApplicationContext(), "clicked ID " +imagesList.get(position) , Toast.LENGTH_SHORT).show();
                     Intent it = new Intent(GalleryActivity.this, FullScreenActivity.class);
                     it.putStringArrayListExtra("imageURL", (ArrayList<String>) imagesList);
                     it.putExtra("clicked_image",position);
@@ -89,6 +91,10 @@ public class GalleryActivity extends AppCompatActivity implements MoPubView.Bann
         moPubView.setAdUnitId("6d4ed34709184518870d820a5dd5f27e");
         moPubView.loadAd();
         moPubView.setBannerAdListener(this);
+        progressdialog = new ProgressDialog(GalleryActivity.this);
+        progressdialog.setMessage("Please Wait....");
+        progressdialog.setCancelable(false);
+        progressdialog.show();
     }
 
     private void sendRequest(String celebrityId, String woodId) {
@@ -105,7 +111,6 @@ public class GalleryActivity extends AppCompatActivity implements MoPubView.Bann
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
                         Log.e("response Errorhome", error + "");
                         if (error instanceof NoConnectionError) {
                             Log.d("NoConnectionError>>>>>>>>>", "NoConnectionError.......");
@@ -129,6 +134,7 @@ public class GalleryActivity extends AppCompatActivity implements MoPubView.Bann
                             AlertDialog dialog = builder.create();
 
                             dialog.show();
+                            progressdialog.dismiss();
                         }
 
 
@@ -140,13 +146,37 @@ public class GalleryActivity extends AppCompatActivity implements MoPubView.Bann
 
     private void getData(JSONObject response) {
         try {
+            String connectType= Connectivity.connectionType(GalleryActivity.this);
+            if(Connectivity.isConnectedWifi(GalleryActivity.this)){
+                Log.e("isConnectedWifi CHECK",""+"ORIGINAL IMAGE!!!!!!!!!!!!!!");
+                imageSize = "original";
+            }else if(connectType.equalsIgnoreCase("CDMA")||connectType.equalsIgnoreCase("EDGE")||connectType.equalsIgnoreCase("GPRS")||connectType.equalsIgnoreCase("1xRTT")){
+                Log.e("connectType CHECK",""+"SMALL IMAGE!!!!!!!!!!!!!!");
+                imageSize = "small";
+
+            }
+            else if (connectType.equalsIgnoreCase("HSDPA")||connectType.equalsIgnoreCase("HSPA")||connectType.equalsIgnoreCase("HSUPA")||connectType.equalsIgnoreCase("UMTS")||connectType.equalsIgnoreCase("HSPA+")){
+                Log.e("connectType CHECK",""+"Medium IMAGE!!!!!!!!!!!!!!");
+
+                imageSize = "medium";
+
+            }
+            else if (connectType.equalsIgnoreCase("LTE")){
+                Log.e("connectType CHECK",""+"Large IMAGE!!!!!!!!!!!!!!");
+
+                imageSize = "large";
+
+            }else{
+                imageSize = "small";
+
+            }
             JSONArray pictures = response.getJSONArray("pictures");
             imagesMap = new LinkedHashMap();
 
             for (int i = 0; i < pictures.length(); i++) {
                 JSONObject jsonobject = pictures.getJSONObject(i);
                 id = jsonobject.getString("id");
-                image_url = jsonobject.getString("original");
+                image_url = jsonobject.getString(imageSize);
                 imagesMap.put(id,image_url);
 
             }
@@ -155,6 +185,7 @@ public class GalleryActivity extends AppCompatActivity implements MoPubView.Bann
             e.printStackTrace();
         }
         gridview.setAdapter(new ImageAdapter(getApplicationContext(),imagesMap));
+        progressdialog.dismiss();
 
     }
 
