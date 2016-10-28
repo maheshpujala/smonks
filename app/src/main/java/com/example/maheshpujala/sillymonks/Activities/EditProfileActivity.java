@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -238,16 +239,17 @@ if(picturePath == null || picturePath.trim().length() == 0){
 
     private void sendRequestForUpdate() {
 
-        progress = new ProgressDialog(EditProfileActivity.this);
-        progress.setTitle("Uploading");
-        progress.setMessage("Please wait...");
-        progress.show();
+//        progress = new ProgressDialog(EditProfileActivity.this);
+//        progress.setTitle("Uploading");
+//        progress.setMessage("Please wait...");
+//        progress.show();
 
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
 
                 File f = new File(picturePath) ;
+                Log.e("picturePath",""+picturePath);
                 String content_type  = getMimeType(f.getPath());
 
                 String file_path = f.getAbsolutePath();
@@ -273,12 +275,15 @@ if(picturePath == null || picturePath.trim().length() == 0){
                     okhttp3.Response response = client.newCall(request).execute();
 
                     if(!response.isSuccessful()){
+                        Log.e("Error",""+response);
                         throw new IOException("Error : "+response);
-
                     }
-                    session.createLoginSession(smonksID,file_path.substring(file_path.lastIndexOf("/")+1),firstName_edit.getText().toString()+" "+lastName_edit.getText().toString(),user_data.get(0).getEmail(),gender_edit.getText().toString(),"default_login");
+                    Bitmap bitmap = ((BitmapDrawable)profilePic.getDrawable()).getBitmap();
+                            String profileImage = HelperMethods.encodeToBase64(bitmap, Bitmap.CompressFormat.JPEG, 100);
+                    session.createLoginSession(smonksID,profileImage,firstName_edit.getText().toString()+" "+lastName_edit.getText().toString(),user_data.get(0).getEmail(),gender_edit.getText().toString(),"default_login");
+                    Log.e("session","Created");
 
-                    progress.dismiss();
+//                    progress.dismiss();
 
                 } catch (IOException e) {
                     e.printStackTrace();
