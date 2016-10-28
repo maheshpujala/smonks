@@ -202,8 +202,12 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
     public void onClick(View v) {
         switch(v.getId()){
             case R.id.save_changes:
+if(picturePath == null || picturePath.trim().length() == 0){
+    sendRequestWithoutImage();
+}else{
+    sendRequestForUpdate();
 
-                sendRequestForUpdate();
+}
                 break;
             case R.id.change_picture:
                 int permissionCheck = ContextCompat.checkSelfPermission(EditProfileActivity.this,
@@ -233,14 +237,16 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void sendRequestForUpdate() {
-        profilePic.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+
         progress = new ProgressDialog(EditProfileActivity.this);
         progress.setTitle("Uploading");
         progress.setMessage("Please wait...");
         progress.show();
+
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
+
                 File f = new File(picturePath) ;
                 String content_type  = getMimeType(f.getPath());
 
@@ -250,13 +256,16 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
 
                 RequestBody request_body = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("id","28")
+                        .addFormDataPart("id",smonksID)
+                        .addFormDataPart("first_name",firstName_edit.getText().toString())
+                        .addFormDataPart("last_name",lastName_edit.getText().toString())
+                        .addFormDataPart("gender",gender_edit.getText().toString())
                         .addFormDataPart("type",content_type)
                         .addFormDataPart("profile_picture",file_path.substring(file_path.lastIndexOf("/")+1), file_body)
                         .build();
 
                 okhttp3.Request request = new okhttp3.Request.Builder()
-                        .url("http://192.168.1.15:3000/api/v1/PostUserProfileUpdate")
+                        .url(getResources().getString(R.string.main_url)+getResources().getString(R.string.updateProfile_url))
                         .post(request_body)
                         .build();
 
@@ -265,7 +274,9 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
 
                     if(!response.isSuccessful()){
                         throw new IOException("Error : "+response);
+
                     }
+                    session.createLoginSession(smonksID,file_path.substring(file_path.lastIndexOf("/")+1),firstName_edit.getText().toString()+" "+lastName_edit.getText().toString(),user_data.get(0).getEmail(),gender_edit.getText().toString(),"default_login");
 
                     progress.dismiss();
 
@@ -326,37 +337,44 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
 //    }
 
 
-//    private void sendRequestForUpdate() {
-//        final String fullname = firstName_edit.getText().toString()+" "+lastName_edit.getText().toString();
-//        String updateUserDetails_url =getResources().getString(R.string.main_url)+getResources().getString(R.string.update_user_url)+smonksID+"&"+getResources().getString(R.string.firstname_url)
-//                +firstName_edit.getText().toString()+getResources().getString(R.string.lastname_url)+lastName_edit.getText().toString();
-//        Log.e("++++updateUserDetails_url URLLLLLLLL",updateUserDetails_url);
-//        JsonObjectRequest jsObjRequest = new JsonObjectRequest
-//                (Request.Method.POST, updateUserDetails_url, null, new Response.Listener<JSONObject>() {
-//                    @Override
-//                    public void onResponse(JSONObject response) {
-//                        Log.e("onResponse",""+response);
-//                        try {
-//                            Toast.makeText(getApplication(),response.getString("message"),Toast.LENGTH_SHORT).show();
-//
+    private void sendRequestWithoutImage() {
+        progress = new ProgressDialog(EditProfileActivity.this);
+        progress.setTitle("Uploading");
+        progress.setMessage("Please wait...");
+        progress.show();
+
+        final String fullname = firstName_edit.getText().toString()+" "+lastName_edit.getText().toString();
+        String updateUserDetails_url =getResources().getString(R.string.main_url)+getResources().getString(R.string.updateProfile_url)+"?id="+smonksID+"&"+getResources().getString(R.string.firstname_url)
+                +firstName_edit.getText().toString()+getResources().getString(R.string.lastname_url)+lastName_edit.getText().toString()+"&gender="+gender_edit.getText().toString();
+        Log.e("++++updateUserDetails_url URLLLLLLLL",updateUserDetails_url);
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.POST, updateUserDetails_url, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.e("onResponse",""+response);
+                        try {
+                            Toast.makeText(getApplication(),response.getString("message"),Toast.LENGTH_SHORT).show();
+
 //                            Bitmap bitmap = ((BitmapDrawable)profilePic.getDrawable()).getBitmap();
 //                            String profileImage = HelperMethods.encodeToBase64(bitmap, Bitmap.CompressFormat.JPEG, 100);
-//                            session.createLoginSession(user_data.get(0).getSmonksId(),profileImage,fullname,user_data.get(0).getEmail(),"","default_login");
-//                            finish();
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }, new Response.ErrorListener() {
-//
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        reportError(error);
-//                    }
-//                });
-//// Add the request to the RequestQueue.
-//        VolleyRequest.getInstance().addToRequestQueue(jsObjRequest);
-//    }
+                            session.createLoginSession(user_data.get(0).getSmonksId(),"",fullname,user_data.get(0).getEmail(),"","default_login");
+
+                            progress.dismiss();
+                            finish();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        reportError(error);
+                    }
+                });
+// Add the request to the RequestQueue.
+        VolleyRequest.getInstance().addToRequestQueue(jsObjRequest);
+    }
 
 
     @Override

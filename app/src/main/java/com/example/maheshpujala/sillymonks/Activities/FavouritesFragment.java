@@ -123,7 +123,7 @@ public class FavouritesFragment extends Fragment  {
             return null;
         }
         // Inflate the layout for this fragment
-        LinearLayout inflated_layout = (LinearLayout) inflater.inflate(R.layout.fragment_favourities, container);
+        LinearLayout inflated_layout = (LinearLayout) inflater.inflate(R.layout.fragment_favourities, null);
         favouritesListView = (EnhancedListView) inflated_layout.findViewById(R.id.favourites_listview);
         notAvailable = (TextView) inflated_layout.findViewById(R.id.not_available);
 
@@ -173,9 +173,14 @@ public class FavouritesFragment extends Fragment  {
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                     Article a= (Article) favouritesMap.get(position);
+                     Article a= (Article) favouritesMap.values().toArray()[position];
                     Intent it = new Intent(getContext(), ArticleActivity.class);
-                     it.putExtra("identifyActivity","FavoriteArticles" );
+                Log.e("favouritesMap",""+favouritesMap);
+                Log.e("position",""+position);
+
+                Log.e("Article",""+a);
+
+                it.putExtra("identifyActivity","FavoriteArticles" );
                     it.putExtra("articleID",a.getId());
                     it.putExtra("categoryID",a.getFirstCatId());
                     it.putExtra("categoryName","Favorites");

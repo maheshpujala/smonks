@@ -78,7 +78,7 @@ public class Favourite_ListAdapter extends BaseAdapter{
 		LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		ViewHolder holder = new ViewHolder();
 		if (convertView == null) {
-			convertView = inflater.inflate(R.layout.favourite_item, parent);
+			convertView = inflater.inflate(R.layout.favourite_item, null);
 			holder.favouriteImage = (SquareImageView) convertView.findViewById(R.id.favourite_image);
 			holder.favouriteText = (TextView) convertView.findViewById(R.id.favourite_text);
 			holder.favDescText = (TextView) convertView.findViewById(R.id.fav_description);

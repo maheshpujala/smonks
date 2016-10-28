@@ -95,7 +95,7 @@ public class ListAdapter extends BaseAdapter {
         View rowView = null;
         if (response == 1){
 
-            rowView = inflater.inflate(R.layout.listview_navigation, parent,false);
+            rowView = inflater.inflate(R.layout.listview_navigation, null);
             TextView nav_text = (TextView) rowView.findViewById(R.id.nav_text);
             nav_text.setText(wood_titles.get(position));
 
@@ -103,10 +103,10 @@ public class ListAdapter extends BaseAdapter {
 
             if (position == 0) {
 
-                rowView = inflater.inflate(R.layout.listview_dummy, parent,false);
+                rowView = inflater.inflate(R.layout.listview_dummy, null);
                 LinearLayout blank =(LinearLayout) rowView.findViewById(R.id.blank);
             } else {
-                rowView = inflater.inflate(R.layout.listview_home, parent,false);
+                rowView = inflater.inflate(R.layout.listview_home, null);
                 TextView wood_name_tv = (TextView) rowView.findViewById(R.id.wood_name_sillymonks);
                 ImageView cover_image = (ImageView) rowView.findViewById(R.id.wood_cover_image);
 
@@ -115,7 +115,7 @@ public class ListAdapter extends BaseAdapter {
 
             }
         }else if(response ==3){
-            rowView = inflater.inflate(R.layout.listview_comments, parent,false);
+            rowView = inflater.inflate(R.layout.listview_comments, null);
 
             ImageView user_dp = (ImageView) rowView.findViewById(R.id.user_dp);
             TextView userName = (TextView) rowView.findViewById(R.id.userName);
@@ -130,7 +130,7 @@ public class ListAdapter extends BaseAdapter {
             rating_text.setText(comments.get(2));
             textViewComment.setText(comments.get(3));
         }else{
-            rowView = inflater.inflate(R.layout.recyclerview_category,parent,false);
+            rowView = inflater.inflate(R.layout.recyclerview_category,null);
              wood_name_tv = (TextView) rowView.findViewById(R.id.wood_name_sillymonks);
              cover_image = (ImageView) rowView.findViewById(R.id.wood_cover_image);
             time_ago = (TextView) rowView.findViewById(R.id.time_ago);

@@ -97,7 +97,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void sendUserRegistration() {
-        String registration_url =getResources().getString(R.string.main_url)+getResources().getString(R.string.user_registration_url)+getResources().getString(R.string.firstname_url)+Fname_holder.getText().toString()+getResources().getString(R.string.lastname_url)+Lname_holder.getText().toString()+getResources().getString(R.string.email_url)+Email_holder.getText().toString()+getResources().getString(R.string.password_url)+Pswd_holder.getText().toString();
+        String registration_url =getResources().getString(R.string.main_url)+getResources().getString(R.string.user_registration_url)+getResources().getString(R.string.firstname_url)+Fname_holder.getText().toString()+getResources().getString(R.string.lastname_url)+Lname_holder.getText().toString()+"&mobile="+mobileNo_holder.getText().toString()+getResources().getString(R.string.email_url)+Email_holder.getText().toString()+getResources().getString(R.string.password_url)+Pswd_holder.getText().toString();
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.POST, registration_url, null, new Response.Listener<JSONObject>() {
                     @Override

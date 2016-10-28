@@ -1,5 +1,6 @@
 package com.example.maheshpujala.sillymonks.Activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -24,6 +25,8 @@ import com.mopub.mobileads.MoPubInterstitial;
 import java.io.Serializable;
 import java.util.List;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 /**
  * Created by maheshpujala on 12/10/16.
  */
@@ -38,7 +41,6 @@ public class ArticleActivity extends AppCompatActivity implements MoPubInterstit
     private MoPubInterstitial mInterstitial;
     int swipeCount = 2;
     Intent getIds;
-
 
 
     @Override

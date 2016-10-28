@@ -106,7 +106,7 @@ Please contact us at info@sillymonks.com if you have any questions about our ter
 
 
     <string name="os_tag">&amp;os=andy</string>
-    <!--<string name="main_url">http://192.168.3.16:3000</string>-->
+    <!--<string name="main_url">http://192.168.3.11:3000</string>-->
     <!--<string name="ngrok_main_url">http://f66228b4.ngrok.io</string>-->
     <string name="main_url">http://cms.sillymonksapp.com</string>
 
@@ -161,7 +161,7 @@ Please contact us at info@sillymonks.com if you have any questions about our ter
     <string name="user_id_url">&amp;id=</string>
     <string name="new_password_url">&amp;password=</string>
     <string name="confirm_password_url">&amp;password_confirmation=</string>
-
+    <string name="updateProfile_url">/api/v1/PostUserProfileUpdate</string>
 
     <string name="forgotPassword_url">/api/v1/PostUserForgotPassword?email=</string>
 

@@ -50,7 +50,7 @@ public class ImageAdapter extends BaseAdapter {
         List<String> imagesList = new ArrayList<>(ImageUrl.values());
         if (convertView == null) {
             grid = new View(mContext);
-            grid = inflater.inflate(R.layout.grid_gallery, parent);
+            grid = inflater.inflate(R.layout.grid_gallery, null);
         } else {
             grid = convertView;
         }
