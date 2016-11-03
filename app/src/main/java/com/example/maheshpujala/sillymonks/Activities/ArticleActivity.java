@@ -42,6 +42,10 @@ public class ArticleActivity extends AppCompatActivity implements MoPubInterstit
     int swipeCount = 2;
     Intent getIds;
 
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

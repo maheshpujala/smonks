@@ -30,9 +30,9 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/sillymonks_navigation_logo_long"
+            android:layout_height="50dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/sillymonks_logo"
             android:theme="@style/ThemeOverlay.AppCompat.Dark"
             android:orientation="vertical"
             android:gravity="bottom"/>
@@ -134,26 +134,29 @@
 
 
                 <ImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:background="@drawable/fb_button"
+                    android:background="@drawable/fb_icon"
+                    android:layout_margin="5dp"
                     android:id="@+id/fb_button"
                     tools:ignore="ContentDescription" />
 
                 <ImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:background="@drawable/twitter_button"
+                    android:background="@drawable/twitter_icon"
+                    android:layout_margin="5dp"
                     android:id="@+id/twitter_button"
                     tools:ignore="ContentDescription" />
 
                 <ImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:background="@drawable/gplus_button"
+                    android:background="@drawable/gplus_icon"
+                    android:layout_margin="5dp"
                     android:id="@+id/gplus_button"
                     tools:ignore="ContentDescription" />
             </LinearLayout>

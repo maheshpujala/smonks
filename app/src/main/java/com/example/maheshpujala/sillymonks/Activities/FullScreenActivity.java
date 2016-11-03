@@ -1,5 +1,6 @@
 package com.example.maheshpujala.sillymonks.Activities;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +15,8 @@ import com.mopub.mobileads.MoPubInterstitial;
 
 import java.util.ArrayList;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 /**
  * Created by maheshpujala on 28/9/16.
  */
@@ -22,7 +25,10 @@ public class FullScreenActivity extends AppCompatActivity implements MoPubInters
     private MoPubInterstitial mInterstitial;
     int swipeCount = 2;
 
-
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
 
 
     @Override

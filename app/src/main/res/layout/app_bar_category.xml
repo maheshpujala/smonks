@@ -26,11 +26,11 @@
                 android:id="@+id/publisherAdView"
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
-                ads:adSize="BANNER"
+                ads:adSize="SMART_BANNER"
                 android:layout_marginTop="?attr/actionBarSize"
                 android:layout_marginBottom="30dp"
                 android:background="@android:color/transparent"
-                ads:adUnitId="@string/banner_ad_unit_id"
+                ads:adUnitId="@string/leaptest_banner_ad_unit_id"
                 app:layout_collapseMode="parallax"/>
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"

@@ -11,8 +11,10 @@ import java.util.Locale;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -25,15 +27,19 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.webkit.JavascriptInterface;
 import android.webkit.MimeTypeMap;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -48,6 +54,7 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class ContestActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -71,13 +78,17 @@ public class ContestActivity extends AppCompatActivity implements View.OnClickLi
     LinearLayout previewLayout;
     TextView toolbar_title;
     WebView contest_webview;
-
+    EditText mobileNumber_holder;
+    Button uploadPicture;
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contest);
-        session = new SessionManager(getApplicationContext());
-        userData=session.getUserDetails();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -85,6 +96,9 @@ public class ContestActivity extends AppCompatActivity implements View.OnClickLi
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
+
+
         contest_webview = (WebView) findViewById(R.id.contest_webview);
 
         toolbar_title= (TextView)findViewById(R.id.toolbar_title);
@@ -93,7 +107,7 @@ public class ContestActivity extends AppCompatActivity implements View.OnClickLi
         previewLayout.setVisibility(View.GONE);
         imgPreview = (ImageView) findViewById(R.id.imgPreview);
         Button btnCapturePicture = (Button) findViewById(R.id.cameraButton);
-        Button uploadPicture = (Button) findViewById(R.id.uploadPicture);
+        uploadPicture= (Button) findViewById(R.id.uploadPicture);
         btnCapturePicture.setOnClickListener(this);
         uploadPicture.setOnClickListener(this);
 //        String yourFilePath = Environment.getExternalStorageDirectory() + "/selfie_contest/" + "index.html";
@@ -102,9 +116,6 @@ public class ContestActivity extends AppCompatActivity implements View.OnClickLi
         contest_webview.addJavascriptInterface(new WebAppInterface(this, getParent()), "Android");
 //        contest_webview.loadUrl("file:///"+yourFilePath);
         contest_webview.loadUrl(getResources().getString(R.string.main_url)+"/selfie_contest.html");
-
-
-        Log.e("loadUrl", "" + contest_webview.getUrl());
 
         // Checking camera availability
         if (!isDeviceSupportCamera()) {
@@ -195,7 +206,7 @@ public class ContestActivity extends AppCompatActivity implements View.OnClickLi
             }  else {
                 // failed to capture image
                 Toast.makeText(getApplicationContext(),
-                        "Sorry! Failed to capture image", Toast.LENGTH_SHORT)
+                        "Sorry! Failed to capture image", Toast.LENGTH_LONG)
                         .show();
             }
         }
@@ -264,11 +275,55 @@ public class ContestActivity extends AppCompatActivity implements View.OnClickLi
                 }
                 break;
             case R.id.uploadPicture:
-                uploadSelifeImage(fileUri.getPath());
-                contest_webview.setVisibility(View.VISIBLE);
-                previewLayout.setVisibility(View.GONE);
+                session = new SessionManager(getApplicationContext());
+                userData=session.getUserDetails();
+                Log.e("userData.get(0).getMobileNo()","="+userData.get(0).getMobileNo());
+                if(userData.get(0).getMobileNo() == null || userData.get(0).getMobileNo().length() < 10 ){
+                    showDialogMobileNumber();
+                }else{
+                    uploadSelifeImage(fileUri.getPath());
+                    contest_webview.setVisibility(View.VISIBLE);
+                    previewLayout.setVisibility(View.GONE);
+                }
+
                 break;
         }
+    }
+
+    private void showDialogMobileNumber() {
+        final Dialog dialog1 = new Dialog(ContestActivity.this);
+        dialog1.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog1.setContentView(R.layout.dialog);
+        dialog1.setCancelable(false);
+
+        Button yes = (Button) dialog1.findViewById(R.id.submit_button);
+        Button no = (Button) dialog1.findViewById(R.id.cancel_button);
+        mobileNumber_holder= (EditText) dialog1.findViewById(R.id.mobileNumber_holder);
+
+        yes.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if (mobileNumber_holder.getText().toString().length() == 10) {
+                    session.createLoginSession(userData.get(0).getSmonksId(), userData.get(0).getId(),
+                            userData.get(0).getFirstName(), userData.get(0).getLastName(),
+                            mobileNumber_holder.getText().toString(), userData.get(0).getEmail(),
+                            userData.get(0).getGender(), userData.get(0).getLoginType());
+                    Log.e("CREATED SESSION","= true");
+                    dialog1.dismiss();
+                    uploadPicture.performClick();
+                } else {
+                    Toast.makeText(ContestActivity.this, "Please enter a valid ten digit mobile number", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+        no.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v)
+            {
+                dialog1.dismiss();
+            }
+        });
+        dialog1.show();
     }
 
     public Bitmap waterMark(Bitmap src) {
@@ -322,6 +377,8 @@ if(w > 1280 || h> 1280){
     }
 
     private void uploadSelifeImage(final String picturePath) {
+        session = new SessionManager(getApplicationContext());
+        userData=session.getUserDetails();
         progress = new ProgressDialog(ContestActivity.this);
         progress.setTitle("Uploading");
         progress.setMessage("Please wait...");
@@ -343,6 +400,7 @@ if(w > 1280 || h> 1280){
                         .addFormDataPart("contest_category_name",cat_name)
                         .addFormDataPart("type",content_type)
                         .addFormDataPart("photo",file_path.substring(file_path.lastIndexOf("/")+1), file_body)
+                        .addFormDataPart("mobile",userData.get(0).getMobileNo())
                         .build();
                 Log.e("upload cat name",cat_name);
 
@@ -350,7 +408,7 @@ if(w > 1280 || h> 1280){
                         .url(getResources().getString(R.string.main_url)+getResources().getString(R.string.contest_url))
                         .post(request_body)
                         .build();
-
+Log.e("URLLLL=====",""+getResources().getString(R.string.main_url)+getResources().getString(R.string.contest_url));
                 try {
                     okhttp3.Response response = client.newCall(request).execute();
 
@@ -367,12 +425,9 @@ if(w > 1280 || h> 1280){
         });
 
         t.start();
-
     }
     private String getMimeType(String path) {
-
         String extension = MimeTypeMap.getFileExtensionFromUrl(path);
-
         return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
     }
 

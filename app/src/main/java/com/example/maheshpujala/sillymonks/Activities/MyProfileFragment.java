@@ -50,7 +50,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
  * Created by maheshpujala on 28/9/16.
  */
 public class MyProfileFragment extends Fragment {
-    TextView f_name,email,gender,name,logout,editProfile,GenderView;
+    TextView l_name,f_name,email,gender,name,logout,editProfile,GenderView,full_name;
     CircleImageView pic;
     List<UserData> user_data;
     SessionManager session;
@@ -89,8 +89,9 @@ public class MyProfileFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         GenderView  = (TextView) view.findViewById(R.id.GenderView);
-        f_name = (TextView) view.findViewById(R.id.user_name);
-        name = (TextView) view.findViewById(R.id.user_fname);
+        full_name = (TextView) view.findViewById(R.id.user_name);
+        f_name = (TextView) view.findViewById(R.id.user_fname);
+        l_name = (TextView) view.findViewById(R.id.user_lname);
         email = (TextView) view.findViewById(R.id.user_email);
         gender = (TextView) view.findViewById(R.id.user_gender);
         editProfile=(TextView)view.findViewById(R.id.edit_profile);
@@ -101,10 +102,9 @@ public class MyProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent edit_profile = new Intent(getContext(),EditProfileActivity.class);
-                String fullname = f_name.getText().toString();
-                String[] separated = fullname.split(" ");
-                String firstName= separated[0];
-                String lastName= separated[1];
+                String firstName = f_name.getText().toString();
+                String lastName = l_name.getText().toString();
+
                 edit_profile. putExtra("first",firstName);
                 edit_profile. putExtra("last",lastName);
                 edit_profile. putExtra("email",email.getText());
@@ -143,30 +143,7 @@ public class MyProfileFragment extends Fragment {
 
         pic = (CircleImageView) view.findViewById(R.id.user_image);
 
-        f_name.setText(user_data.get(0).getName());
-        name.setText(user_data.get(0).getName());
-        email.setText(user_data.get(0).getEmail());
-        if(user_data.get(0).getGender().length()<1){
-            GenderView.setVisibility(View.GONE);
-        }else{
-            GenderView.setVisibility(View.VISIBLE);
-            gender.setText(user_data.get(0).getGender());
-        }
-
-        if(user_data.get(0).getLoginType().contains("google")){
-            Glide.with(pic.getContext()).load(user_data.get(0).getId()).into(pic);
-            Log.e("google","profile image"+user_data.get(0).getId());
-
-        }else if (user_data.get(0).getLoginType().contains("facebook")){
-            Glide.with(pic.getContext()).load("https://graph.facebook.com/" +user_data.get(0).getId()+ "/picture?type=large").into(pic);
-            Log.e("facebokk","profile image"+user_data.get(0).getId());
-        }else{
-            if(user_data.get(0).getId().length()>20) {
-                Log.e("default login","profile image"+user_data.get(0).getId());
-                decodedProfilePicture = HelperMethods.decodeBase64(user_data.get(0).getId());
-                pic.setImageBitmap(decodedProfilePicture);
-            }
-        }
+       setData();
     }
 
     private void sendLogout() {
@@ -177,7 +154,7 @@ public class MyProfileFragment extends Fragment {
                     public void onResponse(JSONObject response) {
                         try {
                             JSONObject returnResponse = response.getJSONObject("message");
-                            Toast.makeText(getContext(),returnResponse.getString("message"),Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(),returnResponse.getString("message"),Toast.LENGTH_LONG).show();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -213,13 +190,29 @@ public class MyProfileFragment extends Fragment {
         user_data = session.getUserDetails();
 
         Log.e("SESSION ",""+user_data);
-        f_name.setText(user_data.get(0).getName());
-        name.setText(user_data.get(0).getName());
+        full_name.setText(user_data.get(0).getFirstName()+" "+user_data.get(0).getLastName());
+        f_name.setText(user_data.get(0).getFirstName());
+        l_name.setText(user_data.get(0).getLastName());
         email.setText(user_data.get(0).getEmail());
-        gender.setText(user_data.get(0).getGender());
-        if(user_data.get(0).getId().length()>20) {
-            decodedProfilePicture = HelperMethods.decodeBase64(user_data.get(0).getId());
-            pic.setImageBitmap(decodedProfilePicture);
+        if(user_data.get(0).getGender().length()<1){
+            GenderView.setVisibility(View.GONE);
+        }else{
+            GenderView.setVisibility(View.VISIBLE);
+            gender.setText(user_data.get(0).getGender());
+        }
+
+        if(user_data.get(0).getLoginType().contains("google")){
+            Glide.with(pic.getContext()).load(user_data.get(0).getId()).into(pic);
+        }else if (user_data.get(0).getLoginType().contains("facebook")){
+            Glide.with(pic.getContext()).load("https://graph.facebook.com/" +user_data.get(0).getId()+ "/picture?type=large").into(pic);
+        }else if(user_data.get(0).getLoginType().contains("default_login")) {
+            if(user_data.get(0).getId().contains("http")) {
+                Glide.with(pic.getContext()).load(user_data.get(0).getId()).into(pic);
+            }else {
+                Log.e("DEFAULT LOGIN","ENTERED FOR DECODING");
+                decodedProfilePicture = HelperMethods.decodeBase64(user_data.get(0).getId());
+                pic.setImageBitmap(decodedProfilePicture);
+            }
         }
     }
 

@@ -60,7 +60,7 @@ public class CategoryGridFragment extends Fragment {
         myRecyclerView = (RecyclerView) view.findViewById(R.id.category_list);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
         myRecyclerView.setLayoutManager(layoutManager);
-        mAdapter = new RecyclerAdapter(getActivity(), articles,myRecyclerView,category_name, (String) articles_total_count.get(category_name));
+        mAdapter = new RecyclerAdapter(getActivity(), articles,myRecyclerView,category_name, (String) articles_total_count.get(category_name),2);
         myRecyclerView.setAdapter(mAdapter);
 
 

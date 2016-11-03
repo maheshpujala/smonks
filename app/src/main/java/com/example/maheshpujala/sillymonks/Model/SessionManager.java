@@ -33,10 +33,16 @@ public class SessionManager {
     public static final String KEY_SMONKSID= "sMonksId";
 
     // User name (make variable public to access from outside)
-    public static final String KEY_NAME = "name";
+    public static final String KEY_FIRST_NAME = "first_name";
+
+    // User name (make variable public to access from outside)
+    public static final String KEY_LAST_NAME = "last_name";
 
     // Email address (make variable public to access from outside)
     public static final String KEY_EMAIL = "email";
+
+    // Email address (make variable public to access from outside)
+    public static final String KEY_MOBILE = "mobile number";
 
     // IDs (make variable public to access from outside)
     public static final String KEY_ID= "id";
@@ -58,7 +64,7 @@ public class SessionManager {
     /**
      * Create login session
      * */
-    public void createLoginSession(String sMonksId,String id,String name, String email,String gender,String login_type){
+    public void createLoginSession(String sMonksId,String id,String fname,String lname,String mobileNo, String email,String gender,String login_type){
         // Storing login value as TRUE
         editor.putBoolean(IS_LOGIN, true);
         // Storing id in pref
@@ -67,8 +73,14 @@ public class SessionManager {
         // Storing id in pref
         editor.putString(KEY_ID, id);
 
-        // Storing name in pref
-        editor.putString(KEY_NAME, name);
+        // Storing first name in pref
+        editor.putString(KEY_FIRST_NAME, fname);
+
+        // Storing last name in pref
+        editor.putString(KEY_LAST_NAME, lname);
+
+        // Storing mobile number in pref
+        editor.putString(KEY_MOBILE, mobileNo);
 
         // Storing email in pref
         editor.putString(KEY_EMAIL, email);
@@ -113,7 +125,7 @@ public class SessionManager {
     public  List<UserData> getUserDetails(){
         List<UserData> user = new ArrayList<>();
         // user name
-        user.add(new UserData(pref.getString(KEY_SMONKSID, null),pref.getString(KEY_ID, null),pref.getString(KEY_NAME, null),pref.getString(KEY_EMAIL, null),pref.getString(KEY_GENDER, null),pref.getString(KEY_LOGIN_TYPE,null)));
+        user.add(new UserData(pref.getString(KEY_SMONKSID, null),pref.getString(KEY_ID, null),pref.getString(KEY_FIRST_NAME, null),pref.getString(KEY_LAST_NAME, null),pref.getString(KEY_MOBILE, null),pref.getString(KEY_EMAIL, null),pref.getString(KEY_GENDER, null),pref.getString(KEY_LOGIN_TYPE,null)));
 
         // return user
         return user;

@@ -13,14 +13,15 @@
 
     <string name="youtube_api_key">AIzaSyB1cHZqFxookTRf73Nf7T5y0oVrCovnHAk</string>
 
-
+    <string name="share_app_url">http://sillymonksapp.com/downloadapp</string>
     <string name="prompt_name">Name</string>
     <string name="prompt_mobile">Mobile</string>
     <string name="prompt_desc">Description</string>
     <string name="prompt_sbmt">SUBMIT</string>
     <string name="no_favourites">You have no favourites</string>
     <string name="no_comments">There are no comments yet.\nBe the first one to write a comment.</string>
-
+    <string name="radio_male">Male</string>
+    <string name="radio_female">Female</string>
 
     <string name="elv_undo">Undo</string>
     <string name="elv_undo_all">Undo All</string>
@@ -98,20 +99,27 @@ Please contact us at info@sillymonks.com if you have any questions about our ter
 @ 2016 Silly Monks Entertainment Pvt Ltd. All Rights Reserved"</string>
 
 
-    <string name="banner_ad_unit_id"> /133516651/LeapTest</string>
-    <string name="mopub_interstitial_ad_id">6d4ed34709184518870d820a5dd5f27e</string>
+    <string name="leaptest_banner_ad_unit_id">/133516651/LeapTest</string>
+    <string name="banner_ad_unit_id">/133516651/NewAppHome</string>
+
+
+    <string name="mopub_interstitial_ad_id">5d84bf5a4e5c415a923b042dee24bafa</string>
 
 
     <!--<string name="banner_ad_unit_id">/6499/example/banner</string>-->
 
 
     <string name="os_tag">&amp;os=andy</string>
-    <!--<string name="main_url">http://192.168.3.11:3000</string>-->
+    <!--<string name="main_url">http://192.168.3.16:3000</string>-->
     <!--<string name="ngrok_main_url">http://f66228b4.ngrok.io</string>-->
     <string name="main_url">http://cms.sillymonksapp.com</string>
 
     <string name="contest_url">/api/v1/postContestPhoto</string>
 
+    <string name="contact_url">/api/v1/PostContactUs?name=</string>
+    <string name="mobile_tag">&amp;mobile=</string>
+    <string name="description_tag">&amp;description=</string>
+    <string name="type_tag">&amp;type=</string>
 
     <string name="search_url">/api/v1/getGenericSearchArticles?key=</string>
 
@@ -134,13 +142,10 @@ Please contact us at info@sillymonks.com if you have any questions about our ter
     <string name="userDisliked_url">/api/v1/getDislikeArticle?articleID=</string>
     <string name="userId_url">&amp;userID=</string>
 
-    <string name="userRating_url">/api/v1/getRateAnArticle?articleID=</string>
-    <string name="value_url">&amp;value=</string>
 
-    <string name="userComment_url">/api/v1/getCommentOnArticle?articleID=</string>
-    <string name="body_url">&amp;body=</string>
-
-
+    <string name="ratng_comnt_url">/api/v1/PostCommentandRatingOnArticle?articleID=</string>
+    <string name="rating_url">&amp;rating=</string>
+    <string name="comment_url">&amp;comment=</string>
 
 
     <string name="more_articles_url">/api/v1/getMoreRelatedArticles?articleID=</string>

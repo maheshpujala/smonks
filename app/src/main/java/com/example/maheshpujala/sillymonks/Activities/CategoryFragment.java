@@ -100,7 +100,7 @@ public class CategoryFragment extends Fragment {
         myRecyclerView = (RecyclerView) rootView.findViewById(R.id.category_list);
         myRecyclerView.setHasFixedSize(true);
 
-        mAdapter = new RecyclerAdapter(getActivity(), articles,myRecyclerView,category_name, (String) articles_total_count.get(category_name));
+        mAdapter = new RecyclerAdapter(getActivity(), articles,myRecyclerView,category_name, (String) articles_total_count.get(category_name),1);
         moPubAdapter = new MoPubRecyclerAdapter(getActivity(), mAdapter,
                 MoPubNativeAdPositioning.serverPositioning());
         MoPubStaticNativeAdRenderer moPubStaticNativeAdRenderer = new MoPubStaticNativeAdRenderer(
@@ -193,7 +193,7 @@ public class CategoryFragment extends Fragment {
     @Override
     public void onResume() {
         // MoPub recommends loading knew ads when the user returns to your activity.
-        moPubAdapter.loadAds("e6784f6a4d7a4b84a9134580a6dbc400");
+        moPubAdapter.loadAds("4af8f892da924673aa0d9db92b49cc10");
         progressdialog.dismiss();
         super.onResume();
         }

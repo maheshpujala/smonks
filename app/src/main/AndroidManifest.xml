@@ -89,6 +89,9 @@
         <activity
             android:name=".Activities.ArticleActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.RatingsAndComments"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".Activities.FullScreenActivity"
@@ -106,6 +109,7 @@
             android:name=".Activities.YoutubeActivity"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
+
         <activity
             android:name=".Activities.RelatedArticles"
             android:screenOrientation="portrait"/>

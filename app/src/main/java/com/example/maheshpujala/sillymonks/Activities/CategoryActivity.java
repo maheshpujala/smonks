@@ -1,6 +1,7 @@
 package com.example.maheshpujala.sillymonks.Activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -62,6 +63,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 /**
  * Created by maheshpujala on 12/9/16.
  */
@@ -86,7 +89,10 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
     ListView   listForWoods;
     List<String> navBarWoodNames,allWoodNames;
     ProgressDialog progressdialog;
-
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,7 +104,6 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
         toolbar_title = (TextView)findViewById(R.id.toolbar_title);
         Intent it = getIntent();
         wood_id = it.getExtras().getString("wood_id");
-
 
         Bundle bundle = it.getExtras();
         woodNames_Map = (HashMap) bundle.getSerializable("woodNames_Map");
@@ -114,15 +119,15 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
 
 
         mPublisherAdView = (PublisherAdView) findViewById(R.id.publisherAdView);
-        mPublisherAdView.setAdSizes(AdSize.MEDIUM_RECTANGLE);
+        mPublisherAdView.setAdSizes(AdSize.SMART_BANNER);
 
         PublisherAdRequest adRequest = new PublisherAdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
-                .addTestDevice("90EE0E29646EF0CBAC99567D3827BAF5")// My Genymotion
-                .addTestDevice("9E24EA1846195D46BA5800679368D5E2")// MOTO G 4.5  marshmallow
-                .addTestDevice("E8A785BC1EC7B41E36D183611BEAE615")// MOTO E  4.3 kitkat
-                .addTestDevice("1DEFD3C3E725D34AD35682EFAC30169E")// Karbon 4     kitkat
-                .addTestDevice("568D4320C2F8B11064876CC8CAE9DAF9")// Genymotion api 19
+//                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
+//                .addTestDevice("90EE0E29646EF0CBAC99567D3827BAF5")// My Genymotion
+//                .addTestDevice("9E24EA1846195D46BA5800679368D5E2")// MOTO G 4.5  marshmallow
+//                .addTestDevice("E8A785BC1EC7B41E36D183611BEAE615")// MOTO E  4.3 kitkat
+//                .addTestDevice("1DEFD3C3E725D34AD35682EFAC30169E")// Karbon 4     kitkat
+//                .addTestDevice("568D4320C2F8B11064876CC8CAE9DAF9")// Genymotion api 19
 
                 .build();
         mPublisherAdView.loadAd(adRequest);
@@ -301,7 +306,7 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
             CategoryFragment fragment = new CategoryFragment();
             CategoryGridFragment grid_fragment = new CategoryGridFragment();
 
-            if (cat_name.equalsIgnoreCase("celebrities") || cat_name.equalsIgnoreCase("gallery")){
+            if (cat_name.equalsIgnoreCase("gallery")){
                 grid_fragment.setArguments(b);
                 adapter.addFrag(grid_fragment, cat_name);
                 adapter.notifyDataSetChanged();
@@ -325,7 +330,7 @@ public class CategoryActivity extends AppCompatActivity implements  View.OnClick
         }
 
         if (id == R.id.publisherAdView) {
-            Toast.makeText(this, "clicked ADVERTISEMENT", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "clicked ADVERTISEMENT", Toast.LENGTH_LONG).show();
 
         }
 

@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatTextView;
@@ -81,7 +82,10 @@ public class MainActivity extends AppCompatActivity
     SessionManager session;
     ProgressDialog progressdialog;
     Bitmap decodedProfilePicture;
-
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,9 +109,6 @@ public class MainActivity extends AppCompatActivity
         login = (TextView) findViewById(R.id.signin);
         login.setOnClickListener(this);
         TextView abt = (TextView) findViewById(R.id.about);
-
-        Typeface font = Typeface.createFromAsset(getAssets(),"RobotoRegular.ttf");
-        abt.setTypeface(font);
         abt.setOnClickListener(this);
         TextView terms = (TextView) findViewById(R.id.tandc);
         terms.setOnClickListener(this);
@@ -117,7 +118,7 @@ public class MainActivity extends AppCompatActivity
         advt.setOnClickListener(this);
         TextView share = (TextView) findViewById(R.id.sharetheapp);
         share.setOnClickListener(this);
-        TextView contests = (TextView) findViewById(R.id.contests);
+        final TextView contests = (TextView) findViewById(R.id.contests);
         contests.setOnClickListener(this);
 
         fb_button = (ImageView) findViewById(R.id.fb_button);
@@ -134,20 +135,11 @@ public class MainActivity extends AppCompatActivity
         checkLogin();
 
         mPublisherAdView = (PublisherAdView) findViewById(R.id.publisherAdView);
-        mPublisherAdView.setAdSizes(AdSize.MEDIUM_RECTANGLE);
-
-        final PublisherAdRequest adRequest = new PublisherAdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
-                .addTestDevice("90EE0E29646EF0CBAC99567D3827BAF5")// My Genymotion
-                .addTestDevice("9E24EA1846195D46BA5800679368D5E2")// MOTO G 4.5  marshmallow
-                .addTestDevice("E8A785BC1EC7B41E36D183611BEAE615")// MOTO E  4.3 kitkat
-                .addTestDevice("1DEFD3C3E725D34AD35682EFAC30169E")// Karbon 4     kitkat
-                .build();
-//        AdSize customAdSize = new AdSize(200, 200);
-//        mPublisherAdView.setAdSizes(customAdSize);
-
+//        mPublisherAdView.setAdSizes(AdSize.SMART_BANNER);
+        AdSize  customAdSize = new AdSize(360, 250);
+        mPublisherAdView.setAdSizes(customAdSize);
+        final PublisherAdRequest adRequest = new PublisherAdRequest.Builder().build();
         mPublisherAdView.loadAd(adRequest);
-        mPublisherAdView.setOnClickListener(this);
 
         home_list = (BounceListView) findViewById(R.id.list_allwoods);
         home_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -155,14 +147,20 @@ public class MainActivity extends AppCompatActivity
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
                 if (position != 0) {
-                    Intent it = new Intent(MainActivity.this, CategoryActivity.class);
-                    Bundle b = new Bundle();
-                    b.putSerializable("woodNames_Map",woodNames_Map);
-                    b.putString("wood_id",woodIds.get(position));
+                    if(woodNames.get(position).trim().equalsIgnoreCase("Hyderabad Selfie Festival")){
+                        contests.performClick();
+                    }else{
+                        Intent it = new Intent(MainActivity.this, CategoryActivity.class);
+                        Bundle b = new Bundle();
+                        b.putSerializable("woodNames_Map",woodNames_Map);
+                        b.putString("wood_id",woodIds.get(position));
 
-                    it.putExtras(b);
-                    //   it.putExtra("wood_names", (Serializable) woodNames);
-                    startActivity(it);
+
+                        it.putExtras(b);
+                        //   it.putExtra("wood_names", (Serializable) woodNames);
+                        startActivity(it);
+                    }
+
                 }
             }
         });
@@ -214,13 +212,12 @@ public class MainActivity extends AppCompatActivity
                 Glide.with(profile_pic.getContext()).load(userData.get(0).getId()).into(profile_pic);
             }else if(userData.get(0).getLoginType().contains("facebook")){
                 Glide.with(profile_pic.getContext()).load("https://graph.facebook.com/" +userData.get(0).getId()+ "/picture?type=large").into(profile_pic);
-            }else{
-                if(userData.get(0).getId().length()>20) {
-                    Log.e("ENCODED IMAGE+++++++",""+userData.get(0).getId());
+            }else if(userData.get(0).getLoginType().contains("default_login")) {
+                if(userData.get(0).getId().contains("http")) {
+                    Glide.with(profile_pic.getContext()).load(userData.get(0).getId()).into(profile_pic);
+                }else {
                     decodedProfilePicture = HelperMethods.decodeBase64(userData.get(0).getId());
                     profile_pic.setImageBitmap(decodedProfilePicture);
-                    Log.e("++++++++++++DECODED IMAGE+++++++",""+decodedProfilePicture);
-
                 }
             }
         }
@@ -415,7 +412,7 @@ public class MainActivity extends AppCompatActivity
                 startActivityForResult(contest,requestCode);
             }else{
                 session.checkLogin();
-                Toast.makeText(this,"You must login for take part in this contest",Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,"You must login for take part in this contest",Toast.LENGTH_LONG).show();
             }
 
         }
@@ -468,7 +465,7 @@ public class MainActivity extends AppCompatActivity
                 i.setType("text/plain");
                 i.putExtra(Intent.EXTRA_SUBJECT, "SillyMonks Android Application");
                 String sAux = "\nMy gateway to the world of entertainment.\n";
-                sAux = sAux + "https://play.google.com/store/apps/details?id=com.ongo.silly_monks \n\n";
+                sAux = sAux + getResources().getString(R.string.share_app_url);
                 i.putExtra(Intent.EXTRA_TEXT, sAux);
                 startActivity(Intent.createChooser(i, "choose one"));
             }
@@ -477,9 +474,6 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        if (id == R.id.publisherAdView) {
-            Toast.makeText(this, "clicked ADVERTISEMENT", Toast.LENGTH_SHORT).show();
-        }
 
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);

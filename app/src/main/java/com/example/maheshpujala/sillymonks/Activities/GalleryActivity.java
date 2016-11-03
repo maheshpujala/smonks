@@ -1,15 +1,20 @@
 package com.example.maheshpujala.sillymonks.Activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.view.ContextThemeWrapper;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -26,6 +31,8 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.maheshpujala.sillymonks.Adapters.ImageAdapter;
+import com.example.maheshpujala.sillymonks.Adapters.RecyclerAdapter;
+import com.example.maheshpujala.sillymonks.Model.Article;
 import com.example.maheshpujala.sillymonks.Network.Connectivity;
 import com.example.maheshpujala.sillymonks.Network.VolleyRequest;
 import com.example.maheshpujala.sillymonks.R;
@@ -36,17 +43,23 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 public class GalleryActivity extends AppCompatActivity implements MoPubView.BannerAdListener {
   String celebrityID,wood_id,categoryName,id,image_url,imageSize;
     LinkedHashMap imagesMap;
-    GridView gridview;
+    RecyclerView gridview;
     private MoPubView moPubView;
     ProgressDialog progressdialog;
-
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,24 +84,50 @@ public class GalleryActivity extends AppCompatActivity implements MoPubView.Bann
 
         sendRequest(celebrityID,wood_id);
 
+        gridview = (RecyclerView) findViewById(R.id.gallery_view);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(GalleryActivity.this, 2);
+        gridview.setLayoutManager(layoutManager);
+        gridview.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
 
-        gridview = (GridView) findViewById(R.id.gallery_view);
+            GestureDetector gestureDetector = new GestureDetector(GalleryActivity.this, new GestureDetector.SimpleOnGestureListener() {
 
-        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public boolean onSingleTapUp(MotionEvent e) {
+                    return true;
+                }
+
+            });
+
             @Override
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                   List<String> imagesList = new ArrayList<>(imagesMap.values());
+            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+                View child = rv.findChildViewUnder(e.getX(), e.getY());
+                if (child != null && gestureDetector.onTouchEvent(e)) {
+                    int position = rv.getChildAdapterPosition(child);
+                    List<String> imagesList = new ArrayList<>(imagesMap.values());
 
                     Intent it = new Intent(GalleryActivity.this, FullScreenActivity.class);
                     it.putStringArrayListExtra("imageURL", (ArrayList<String>) imagesList);
                     it.putExtra("clicked_image",position);
-                startActivity(it);
+                    startActivity(it);
+                }
+                return false;
             }
+
+            @Override
+            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+            }
+
         });
 
+
         moPubView = (MoPubView) findViewById(R.id.mopub_adview);
-        moPubView.setAdUnitId("6d4ed34709184518870d820a5dd5f27e");
+        moPubView.setAdUnitId("b51640c1ff19442184e783f55e0428c3");
         moPubView.loadAd();
         moPubView.setBannerAdListener(this);
         progressdialog = new ProgressDialog(GalleryActivity.this);
@@ -184,7 +223,8 @@ public class GalleryActivity extends AppCompatActivity implements MoPubView.Bann
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        gridview.setAdapter(new ImageAdapter(getApplicationContext(),imagesMap));
+        RecyclerAdapter mAdapter = new RecyclerAdapter(GalleryActivity.this,imagesMap,3);
+        gridview.setAdapter(mAdapter);
         progressdialog.dismiss();
 
     }

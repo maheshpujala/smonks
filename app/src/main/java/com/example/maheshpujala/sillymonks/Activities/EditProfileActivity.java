@@ -2,6 +2,7 @@ package com.example.maheshpujala.sillymonks.Activities;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -29,6 +30,8 @@ import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,6 +46,7 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.bumptech.glide.Glide;
 import com.example.maheshpujala.sillymonks.Network.VolleyRequest;
 import com.example.maheshpujala.sillymonks.Model.SessionManager;
 import com.example.maheshpujala.sillymonks.Model.UserData;
@@ -54,12 +58,15 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**
  * Created by maheshpujala on 19/10/16.
@@ -67,7 +74,9 @@ import okhttp3.RequestBody;
 
 public class EditProfileActivity extends AppCompatActivity implements View.OnClickListener {
     Button save_changes,change_pwd,change_picture,change_pwd_on_screen;
-    EditText firstName_edit,lastName_edit,emailAddress_edit,gender_edit,newPwdEdit,currentPwdEdit,renewPwdEdit;
+    EditText firstName_edit,lastName_edit,emailAddress_edit,newPwdEdit,currentPwdEdit,renewPwdEdit,mobile_edit;
+    private RadioGroup radioSexGroup;
+    private RadioButton radioMaleButton,radioFemaleButton,radioButton;
     String fname,lname,email,gender,smonksID;
     SessionManager session;
     List<UserData> user_data;
@@ -86,7 +95,10 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
     ProgressDialog progress;
     String picturePath;
 
-
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,10 +132,15 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         CURRENT_SCREEN = UPDATE_SCREEN;
 
         profilePic = (ImageView) findViewById(R.id.profilePic);
-        if(user_data.get(0).getId().length()>30) {
+        if(user_data.get(0).getId().contains("http")) {
+            Glide.with(profilePic.getContext()).load(user_data.get(0).getId()).into(profilePic);
+        }else {
+            Log.e("ENCODED IMAGE+++++++",""+user_data.get(0).getId());
             decodedProfilePicture = HelperMethods.decodeBase64(user_data.get(0).getId());
             profilePic.setImageBitmap(decodedProfilePicture);
+            Log.e("++++++++++++DECODED IMAGE+++++++",""+decodedProfilePicture);
         }
+
         change_pwd_on_screen = (Button)findViewById(R.id.change_pwd_on_screen);
         change_pwd_on_screen.setOnClickListener(this);
         save_changes=(Button)findViewById(R.id.save_changes);
@@ -134,18 +151,15 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         firstName_edit =(EditText)findViewById(R.id.firstName_edit);
         lastName_edit = (EditText) findViewById(R.id.lastName_edit);
         emailAddress_edit =(EditText)findViewById(R.id.emailAddress_edit);
+        mobile_edit =(EditText)findViewById(R.id. mobile_edit);
+        mobile_edit.setVisibility(View.GONE);
+        mobile_edit.setKeyListener(null);
         emailAddress_edit.setKeyListener(null);
-        gender_edit = (EditText)findViewById(R.id.gender_edit);
-        gender_edit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.update || id == EditorInfo.IME_NULL) {
-                    save_changes.performClick();
-                    return true;
-                }
-                return false;
-            }
-        });
+        radioSexGroup = (RadioGroup) findViewById(R.id.radioSex);
+        radioMaleButton =(RadioButton)findViewById(R.id.radioMale);
+        radioFemaleButton =(RadioButton)findViewById(R.id.radioFemale);
+
+
         renewPwdEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -164,8 +178,12 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         firstName_edit.setText(fname);
         lastName_edit.setText(lname);
         emailAddress_edit.setText(email);
-        gender_edit.setText(gender);
-
+        mobile_edit.setText(user_data.get(0).getMobileNo());
+if(gender.equalsIgnoreCase("male")){
+    radioMaleButton.setChecked(true);
+}else if (gender.equalsIgnoreCase("female")){
+    radioFemaleButton.setChecked(true);
+}
         setAnimationForViews();
 
     }
@@ -173,7 +191,6 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onBackPressed() {
-        Log.e("onBackPressed","___________Entered__________");
         if (CURRENT_SCREEN == UPDATE_SCREEN) {
             finish();
         } else if (CURRENT_SCREEN == CHANGE_PWD_SCREEN) {
@@ -239,10 +256,15 @@ if(picturePath == null || picturePath.trim().length() == 0){
 
     private void sendRequestForUpdate() {
 
-//        progress = new ProgressDialog(EditProfileActivity.this);
-//        progress.setTitle("Uploading");
-//        progress.setMessage("Please wait...");
-//        progress.show();
+        progress = new ProgressDialog(EditProfileActivity.this);
+        progress.setTitle("Uploading");
+        progress.setMessage("Please wait...");
+        progress.show();
+        // get selected radio button from radioGroup
+        int selectedId = radioSexGroup.getCheckedRadioButtonId();
+
+        // find the radiobutton by returned id
+        radioButton = (RadioButton) findViewById(selectedId);
 
         Thread t = new Thread(new Runnable() {
             @Override
@@ -261,7 +283,7 @@ if(picturePath == null || picturePath.trim().length() == 0){
                         .addFormDataPart("id",smonksID)
                         .addFormDataPart("first_name",firstName_edit.getText().toString())
                         .addFormDataPart("last_name",lastName_edit.getText().toString())
-                        .addFormDataPart("gender",gender_edit.getText().toString())
+                        .addFormDataPart("gender", (String) radioButton.getText())
                         .addFormDataPart("type",content_type)
                         .addFormDataPart("profile_picture",file_path.substring(file_path.lastIndexOf("/")+1), file_body)
                         .build();
@@ -280,18 +302,22 @@ if(picturePath == null || picturePath.trim().length() == 0){
                     }
                     Bitmap bitmap = ((BitmapDrawable)profilePic.getDrawable()).getBitmap();
                             String profileImage = HelperMethods.encodeToBase64(bitmap, Bitmap.CompressFormat.JPEG, 100);
-                    session.createLoginSession(smonksID,profileImage,firstName_edit.getText().toString()+" "+lastName_edit.getText().toString(),user_data.get(0).getEmail(),gender_edit.getText().toString(),"default_login");
+                    session.createLoginSession(smonksID,profileImage,firstName_edit.getText().toString(),lastName_edit.getText().toString(),"",user_data.get(0).getEmail(), String.valueOf(radioButton.getText()),"default_login");
                     Log.e("session","Created");
-
-//                    progress.dismiss();
-
+                    progress.dismiss();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
             }
         });
 
         t.start();
+//        Toast.makeText(EditProfileActivity.this, "Your profile was updated successfully", Toast.LENGTH_LONG).show();
+
+//        if(t.getState() != Thread.State.TERMINATED){
+//            finish();
+//        }
     }
     private String getMimeType(String path) {
 
@@ -347,10 +373,18 @@ if(picturePath == null || picturePath.trim().length() == 0){
         progress.setTitle("Uploading");
         progress.setMessage("Please wait...");
         progress.show();
+        int selectedId = radioSexGroup.getCheckedRadioButtonId();
 
-        final String fullname = firstName_edit.getText().toString()+" "+lastName_edit.getText().toString();
-        String updateUserDetails_url =getResources().getString(R.string.main_url)+getResources().getString(R.string.updateProfile_url)+"?id="+smonksID+"&"+getResources().getString(R.string.firstname_url)
-                +firstName_edit.getText().toString()+getResources().getString(R.string.lastname_url)+lastName_edit.getText().toString()+"&gender="+gender_edit.getText().toString();
+        // find the radiobutton by returned id
+        radioButton = (RadioButton) findViewById(selectedId);
+        String updateUserDetails_url = null;
+        try {
+            updateUserDetails_url = getResources().getString(R.string.main_url)+getResources().getString(R.string.updateProfile_url)+"?id="+smonksID+"&"+getResources().getString(R.string.firstname_url)
+                    + URLEncoder.encode(firstName_edit.getText().toString(), "UTF-8")+getResources().getString(R.string.lastname_url)+URLEncoder.encode(lastName_edit.getText().toString(), "UTF-8")
+                    +"&gender="+radioButton.getText().toString();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         Log.e("++++updateUserDetails_url URLLLLLLLL",updateUserDetails_url);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.POST, updateUserDetails_url, null, new Response.Listener<JSONObject>() {
@@ -358,11 +392,11 @@ if(picturePath == null || picturePath.trim().length() == 0){
                     public void onResponse(JSONObject response) {
                         Log.e("onResponse",""+response);
                         try {
-                            Toast.makeText(getApplication(),response.getString("message"),Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplication(),response.getString("message"),Toast.LENGTH_LONG).show();
 
-//                            Bitmap bitmap = ((BitmapDrawable)profilePic.getDrawable()).getBitmap();
-//                            String profileImage = HelperMethods.encodeToBase64(bitmap, Bitmap.CompressFormat.JPEG, 100);
-                            session.createLoginSession(user_data.get(0).getSmonksId(),"",fullname,user_data.get(0).getEmail(),"","default_login");
+                            Bitmap bitmap = ((BitmapDrawable)profilePic.getDrawable()).getBitmap();
+                            String profileImage = HelperMethods.encodeToBase64(bitmap, Bitmap.CompressFormat.JPEG, 100);
+                            session.createLoginSession(user_data.get(0).getSmonksId(),profileImage,firstName_edit.getText().toString(),lastName_edit.getText().toString(),"",user_data.get(0).getEmail(),radioButton.getText().toString(),"default_login");
 
                             progress.dismiss();
                             finish();
@@ -400,19 +434,18 @@ if(picturePath == null || picturePath.trim().length() == 0){
         return false;
     }
     public void changePwd() {
-Log.e("changed password","Entered");
         String currentpassword_String = currentPwdEdit.getText().toString();
         String newPassword_String = newPwdEdit.getText().toString();
         String reNewpassword_String = renewPwdEdit.getText().toString();
 
         if (currentpassword_String.equals("")) {
-            Toast.makeText(getApplication(),"Enter Current password",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplication(),"Enter Current password",Toast.LENGTH_LONG).show();
         } else if (newPassword_String.equals("")) {
-            Toast.makeText(getApplication(),"Enter New password",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplication(),"Enter New password",Toast.LENGTH_LONG).show();
         } else if (!newPassword_String.equals(reNewpassword_String)) {
-            Toast.makeText(getApplication(),"New Password and Confirm Password does not match",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplication(),"New Password and Confirm Password does not match",Toast.LENGTH_LONG).show();
         }else if(newPassword_String.length()<=5 || newPassword_String.length()>20){
-            Toast.makeText(this,"Your New password length should be 6 to 20 characters",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"Your New password length should be 6 to 20 characters",Toast.LENGTH_LONG).show();
         }
         else {
             String updatePasswordUrl =getResources().getString(R.string.main_url)+
@@ -429,13 +462,13 @@ Log.e("changed password","Entered");
                             try {
                                 password_verify =response.getBoolean("is_changed");
                                 if(password_verify){
-                                    Toast.makeText(getApplicationContext(),response.getString("message"),Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(),response.getString("message"),Toast.LENGTH_LONG).show();
                                     if (CURRENT_SCREEN == CHANGE_PWD_SCREEN) {
                                         mChangePwdLayout.setAnimation(mOutAnimation);
                                         mChangePwdLayout.startAnimation(mOutAnimation);
                                     }
                                 }else{
-                                    Toast.makeText(getApplicationContext(),response.getString("message"),Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(),response.getString("message"),Toast.LENGTH_LONG).show();
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();

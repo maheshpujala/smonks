@@ -1,9 +1,15 @@
 package com.example.maheshpujala.sillymonks.Activities;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -37,6 +43,7 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.example.maheshpujala.sillymonks.Adapters.ListAdapter;
 import com.example.maheshpujala.sillymonks.Network.Connectivity;
 import com.example.maheshpujala.sillymonks.Network.VolleyRequest;
@@ -57,6 +64,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -64,6 +74,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
 
@@ -71,7 +82,7 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
 
     RatingBar rating;
     ImageView comment, share, like;
-    String articlePageURL, categoryName, categoryID, wood_id, articleID, id, title, category_name_fromJson, likes, banner_image, youtube_id, brightcove_link, description,comments,related_article_id, related_article_title, related_article_image, relatedArticleId,imageSize;
+    String user_ID,articlePageURL, categoryName, categoryID, wood_id, articleID, id, title, category_name_fromJson, likes, banner_image, youtube_id, brightcove_link, description,comments,related_article_id, related_article_title, related_article_image, relatedArticleId,imageSize;
     Float average_rating;
     TextView text_heading, article_title, article_description,text_like, movie_name1, movie_name2, movie_name3, movie_name4, more_articles,text_rating,ratingText,textForNoComments;
     ImageView article_banner, play_image, hztl_image1, hztl_image2, hztl_image3, hztl_image4;
@@ -94,6 +105,8 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
     ScrollView articleScrollView;
     Context context;
     ProgressDialog progressdialog;
+    Intent ratng_comnt;
+    int RATING_COMMENT_RESPONSE = 1;
 
 
     @Override
@@ -108,6 +121,8 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
 
         session = new SessionManager(getContext());
         userData = session.getUserDetails();
+        user_ID=userData.get(0).getSmonksId();
+
         context =getContext();
         sendRequest(articleID,categoryID,wood_id);
         progressdialog = new ProgressDialog(getContext());
@@ -120,6 +135,7 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         // Defines the xml file for the fragment
         return inflater.inflate(R.layout.fragment_article, parent, false);
+
     }
 
     // This event is triggered soon after onCreateView().
@@ -127,8 +143,13 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         // Setup any handles to view objects here
+        ratng_comnt = new Intent(getContext(),RatingsAndComments.class);
+        ratng_comnt.putExtra("articleID",articleID);
+        ratng_comnt.putExtra("user_ID",user_ID);
 
-        nativeAdContainer = (LinearLayout) view.findViewById(R.id.native_ad_container);
+
+
+                nativeAdContainer = (LinearLayout) view.findViewById(R.id.native_ad_container);
         showNativeAd();
 
         articleScrollView = (ScrollView)view.findViewById(R.id.articleScrollView);
@@ -154,10 +175,10 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
                                       public boolean onTouch(View v, MotionEvent event) {
                                           if (event.getAction() == MotionEvent.ACTION_UP) {
                                               if(session.isLoggedIn()){
-                                                  showDialog("Rating");
+                                                  startActivityForResult(ratng_comnt,RATING_COMMENT_RESPONSE);
                                               }else{
                                                   session.checkLogin();
-                                                  Toast.makeText(context,"You must login for rating this article",Toast.LENGTH_SHORT).show();
+                                                  Toast.makeText(context,"You must login for rating this article",Toast.LENGTH_LONG).show();
                                               }
                                           }
                                           return true;
@@ -165,6 +186,9 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
                                   });
         listForComments = (ListView)view.findViewById(R.id.listForComments);
         listForComments.setFocusable(false);
+
+
+
 
         textForNoComments =(TextView)view.findViewById(R.id.textForNoComments);
         comment = (ImageView) view.findViewById(R.id.comment);
@@ -210,7 +234,7 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
 
     private void showNativeAd() {
         AdSettings.addTestDevice("74c31e936f85fe7dae895251d175f7cc");
-        nativeAd = new NativeAd(context, "948537241887382_1177898238951280");
+        nativeAd = new NativeAd(context, "326733984333634_372818276391871");
         nativeAd.setAdListener(new AdListener() {
 
             @Override
@@ -457,7 +481,7 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
                 tag[i].setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(getApplicationContext(), "clicked" + tag[finalI].getText(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "clicked" + tag[finalI].getText(), Toast.LENGTH_LONG).show();
                         Intent searchResult = new Intent(context,RelatedArticles.class);
                         searchResult.putExtra("identifyActivity","SearchResult");
                         String query = tag[finalI].getText().toString().substring(2);
@@ -499,20 +523,23 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
                 setLike();
             }else{
                 session.checkLogin();
-                Toast.makeText(context,"You must login first to like this article",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"You must login first to like this article",Toast.LENGTH_LONG).show();
 
             }
         }
 
         if(id == R.id.share){
+            String sAux = "\nLet me share you this article\n\n";
+            sAux = sAux + "http://webapp.sillymonksapp.com/share/show/"+wood_id+"/"+categoryID+"/"+articleID;
             try{
-                Intent i = new Intent(Intent.ACTION_SEND);
-                i.setType("text/plain");
+                Intent i = new Intent();
+                i.setAction(Intent.ACTION_SEND);
                 i.putExtra(Intent.EXTRA_SUBJECT, "SillyMonks Ride On Digital");
-                String sAux = "\nLet me share you this article\n\n";
-//                sAux = sAux + "http://webapp.sillymonksapp.com/share/show_article/"++"/"+categoryName+"/"+articleID;
                 i.putExtra(Intent.EXTRA_TEXT, sAux);
+                i.putExtra(Intent.EXTRA_STREAM,"http://d32goxaojek0xe.cloudfront.net/production/article/banner_media/57/Margarita-with-a-straw-1.jpg");
+                i.setType("image/*");
                 startActivity(Intent.createChooser(i, "choose one"));
+
             }
             catch(Exception e){
                 e.printStackTrace();
@@ -521,10 +548,10 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
 
         if (id == R.id.comment){
             if(session.isLoggedIn()){
-                showDialog("comments");
+                startActivityForResult(ratng_comnt,RATING_COMMENT_RESPONSE);
             }else{
                 session.checkLogin();
-                Toast.makeText(context,"You must login first to comment  on this article",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"You must login first to comment  on this article",Toast.LENGTH_LONG).show();
             }
         }
 
@@ -568,114 +595,115 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    private void showDialog(final String fromView) {
-        final AlertDialog.Builder popDialog = new AlertDialog.Builder(context);
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View v = inflater.inflate(R.layout.dialog,null);
-        popDialog.setView(v);
-        TextView  dialogTitle = (TextView) v.findViewById(R.id.dialog_heading);
-        ratingBar = (RatingBar)v.findViewById(R.id.ratingBar);
-        ratingText = (TextView) v.findViewById(R.id.user_rating_text);
-        commentsHolder= (EditText) v.findViewById(R.id.comment_holder);
+//    private void showDialog(final String fromView) {
+//        final AlertDialog.Builder popDialog = new AlertDialog.Builder(context);
+//        LayoutInflater inflater = getActivity().getLayoutInflater();
+//        View v = inflater.inflate(R.layout.dialog,null);
+//        popDialog.setView(v);
+//        TextView  dialogTitle = (TextView) v.findViewById(R.id.dialog_heading);
+//        ratingBar = (RatingBar)v.findViewById(R.id.ratingBar);
+//        ratingText = (TextView) v.findViewById(R.id.user_rating_text);
+//        commentsHolder= (EditText) v.findViewById(R.id.comment_holder);
+//
+//        if(fromView.equalsIgnoreCase("Rating")){
+//            dialogTitle.setText("User Rating");
+//            commentsHolder.setVisibility(View.GONE);
+//            ratingText.setVisibility(View.VISIBLE);
+//            ratingBar.setVisibility(View.VISIBLE);
+//            ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+//                @Override
+//                public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+//                    ratingText.setText(""+rating);
+//                }
+//            });
+//        }else{
+//            dialogTitle.setText("User Comments");
+//            commentsHolder.setVisibility(View.VISIBLE);
+//            ratingText.setVisibility(View.GONE);
+//            ratingBar.setVisibility(View.GONE);
+//        }
+//        popDialog.setCancelable(false);
+//        // Button OK
+//        popDialog.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int which) {
+//                if(fromView.equalsIgnoreCase("Rating")){
+//                    sendRating(ratingText.getText().toString());
+//                }else{
+//                    sendComments(commentsHolder.getText().toString());
+//                }
+//
+//                dialog.dismiss();
+//            }
+//        })
+//                .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int id) {
+//                dialog.cancel();
+//            }
+//        });
+//        popDialog.create();
+//        popDialog.show();
+//    }
 
-        if(fromView.equalsIgnoreCase("Rating")){
-            dialogTitle.setText("User Rating");
-            commentsHolder.setVisibility(View.GONE);
-            ratingText.setVisibility(View.VISIBLE);
-            ratingBar.setVisibility(View.VISIBLE);
-            ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-                @Override
-                public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                    ratingText.setText(""+rating);
-                }
-            });
-        }else{
-            dialogTitle.setText("User Comments");
-            commentsHolder.setVisibility(View.VISIBLE);
-            ratingText.setVisibility(View.GONE);
-            ratingBar.setVisibility(View.GONE);
-        }
-        popDialog.setCancelable(false);
-        // Button OK
-        popDialog.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                if(fromView.equalsIgnoreCase("Rating")){
-                    sendRating(ratingText.getText().toString());
-                }else{
-                    sendComments(commentsHolder.getText().toString());
-                }
-
-                dialog.dismiss();
-            }
-        })
-                .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
-        popDialog.create();
-        popDialog.show();
-    }
-
-    private void sendComments(String userComment) {
-
-        String   sendCommentsUrl = null;
-        try {
-            sendCommentsUrl = getResources().getString(R.string.main_url)+getResources().getString(R.string.userComment_url)+articleID
-                    + getResources().getString(R.string.userId_url)+userData.get(0).getSmonksId()+getResources().getString(R.string.body_url)+ URLEncoder.encode(userComment, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        // Request a JsonObject response from the provided URL.
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.GET, sendCommentsUrl, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            String message = response.getString("message");
-                           Toast.makeText(context,message,Toast.LENGTH_SHORT).show();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        reportError(error);
-                    }
-                });
-// Add the request to the RequestQueue.
-        VolleyRequest.getInstance().addToRequestQueue(jsObjRequest);
-    }
-
-    private void sendRating(String userRating) {
-     String   sendRatingUrl = getResources().getString(R.string.main_url)+getResources().getString(R.string.userRating_url)+articleID
-       + getResources().getString(R.string.userId_url)+userData.get(0).getSmonksId()+getResources().getString(R.string.value_url)+userRating;
-        // Request a JsonObject response from the provided URL.
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.GET, sendRatingUrl, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            JSONObject likes_data = response.getJSONObject("article");
-                            String averageRating = likes_data.getString("average_rating");
-                            rating.setRating(Float.parseFloat(averageRating));
-                            text_rating.setText("Avg. user ratings:"+averageRating+"/5");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        reportError(error);
-                    }
-                });
-// Add the request to the RequestQueue.
-        VolleyRequest.getInstance().addToRequestQueue(jsObjRequest);
-    }
+//    private void sendComments(String userComment) {
+//
+//        String   sendCommentsUrl = null;
+//        try {
+//            sendCommentsUrl = getResources().getString(R.string.main_url)+getResources().getString(R.string.userComment_url)+articleID
+//                    + getResources().getString(R.string.userId_url)+userData.get(0).getSmonksId()+getResources().getString(R.string.body_url)+ URLEncoder.encode(userComment, "UTF-8");
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
+//        // Request a JsonObject response from the provided URL.
+//        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+//                (Request.Method.GET, sendCommentsUrl, null, new Response.Listener<JSONObject>() {
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//                        try {
+//                            String message = response.getString("message");
+//                           Toast.makeText(context,message,Toast.LENGTH_LONG).show();
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }, new Response.ErrorListener() {
+//
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        reportError(error);
+//                    }
+//                });
+//// Add the request to the RequestQueue.
+//        VolleyRequest.getInstance().addToRequestQueue(jsObjRequest);
+//    }
+//
+//    private void sendRating(String userRating) {
+//     String   sendRatingUrl = getResources().getString(R.string.main_url)+getResources().getString(R.string.userRating_url)+articleID
+//       + getResources().getString(R.string.userId_url)+userData.get(0).getSmonksId()+getResources().getString(R.string.value_url)+userRating;
+//        // Request a JsonObject response from the provided URL.
+//        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+//                (Request.Method.GET, sendRatingUrl, null, new Response.Listener<JSONObject>() {
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//                        try {
+//                            JSONObject likes_data = response.getJSONObject("article");
+//                            String averageRating = likes_data.getString("average_rating");
+//                            rating.setRating(Float.parseFloat(averageRating));
+//                            text_rating.setText("Avg. user ratings:"+averageRating+"/5");
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }, new Response.ErrorListener() {
+//
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        reportError(error);
+//                    }
+//                });
+//// Add the request to the RequestQueue.
+//        VolleyRequest.getInstance().addToRequestQueue(jsObjRequest);
+//    }
+// Returns the URI path to the Bitmap displayed in specified ImageView
 
 
     private void setLike() {
@@ -709,7 +737,7 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
                             JSONObject likes_data = response.getJSONObject("likes");
                             String likesCount = likes_data.getString("likes_count");
                             String message = likes_data.getString("message");
-                            Toast.makeText(getContext(),message,Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(),message,Toast.LENGTH_LONG).show();
                             text_like.setText("Likes :"+likesCount);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -765,6 +793,20 @@ public class ArticleFragment extends Fragment implements View.OnClickListener {
 
             dialog.show();
             progressdialog.dismiss();
+
+        }
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == RATING_COMMENT_RESPONSE) {
+            if (resultCode == Activity.RESULT_OK) {
+              String averageRating = data.getExtras().getString("average_rating");
+                rating.setRating(Float.parseFloat(averageRating));
+                text_rating.setText("Avg. user ratings:"+averageRating+"/5");
+
+            }
+        }
+        if (resultCode == Activity.RESULT_CANCELED) {
 
         }
     }

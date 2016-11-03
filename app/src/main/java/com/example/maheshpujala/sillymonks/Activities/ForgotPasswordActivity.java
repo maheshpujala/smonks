@@ -1,6 +1,7 @@
 package com.example.maheshpujala.sillymonks.Activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -34,6 +35,8 @@ import com.example.maheshpujala.sillymonks.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 /**
  * Created by maheshpujala on 18/10/16.
  */
@@ -41,7 +44,10 @@ import org.json.JSONObject;
 public class ForgotPasswordActivity extends AppCompatActivity {
     EditText email_address_holder;
     ProgressDialog progressdialog;
-
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +83,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!isEmailValid(email_address_holder.getText().toString())){
-                    Toast.makeText(getApplicationContext(),"Your Email format is invalid",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"Your Email format is invalid",Toast.LENGTH_LONG).show();
                 }
                 else{
                     sendRequest();
@@ -97,7 +103,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         try {
                             progressdialog.dismiss();
-                            Toast.makeText(getApplicationContext(),response.getString("message"),Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(),response.getString("message"),Toast.LENGTH_LONG).show();
                             if(response.getBoolean("is_registered")){
                               finish();
                           }

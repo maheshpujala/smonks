@@ -18,9 +18,10 @@
         android:layout_centerHorizontal="true">
         <com.google.android.gms.ads.doubleclick.PublisherAdView
             android:id="@+id/publisherAdView"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            ads:adSize="BANNER"
+            ads:adSize="SMART_BANNER"
+            android:layout_gravity="center_horizontal"
             ads:adUnitId="@string/banner_ad_unit_id"/>
 
         <com.example.maheshpujala.sillymonks.Utils.BounceListView

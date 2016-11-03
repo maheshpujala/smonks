@@ -21,12 +21,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical">`
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/nav_header_height"
-                android:layout_marginTop="@dimen/header_horizontal_margin"
-                android:background="@drawable/sillymonks_navigation_logo_long"
+                android:layout_height="50dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/sillymonks_logo"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark"
                 android:orientation="vertical"
                 android:gravity="bottom"/>
@@ -61,6 +61,7 @@
                 android:scrollbars="none"
                 android:listSelector="#00000000"
                 android:cacheColorHint="#00000000"
+                android:divider="@null"
                 android:footerDividersEnabled="false"/>
 
 

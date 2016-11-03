@@ -1,6 +1,7 @@
 package com.example.maheshpujala.sillymonks.Activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -52,6 +53,8 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 /**
  * Created by maheshpujala on 8/10/16.
  */
@@ -70,7 +73,10 @@ public class RelatedArticles extends AppCompatActivity implements SearchView.OnQ
     ListAdapter lAdapter;
     MoPubStaticNativeAdRenderer adRenderer;
     MoPubNativeAdPositioning.MoPubServerPositioning adPositioning;
-
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -245,7 +251,7 @@ public class RelatedArticles extends AppCompatActivity implements SearchView.OnQ
         // Set up the MoPubAdAdapter
         mAdAdapter = new MoPubAdAdapter(this, lAdapter, adPositioning);
         mAdAdapter.registerAdRenderer(adRenderer);
-        mAdAdapter.loadAds("e6784f6a4d7a4b84a9134580a6dbc400");
+        mAdAdapter.loadAds("4af8f892da924673aa0d9db92b49cc10");
         list_moreArticles.setAdapter(mAdAdapter);
     }
 
@@ -329,7 +335,9 @@ public class RelatedArticles extends AppCompatActivity implements SearchView.OnQ
     }
     @Override
     protected void onDestroy() {
-        mAdAdapter.destroy();
+        if(mAdAdapter != null){
+            mAdAdapter.destroy();
+        }
         super.onDestroy();
     }
     @Override
@@ -370,7 +378,7 @@ public class RelatedArticles extends AppCompatActivity implements SearchView.OnQ
     public boolean onQueryTextSubmit(String query) {
         searchView.onActionViewCollapsed();
         sendSearchRequest(query);
-        Toast.makeText(getApplication(), "TEXT SUBMITTED"+query, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplication(), "TEXT SUBMITTED"+query, Toast.LENGTH_LONG).show();
         return false;
     }
 

@@ -6,6 +6,9 @@ import android.text.TextUtils;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.example.maheshpujala.sillymonks.R;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 /**
  * Created by maheshpujala on 1/10/16.
@@ -24,6 +27,12 @@ public class VolleyRequest extends Application {
     public void onCreate() {
         super.onCreate();
         mInstance = this;
+
+        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                .setDefaultFontPath("fonts/Roboto-Regular.ttf")
+                .setFontAttrId(R.attr.fontPath)
+                .build()
+        );
     }
 
     public static synchronized VolleyRequest getInstance() {

@@ -124,21 +124,51 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:maxLines="1" />
-
             <EditText
-                android:id="@+id/gender_edit"
+                android:id="@+id/mobile_edit"
                 android:layout_width="fill_parent"
                 android:layout_height="45dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:hint="Gender"
-                android:imeActionId="@+id/update"
-                android:imeActionLabel="Update"
-                android:imeOptions="actionDone"
-                android:inputType="textCapSentences"
+                android:hint="Mobile Number"
+                android:imeOptions="flagNoExtractUi"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:maxLines="1" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Gender :"
+                    android:layout_gravity=""
+                    android:textSize="18sp"
+                    />
+                <RadioGroup
+                android:id="@+id/radioSex"
+                    android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <RadioButton
+                    android:id="@+id/radioMale"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radio_male"
+                    android:checked="true" />
+
+                <RadioButton
+                    android:id="@+id/radioFemale"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radio_female" />
+
+            </RadioGroup>
+            </LinearLayout>
             <LinearLayout
                 android:id="@+id/linearLayout"
                 android:layout_width="fill_parent"
@@ -159,6 +189,8 @@
                     android:text="save changes"
                     android:textColor="@android:color/white"
                     android:textSize="20sp" />
+
+
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

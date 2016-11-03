@@ -1,5 +1,6 @@
 package com.example.maheshpujala.sillymonks.Activities;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -32,6 +33,8 @@ import com.example.maheshpujala.sillymonks.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 /**
  * Created by maheshpujala on 18/10/16.
  */
@@ -40,7 +43,10 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     TextView home,toolbar_title;
     EditText Fname_holder,Lname_holder,Email_holder,Pswd_holder,mobileNo_holder;
     Button signUp_button,signIn_button;
-
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,7 +103,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void sendUserRegistration() {
-        String registration_url =getResources().getString(R.string.main_url)+getResources().getString(R.string.user_registration_url)+getResources().getString(R.string.firstname_url)+Fname_holder.getText().toString()+getResources().getString(R.string.lastname_url)+Lname_holder.getText().toString()+"&mobile="+mobileNo_holder.getText().toString()+getResources().getString(R.string.email_url)+Email_holder.getText().toString()+getResources().getString(R.string.password_url)+Pswd_holder.getText().toString();
+        String registration_url =getResources().getString(R.string.main_url)+getResources().getString(R.string.user_registration_url)+getResources().getString(R.string.firstname_url)+Fname_holder.getText().toString()+getResources().getString(R.string.lastname_url)+Lname_holder.getText().toString()+getResources().getString(R.string.mobile_tag)+mobileNo_holder.getText().toString()+getResources().getString(R.string.email_url)+Email_holder.getText().toString()+getResources().getString(R.string.password_url)+Pswd_holder.getText().toString();
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.POST, registration_url, null, new Response.Listener<JSONObject>() {
                     @Override
@@ -120,7 +126,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     private void getResponseData(JSONObject response) {
         try {
             JSONObject returnResponse = response.getJSONObject("users");
-            Toast.makeText(this,returnResponse.getString("message"),Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,returnResponse.getString("message"),Toast.LENGTH_LONG).show();
             finish();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -129,24 +135,24 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
     private boolean checkValidation() {
         if(Fname_holder.getText().toString().length()<=2){
-            Toast.makeText(this,"Your First name should be at least 3 characters.",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"Your First name should be at least 3 characters.",Toast.LENGTH_LONG).show();
             return false;
         }else if(Lname_holder.getText().toString().length()<=2){
-            Toast.makeText(this,"Your Last name should be at least 3 characters.",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"Your Last name should be at least 3 characters.",Toast.LENGTH_LONG).show();
             return false;
         }else if(mobileNo_holder.getText().toString().length() != 10){
-            Toast.makeText(this,"Your Mobile Number is invalid",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"Your Mobile Number is invalid",Toast.LENGTH_LONG).show();
             return false;
         }
         else if(!isEmailValid(Email_holder.getText().toString())){
-            Toast.makeText(this,"Your Email format is invalid",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"Your Email format is invalid",Toast.LENGTH_LONG).show();
             return false;
         }
         else if(Pswd_holder.getText().toString().length()<=5 || Pswd_holder.getText().toString().length()>20){
-            Toast.makeText(this,"Your password length should be 6 to 20 characters",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"Your password length should be 6 to 20 characters",Toast.LENGTH_LONG).show();
             return false;
         }else if (Fname_holder.getText().toString().contains(" ") || Lname_holder.getText().toString().contains(" ")){
-            Toast.makeText(this,"No Spaces Allowed",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"No Spaces Allowed",Toast.LENGTH_LONG).show();
             return false;
         }
 

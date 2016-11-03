@@ -2,8 +2,12 @@ package com.example.maheshpujala.sillymonks.Activities;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -42,6 +46,7 @@ import com.example.maheshpujala.sillymonks.Network.Connectivity;
 import com.example.maheshpujala.sillymonks.Network.VolleyRequest;
 import com.example.maheshpujala.sillymonks.Model.SessionManager;
 import com.example.maheshpujala.sillymonks.R;
+import com.example.maheshpujala.sillymonks.Utils.HelperMethods;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -65,6 +70,8 @@ import com.google.android.gms.common.api.Scope;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 public class LoginActivity extends AppCompatActivity implements OnClickListener {
 
 
@@ -79,12 +86,15 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
     boolean skipVisible = false;
     SessionManager session;
     TextView sign_up,forgot_password;
-    String personName,personEmail,personPhoto,userId,mFbid,mFullname,mEmail,mGender,email,password,fullname,smonksId,first_name,last_name;
+    String personName,personEmail,personPhoto,userId,mFbid,mEmail,mGender,gender,mobile,email,password,smonksId,first_name,last_name,profilePicture,google_firstName,google_lastName,facebook_firstName,facebook_lastName;
     Boolean identity;
     ProgressDialog progressdialog;
     ActionBar actionBar;
 
-
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -258,9 +268,9 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
                  Uri pPhoto = acct.getPhotoUrl();
                  personPhoto = pPhoto.toString();
                     String[] separated = personName.split(" ");
-                    String firstName= separated[0];
-                    String lastName= separated[1];
-                    sendUserDetails(firstName,lastName,personEmail,"google");
+                     google_firstName= separated[0];
+                     google_lastName= separated[1];
+                    sendUserDetails(google_firstName,google_lastName,personEmail,"google");
 
 
             } else {
@@ -299,7 +309,7 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
         try {
             JSONObject returnResponse = response.getJSONObject("users");
             userId = returnResponse.getString("id");
-            Toast.makeText(this,returnResponse.getString("message"),Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,returnResponse.getString("message"),Toast.LENGTH_LONG).show();
             afterGettingUserDetails(socialPluginType);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -311,36 +321,36 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
             if (skipVisible) {
                 Intent begin = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(begin);
-                session.createLoginSession(userId,personPhoto, personName, personEmail, "", socialPluginType);
+                session.createLoginSession(userId,personPhoto,google_firstName,google_lastName,"", personEmail, "", socialPluginType);
                 finish();
             } else {
                 Intent googleIntent = getIntent();
                 setResult(Activity.RESULT_OK, googleIntent);
-                session.createLoginSession(userId,personPhoto, personName, personEmail, "", socialPluginType);
+                session.createLoginSession(userId,personPhoto,google_firstName,google_lastName,"", personEmail, "", socialPluginType);
                 finish();
             }
         }else if(socialPluginType.contentEquals("facebook")){
             if (skipVisible) {
                 Intent begin = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(begin);
-                session.createLoginSession(userId,mFbid, mFullname, mEmail, mGender,socialPluginType);
+                session.createLoginSession(userId,mFbid,facebook_firstName,facebook_lastName,"", mEmail, mGender,socialPluginType);
                 finish();
             } else {
                 Intent returnIntent = getIntent();
                 setResult(Activity.RESULT_OK, returnIntent);
-                session.createLoginSession(userId,mFbid, mFullname, mEmail, mGender, socialPluginType);
+                session.createLoginSession(userId,mFbid,facebook_firstName,facebook_lastName,"", mEmail, mGender, socialPluginType);
                 finish();
             }
         }else{
             if (skipVisible) {
                 Intent begin = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(begin);
-                session.createLoginSession(smonksId,"Display Picture",fullname,email,"",socialPluginType);
+                session.createLoginSession(smonksId,profilePicture,first_name,last_name,mobile,email,gender,socialPluginType);
                 finish();
             }else{
                 Intent returnIntent = getIntent();
                 setResult(Activity.RESULT_OK, returnIntent);
-                session.createLoginSession(smonksId,"Display Picture",fullname,email,"",socialPluginType);
+                session.createLoginSession(smonksId,profilePicture,first_name,last_name,mobile,email,gender,socialPluginType);
                 finish();
             }
 
@@ -350,7 +360,7 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
     private void handleSignInResult(Callable<Void> logout) {
         if (logout == null) {
             /* Login error */
-            Toast.makeText(getApplicationContext(), R.string.login_error, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), R.string.login_error, Toast.LENGTH_LONG).show();
         } else {
             /* Login success */
             /*
@@ -366,13 +376,12 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
                             if (response != null) {
                                 Bundle bFacebookData = getFacebookData(json_object);
                                  mFbid = bFacebookData.getString("idFacebook");
-                                String firstName = bFacebookData.getString("first_name");
-                                String lastName = bFacebookData.getString("last_name");
-                                 mFullname = bFacebookData.getString("first_name") + " " + bFacebookData.getString("last_name");
+                                 facebook_firstName = bFacebookData.getString("first_name");
+                                 facebook_lastName = bFacebookData.getString("last_name");
                                  mEmail = bFacebookData.getString("email");
                                  mGender = bFacebookData.getString("gender");
 
-                                sendUserDetails(firstName,lastName,mEmail,"facebook");
+                                sendUserDetails(facebook_firstName,facebook_lastName,mEmail,"facebook");
                             } else {
 
                             }
@@ -411,10 +420,10 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
          email = mEmailView.getText().toString();
          password = mPasswordView.getText().toString();
         if(!isEmailValid(email)){
-            Toast.makeText(this,"Your Email format is invalid",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"Your Email format is invalid",Toast.LENGTH_LONG).show();
         }
         else if(password.length()<=5){
-            Toast.makeText(this,getString(R.string.error_invalid_password),Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,getString(R.string.error_invalid_password),Toast.LENGTH_LONG).show();
         }else {
             progressdialog.show();
             sendUserLoginDetails();
@@ -450,12 +459,16 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
             progressdialog.dismiss();
 
             identity = returnResponse.getBoolean("logged_in");
-            Toast.makeText(this,returnResponse.getString("message"),Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,returnResponse.getString("message"),Toast.LENGTH_LONG).show();
             if(identity){
                 smonksId = returnResponse.getString("id");
                 first_name = returnResponse.getString("first_name");
                 last_name = returnResponse.getString("last_name");
-                fullname = first_name+" "+last_name;
+                profilePicture = returnResponse.getString("profile_picture");
+                gender = returnResponse.getString("gender");
+                mobile = returnResponse.getString("mobile");
+
+
                 afterGettingUserDetails("default_login");
             }
         } catch (JSONException e) {

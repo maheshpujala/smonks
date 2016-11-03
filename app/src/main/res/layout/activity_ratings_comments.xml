@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/toolbar_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginLeft="-72dp"
+                    android:layout_marginStart="-72dp"
+                    android:text="TEXT"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"/>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <TextView
+        android:id="@+id/dialog_heading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Your Rating"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:background="@android:drawable/stat_notify_chat"/>
+    <RatingBar
+        android:id="@+id/ratingBar"
+        style="@style/CustomRatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:isIndicator="false"
+        android:layout_marginTop="10dp"
+        android:max="5"
+        android:numStars="5"
+        android:rating="5"
+        android:stepSize="0.5"
+        android:layout_gravity="center"/>
+    <TextView
+        android:id="@+id/user_rating_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="5"
+        android:gravity="center"
+        android:textSize="16sp"/>
+
+    <EditText
+        android:id="@+id/comment_holder"
+    android:inputType="textMultiLine"
+    android:lines="15"
+    android:minLines="10"
+    android:gravity="top|left"
+    android:maxLines="15"
+    android:hint="Type Your Comments"
+    android:background="@android:drawable/editbox_background"
+    android:layout_margin="5dp"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:scrollbars="vertical"
+    android:layout_weight="1"
+    />
+    <Button
+        android:id="@+id/submit_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Submit"
+        android:textSize="18sp"
+        android:textColor="@color/white_color"
+        android:background="@color/app_theme"/>
+</LinearLayout>

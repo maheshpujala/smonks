@@ -1,8 +1,12 @@
 package com.example.maheshpujala.sillymonks.Activities;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -15,7 +19,27 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.maheshpujala.sillymonks.Network.VolleyRequest;
 import com.example.maheshpujala.sillymonks.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**
  * Created by maheshpujala on 23/8/16.
@@ -25,8 +49,12 @@ public class ContactAndAdvertise extends AppCompatActivity implements View.OnCli
     private TextView header;
     private Button submit;
     private String person_name,mobile_no,description;
+    ProgressDialog progressdialog;
 
-
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,13 +108,88 @@ public class ContactAndAdvertise extends AppCompatActivity implements View.OnCli
             person_name = pname.getText().toString();
             mobile_no  = pmobile.getText().toString();
             description = desc.getText().toString();
-            Toast.makeText(this, "clicked SUBMIT BUTTON"+person_name +mobile_no, Toast.LENGTH_SHORT).show();
-            checkData();
+
+          if(!checkData()){
+              sendRequest();
+          }
         }
     }
 
-    private void checkData() {
+    private void sendRequest() {
+        progressdialog = new ProgressDialog(ContactAndAdvertise.this);
+        progressdialog.setMessage("Please Wait....");
+        progressdialog.setCancelable(false);
+        progressdialog.show();
+        final String requestType;
+        if(header.getText().toString().equalsIgnoreCase("Contact Us")){
+            requestType = "contact_us";
+        }else{
+            requestType = "advertise_with_us";
+        }
+        String ContactandAdvertise = null;
+        try {
+            ContactandAdvertise = getResources().getString(R.string.main_url)+getResources().getString(R.string.contact_url)+pname.getText().toString()+getResources().getString(R.string.mobile_tag)+pmobile.getText().toString()+getResources().getString(R.string.description_tag)+ URLEncoder.encode(desc.getText().toString(), "UTF-8")+getResources().getString(R.string.type_tag)+requestType+getResources().getString(R.string.os_tag);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.POST, ContactandAdvertise, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.e("onResponse",""+response);
+                        try {
+                            progressdialog.dismiss();
+                            Toast.makeText(ContactAndAdvertise.this,response.getString("message"),Toast.LENGTH_LONG).show();
+                            finish();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
 
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+                        reportError(error);
+                    }
+                });
+        int MY_SOCKET_TIMEOUT_MS = 15000;
+        jsObjRequest.setRetryPolicy(new DefaultRetryPolicy(
+                MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+// Add the request to the RequestQueue.
+        VolleyRequest.getInstance().addToRequestQueue(jsObjRequest);
+    }
+
+
+    private void reportError(VolleyError error) {
+        Log.e("response Errorhome", error + "");
+        if (error instanceof NoConnectionError) {
+            Log.d("NoConnectionError>>>>>>>>>", "NoConnectionError.......");
+        } else if (error instanceof AuthFailureError) {
+            Log.d("AuthFailureError>>>>>>>>>", "AuthFailureError.......");
+        } else if (error instanceof ServerError) {
+            Log.d("ServerError>>>>>>>>>", "ServerError.......");
+        } else if (error instanceof NetworkError) {
+            Log.d("NetworkError>>>>>>>>>", "NetworkError.......");
+        } else if (error instanceof ParseError) {
+            Log.d("ParseError>>>>>>>>>", "ParseError.......");
+        }else if (error instanceof TimeoutError) {
+            Log.d("TimeoutError>>>>>>>>>", "TimeoutError.......");
+            AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(getApplication(), R.style.myDialog));
+
+            // 2. Chain together various setter methods to set the dialog characteristics
+            builder.setMessage("Unable to connect with the server.Try again after some time.")
+                    .setTitle("Server Error");
+
+            // 3. Get the AlertDialog from create()
+            AlertDialog dialog = builder.create();
+
+            dialog.show();
+        }
+    }
+    private boolean checkData() {
         boolean cancel = false;
         View focusView = null;
 
@@ -119,11 +222,13 @@ public class ContactAndAdvertise extends AppCompatActivity implements View.OnCli
             // form field with an error.
             focusView.requestFocus();
         }
+        Log.e("cancel",""+cancel);
+        return cancel;
     }
 
     private boolean isMobileValid(String mobile_no) {
-        //TODO: Replace this with your own logic
-        return mobile_no.length() >= 10;
+
+        return mobile_no.length() == 10;
     }
 
 
